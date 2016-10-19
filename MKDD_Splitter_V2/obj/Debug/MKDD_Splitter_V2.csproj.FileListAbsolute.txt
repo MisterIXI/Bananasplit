@@ -1,0 +1,14 @@
+d:\misterixi\documents\visual studio 2015\Projects\MKDD Splitter V2\MKDD_Splitter_V2\bin\Debug\MKDD_Splitter_V2.exe.config
+d:\misterixi\documents\visual studio 2015\Projects\MKDD Splitter V2\MKDD_Splitter_V2\bin\Debug\MKDD_Splitter_V2.exe
+d:\misterixi\documents\visual studio 2015\Projects\MKDD Splitter V2\MKDD_Splitter_V2\bin\Debug\MKDD_Splitter_V2.pdb
+d:\misterixi\documents\visual studio 2015\Projects\MKDD Splitter V2\MKDD_Splitter_V2\obj\Debug\MKDD_Splitter_V2.csprojResolveAssemblyReference.cache
+d:\misterixi\documents\visual studio 2015\Projects\MKDD Splitter V2\MKDD_Splitter_V2\obj\Debug\MainWindow.g.cs
+d:\misterixi\documents\visual studio 2015\Projects\MKDD Splitter V2\MKDD_Splitter_V2\obj\Debug\App.g.cs
+d:\misterixi\documents\visual studio 2015\Projects\MKDD Splitter V2\MKDD_Splitter_V2\obj\Debug\MKDD_Splitter_V2_MarkupCompile.cache
+d:\misterixi\documents\visual studio 2015\Projects\MKDD Splitter V2\MKDD_Splitter_V2\obj\Debug\MKDD_Splitter_V2_MarkupCompile.lref
+d:\misterixi\documents\visual studio 2015\Projects\MKDD Splitter V2\MKDD_Splitter_V2\obj\Debug\MainWindow.baml
+d:\misterixi\documents\visual studio 2015\Projects\MKDD Splitter V2\MKDD_Splitter_V2\obj\Debug\MKDD_Splitter_V2.g.resources
+d:\misterixi\documents\visual studio 2015\Projects\MKDD Splitter V2\MKDD_Splitter_V2\obj\Debug\MKDD_Splitter_V2.Properties.Resources.resources
+d:\misterixi\documents\visual studio 2015\Projects\MKDD Splitter V2\MKDD_Splitter_V2\obj\Debug\MKDD_Splitter_V2.csproj.GenerateResource.Cache
+d:\misterixi\documents\visual studio 2015\Projects\MKDD Splitter V2\MKDD_Splitter_V2\obj\Debug\MKDD_Splitter_V2.exe
+d:\misterixi\documents\visual studio 2015\Projects\MKDD Splitter V2\MKDD_Splitter_V2\obj\Debug\MKDD_Splitter_V2.pdb
