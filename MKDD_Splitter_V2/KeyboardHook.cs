@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace LiveSplit.Model.Input
 {
@@ -22,6 +23,8 @@ namespace LiveSplit.Model.Input
         {
             if (!RegisteredKeys.ContainsKey(key))
                 RegisteredKeys.Add(key, false);
+            System.Console.WriteLine("Registered");
+
         }
 
         public void UnregisterAllHotkeys()
@@ -59,7 +62,11 @@ namespace LiveSplit.Model.Input
                 RegisteredKeys[key] = isPressed;
 
                 if (modifiersDown && isPressed && !wasPressedBefore)
+                {
                     KeyPressed?.Invoke(this, new KeyEventArgs(key));
+                    System.Console.Beep();
+                }
+                    
             }
         }
 

@@ -24,9 +24,20 @@ namespace MKDD_Splitter_V2
     {
         Stopwatch MainStopwatch = new Stopwatch();
         Timer MainRefreshTimer;
+        Timer HotkeyPollTimer;
+        LiveSplit.Model.Input.KeyboardHook HookInstance = new LiveSplit.Model.Input.KeyboardHook();
+
         public MainWindow()
         {
             InitializeComponent();
+            HotkeyPollTimer = new Timer(25);
+            HotkeyPollTimer.Elapsed += new ElapsedEventHandler(OnHotkeyPoll);
+            HotkeyPollTimer.Start();
+        }
+
+        private void Init()
+        {
+
         }
 
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -38,6 +49,7 @@ namespace MKDD_Splitter_V2
         {
             if(e.Key == Key.Space)
             {
+                //Console.Beep();
                 if (!MainStopwatch.IsRunning)
                 {
                     MainStopwatch.Start();
@@ -53,7 +65,17 @@ namespace MKDD_Splitter_V2
                     MainRefreshTimer.Dispose();
                 }
             }
+            if (e.Key == Key.A)
+            {
+                HookInstance.RegisterHotKey(System.Windows.Forms.Keys.Space);
+                Console.WriteLine("FAFWF");
+            }
             
+        }
+
+        private void OnHotkeyPoll(object source, ElapsedEventArgs e)
+        {
+            HookInstance.Poll();
         }
 
         private void OnMainRefreshTimer(object source, ElapsedEventArgs e)
@@ -64,9 +86,7 @@ namespace MKDD_Splitter_V2
             {
                 TimerLabel.Text = MainStopwatch.Elapsed.ToString(@"mm\:ss\.fff");
             });
-            
+            //LiveSplit.Model.Input.KeyboardHook.RegisterHotKey(System.Windows.Forms.Keys.Space);
         }
-
-
     }
 }

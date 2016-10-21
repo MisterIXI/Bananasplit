@@ -12,3 +12,17 @@ d:\misterixi\documents\visual studio 2015\Projects\MKDD Splitter V2\MKDD_Splitte
 d:\misterixi\documents\visual studio 2015\Projects\MKDD Splitter V2\MKDD_Splitter_V2\obj\Debug\MKDD_Splitter_V2.csproj.GenerateResource.Cache
 d:\misterixi\documents\visual studio 2015\Projects\MKDD Splitter V2\MKDD_Splitter_V2\obj\Debug\MKDD_Splitter_V2.exe
 d:\misterixi\documents\visual studio 2015\Projects\MKDD Splitter V2\MKDD_Splitter_V2\obj\Debug\MKDD_Splitter_V2.pdb
+D:\MisterIXI\Documents\Git Repos\Splitter V2\MKDD_Splitter_V2\bin\Debug\MKDD_Splitter_V2.exe.config
+D:\MisterIXI\Documents\Git Repos\Splitter V2\MKDD_Splitter_V2\obj\Debug\MKDD_Splitter_V2.exe
+D:\MisterIXI\Documents\Git Repos\Splitter V2\MKDD_Splitter_V2\obj\Debug\MKDD_Splitter_V2.pdb
+D:\MisterIXI\Documents\Git Repos\Splitter V2\MKDD_Splitter_V2\bin\Debug\MKDD_Splitter_V2.exe
+D:\MisterIXI\Documents\Git Repos\Splitter V2\MKDD_Splitter_V2\bin\Debug\MKDD_Splitter_V2.pdb
+D:\MisterIXI\Documents\Git Repos\Splitter V2\MKDD_Splitter_V2\obj\Debug\MKDD_Splitter_V2.csprojResolveAssemblyReference.cache
+D:\MisterIXI\Documents\Git Repos\Splitter V2\MKDD_Splitter_V2\obj\Debug\MainWindow.g.cs
+D:\MisterIXI\Documents\Git Repos\Splitter V2\MKDD_Splitter_V2\obj\Debug\App.g.cs
+D:\MisterIXI\Documents\Git Repos\Splitter V2\MKDD_Splitter_V2\obj\Debug\MKDD_Splitter_V2_MarkupCompile.cache
+D:\MisterIXI\Documents\Git Repos\Splitter V2\MKDD_Splitter_V2\obj\Debug\MKDD_Splitter_V2_MarkupCompile.lref
+D:\MisterIXI\Documents\Git Repos\Splitter V2\MKDD_Splitter_V2\obj\Debug\MainWindow.baml
+D:\MisterIXI\Documents\Git Repos\Splitter V2\MKDD_Splitter_V2\obj\Debug\MKDD_Splitter_V2.g.resources
+D:\MisterIXI\Documents\Git Repos\Splitter V2\MKDD_Splitter_V2\obj\Debug\MKDD_Splitter_V2.Properties.Resources.resources
+D:\MisterIXI\Documents\Git Repos\Splitter V2\MKDD_Splitter_V2\obj\Debug\MKDD_Splitter_V2.csproj.GenerateResource.Cache
