@@ -64,7 +64,7 @@ namespace LiveSplit.Model.Input
                 if (modifiersDown && isPressed && !wasPressedBefore)
                 {
                     KeyPressed?.Invoke(this, new KeyEventArgs(key));
-                    System.Console.Beep();
+                    //System.Console.Beep();
                 }
                     
             }
