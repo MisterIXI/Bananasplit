@@ -29,6 +29,8 @@ namespace MKDD_Splitter_V2
         LiveSplit.Model.Input.KeyboardHook HookInstance = new LiveSplit.Model.Input.KeyboardHook();
         LiveSplit.Model.Input.CompositeHook Hook { get; set; }
 
+
+
         public MainWindow()
         {
             InitializeComponent();
@@ -37,7 +39,7 @@ namespace MKDD_Splitter_V2
             HotkeyPollTimer.Tick += new EventHandler(OnHotkeyPoll);
             HotkeyPollTimer.Start();
             Hook = new LiveSplit.Model.Input.CompositeHook();
-            Hook.KeyPressed += Hook_OnKeyPress;
+            Hook.KeyOrButtonPressed += Hook_OnKeyPress;
         }
 
         private void Init()
@@ -62,16 +64,22 @@ namespace MKDD_Splitter_V2
             //LiveSplit.Model.Input.KeyboardHook.RegisterHotKey(System.Windows.Forms.Keys.Space);
         }
 
-        void Hook_OnKeyPress(object sender, KeyEventArgs e)
+        public void DebugBeep()
+        {
+            Console.Beep();
+        }
+
+        void Hook_OnKeyPress(object sender, LiveSplit.Model.Input.KeyOrButton e)
         {
 
-
+            Console.WriteLine("pressing triggered");
             
             Action action = () =>
             {
-                if(Keys.Space == e.KeyCode)
+                if(Keys.Space == e.Key)
                 {
                     Console.Beep();
+                    Console.WriteLine("correct Bitch");
                 }
             };
 
@@ -112,8 +120,7 @@ namespace MKDD_Splitter_V2
             }
             if (e.Key == System.Windows.Input.Key.A)
             {
-                HookInstance.RegisterHotKey(Keys.Space);
-                Console.WriteLine("FAFWF");
+                Hook.RegisterHotKey(Keys.Space);
             }
         }
 
