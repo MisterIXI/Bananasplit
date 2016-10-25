@@ -29,7 +29,31 @@ namespace MKDD_Splitter_V2
         LiveSplit.Model.Input.KeyboardHook HookInstance = new LiveSplit.Model.Input.KeyboardHook();
         LiveSplit.Model.Input.CompositeHook Hook { get; set; }
 
+        //Splitter Variables
+        int currentTrackIndex, currentSplitProgress, currentSplitInUI, scrollToIndex = 0;
 
+        int[] currentTrackOrder = new int[15];
+        TimeSpan[] Splittimes, PBSplits, UnsavedGoldSplits, GoldSplits = new TimeSpan[15];
+        TimeSpan lastSplit;
+        bool[] isSplitAGoldSplit = new bool[15];
+
+        /*
+        Variable explanation:
+        Trackindex: chosen Track to split on when the splitbutton is pressed (0-15)
+        currentSplitProgress: # of Splits splittet in the run
+        currentSplitInUI: MostBottom existing Split Index (0-15)
+        scrollToIndex: Index of SPlit in most bottom Label (scrolled) (4-15)
+
+        currentTrackOrder: Index of Track in place
+
+        Splittimes: Timespans of current splittet Splits (with correct Index e.g. 14 = BC)
+        PBSplits: Timespans of saved & loaded PBSplits
+        UnsavedGoldSplits: Timespans of eventual GoldSPlits ready to be saved or discarded
+        GoldSplits: Timespans of saved & loaded GoldSPlits
+
+        lastSplit: Timespans (point in the run) where the last Split happenend for comparison
+        */
+        
 
         public MainWindow()
         {
@@ -40,6 +64,7 @@ namespace MKDD_Splitter_V2
             HotkeyPollTimer.Start();
             Hook = new LiveSplit.Model.Input.CompositeHook();
             Hook.KeyOrButtonPressed += Hook_OnKeyPress;
+            
         }
 
         private void Init()
@@ -59,7 +84,7 @@ namespace MKDD_Splitter_V2
             //TestLabel.Content = "ficl ypi aföö";//string.Format(@"mm\:ss\.fff",MainStopwatch.Elapsed);
             this.Dispatcher.Invoke(() =>
             {
-                TimerLabel.Text = MainStopwatch.Elapsed.ToString(@"mm\:ss\.fff");
+                TimerLabel.Content = MainStopwatch.Elapsed.ToString(@"mm\:ss\.fff");               
             });
             //LiveSplit.Model.Input.KeyboardHook.RegisterHotKey(System.Windows.Forms.Keys.Space);
         }
@@ -104,16 +129,12 @@ namespace MKDD_Splitter_V2
                 //Console.Beep();
                 if (!MainStopwatch.IsRunning)
                 {
-                    MainStopwatch.Start();
-                    MainRefreshTimer = new Timer();
-                    MainRefreshTimer.Interval = 50;
-                    MainRefreshTimer.Tick += new EventHandler(OnMainRefreshTimer);
-                    MainRefreshTimer.Start();
+                    StartSplitting();
                 }
                 else
                 {
                     MainStopwatch.Stop();
-                    TimerLabel.Text = MainStopwatch.Elapsed.ToString(@"mm\:ss\.fff");
+                    TimerLabel.Content = MainStopwatch.Elapsed.ToString(@"mm\:ss\.fff");
                     MainStopwatch.Reset();
                     MainRefreshTimer.Dispose();
                 }
@@ -122,11 +143,71 @@ namespace MKDD_Splitter_V2
             {
                 Hook.RegisterHotKey(Keys.Space);
             }
+            if (e.Key == System.Windows.Input.Key.S)
+            {
+                
+            }
+
         }
 
         private void Window_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             this.DragMove();
         }
+
+        #region Splitting Functions
+
+        void StartSplitting()
+        {
+            MainStopwatch.Start();
+            MainRefreshTimer = new Timer();
+            MainRefreshTimer.Interval = 50;
+            MainRefreshTimer.Tick += new EventHandler(OnMainRefreshTimer);
+            MainRefreshTimer.Start();
+            currentTrackIndex = 0;
+            lastSplit = TimeSpan.Zero;
+        }
+
+        void Split()
+        {
+            TimeSpan tempTimeSpan = MainStopwatch.Elapsed; // so the time stays the same and isn't influenced by CPU time
+            if (currentTrackIndex == 15)
+            {
+                MainStopwatch.Stop();
+                TimerLabel.Content = tempTimeSpan.ToString(@"mm\:ss\.fff");
+                MainRefreshTimer.Dispose();
+                return;
+            }
+            else
+            {
+                currentTrackOrder[currentSplitProgress] = currentTrackIndex;
+                Splittimes[currentTrackIndex] = tempTimeSpan - lastSplit;
+                if(Splittimes[currentTrackIndex] < GoldSplits[currentTrackIndex])
+                {
+                    isSplitAGoldSplit[currentTrackIndex] = true;
+                }
+                lastSplit = tempTimeSpan;
+            }
+        }
+
+        void Reset()
+        {
+            MainStopwatch.Stop();
+            if (MainRefreshTimer != null) MainRefreshTimer.Dispose();
+            TimerLabel.Content = ("00:00.000");
+            //todo
+        }
+
+        #endregion
+
+        #region Splitselection
+
+        void SelectSplit(int trackIndex)
+        {
+            //todo
+        }
+
+        #endregion
+
     }
 }

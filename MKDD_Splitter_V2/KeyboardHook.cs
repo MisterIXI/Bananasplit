@@ -23,7 +23,7 @@ namespace LiveSplit.Model.Input
         {
             if (!RegisteredKeys.ContainsKey(key))
                 RegisteredKeys.Add(key, false);
-            System.Console.WriteLine("Registered");
+            System.Console.WriteLine("Registered new Hotkey: "+key);
 
         }
 
@@ -75,5 +75,6 @@ namespace LiveSplit.Model.Input
             var result = GetAsyncKeyState(key);
             return ((result >> 15) & 1) == 1;
         }
+
     }
 }

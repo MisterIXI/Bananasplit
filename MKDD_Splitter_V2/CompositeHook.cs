@@ -87,7 +87,6 @@ namespace LiveSplit.Model.Input
 
         void KeyboardHook_KeyPressed(object sender, KeyEventArgs e)
         {
-            Console.WriteLine("KeyDetected");
             KeyPressed?.Invoke(this, e);
             KeyOrButtonPressed?.Invoke(this, new KeyOrButton(e.KeyCode | e.Modifiers));
         }

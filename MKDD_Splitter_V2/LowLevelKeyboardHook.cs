@@ -44,19 +44,15 @@ namespace LiveSplit.Model.Input
 
         void Input_KeyBoardKeyPressed(object sender, KeyEventArgs e)
         {
-            Console.WriteLine("KeyBoardKeyPressed called");
+            //Console.WriteLine("KeyBoardKeyPressed called");
             if (RegisteredKeys.Contains(e.KeyCode | e.Modifiers) && KeyPressed != null)
             {
                 lock (Lock)
                 {
                     if (HookState <= 0)
                     {
-                        KeyPressed(this, e);
-                        
-
-                    }
-                        
-
+                        KeyPressed(this, e);                        
+                    }                        
                     HookState--;
 
                     if (HookState == -1 || HookState > 0)
