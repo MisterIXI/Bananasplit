@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MKDD_Splitter_V2"
         mc:Ignorable="d"
-        Title="MainWindow" Height="547.774" Width="327.358" BorderThickness="0" WindowStyle="None" AllowsTransparency="True" MouseLeftButtonDown="Window_MouseLeftButtonDown" KeyDown="OnKeyDownHandler" ResizeMode="NoResize">
+        Title="MainWindow" Height="547.774" Width="327.358" BorderThickness="0" WindowStyle="None" AllowsTransparency="True" MouseLeftButtonDown="Window_MouseLeftButtonDown" KeyDown="OnKeyDownHandler" ResizeMode="NoResize" MouseWheel="Window_MouseWheel">
     <Window.Background>
         <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
             <GradientStop Color="Black"/>
@@ -21,47 +21,60 @@
         </Grid>
         <Grid HorizontalAlignment="Left" Height="40" Margin="10,50,0,0" VerticalAlignment="Top" Width="305">
             <Label x:Name="L_TrackID1" Content="DDD" HorizontalAlignment="Left" Height="45" VerticalAlignment="Top" Width="67" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
-            <Label x:Name="L_GoldDiff1" Content="+44" HorizontalAlignment="Left" Height="45" Margin="67,0,0,0" VerticalAlignment="Top" Width="79" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
-            <Label x:Name="L_SplitDiff1" Content="+44" HorizontalAlignment="Left" Height="45" Margin="146,0,0,0" VerticalAlignment="Top" Width="76" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
-            <Label x:Name="L_SplitT1" Content="29:46" HorizontalAlignment="Left" Height="45" Margin="232,0,0,0" VerticalAlignment="Top" Width="75" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
+            <Label x:Name="L_GoldDiff1" Content="+44.6" HorizontalAlignment="Left" Height="45" Margin="67,0,0,0" VerticalAlignment="Top" Width="79" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
+            <Label x:Name="L_SplitDiff1" Content="+44.6" HorizontalAlignment="Left" Height="45" Margin="146,0,0,0" VerticalAlignment="Top" Width="76" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
+            <Label x:Name="L_SplitT1" Content="29:46.9" HorizontalAlignment="Left" Height="45" Margin="232,0,0,0" VerticalAlignment="Top" Width="75" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
         </Grid>
         <Grid HorizontalAlignment="Left" Height="40" Margin="10,77,0,0" VerticalAlignment="Top" Width="305">
             <Label x:Name="L_TrackID2" Content="DDD" HorizontalAlignment="Left" Height="45" VerticalAlignment="Top" Width="67" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
-            <Label x:Name="L_GoldDiff2" Content="+44" HorizontalAlignment="Left" Height="45" Margin="67,0,0,0" VerticalAlignment="Top" Width="79" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
-            <Label x:Name="L_SplitDiff2" Content="+44" HorizontalAlignment="Left" Height="45" Margin="146,0,0,0" VerticalAlignment="Top" Width="76" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
-            <Label x:Name="L_SplitT2" Content="29:46" HorizontalAlignment="Left" Height="45" Margin="232,0,0,0" VerticalAlignment="Top" Width="75" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
+            <Label x:Name="L_GoldDiff2" Content="+44.6" HorizontalAlignment="Left" Height="45" Margin="67,0,0,0" VerticalAlignment="Top" Width="79" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
+            <Label x:Name="L_SplitDiff2" Content="+44.6" HorizontalAlignment="Left" Height="45" Margin="146,0,0,0" VerticalAlignment="Top" Width="76" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
+            <Label x:Name="L_SplitT2" Content="29:46.9" HorizontalAlignment="Left" Height="45" Margin="232,0,0,0" VerticalAlignment="Top" Width="75" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
         </Grid>
         <Grid HorizontalAlignment="Left" Height="40" Margin="10,104,0,0" VerticalAlignment="Top" Width="305">
             <Label x:Name="L_TrackID3" Content="DDD" HorizontalAlignment="Left" Height="45" VerticalAlignment="Top" Width="67" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
-            <Label x:Name="L_GoldDiff3" Content="+44" HorizontalAlignment="Left" Height="45" Margin="67,0,0,0" VerticalAlignment="Top" Width="79" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
-            <Label x:Name="L_SplitDiff3" Content="+44" HorizontalAlignment="Left" Height="45" Margin="146,0,0,0" VerticalAlignment="Top" Width="76" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
-            <Label x:Name="L_SplitT3" Content="29:46" HorizontalAlignment="Left" Height="45" Margin="232,0,0,0" VerticalAlignment="Top" Width="75" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
+            <Label x:Name="L_GoldDiff3" Content="+44.6" HorizontalAlignment="Left" Height="45" Margin="67,0,0,0" VerticalAlignment="Top" Width="79" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
+            <Label x:Name="L_SplitDiff3" Content="+44.6" HorizontalAlignment="Left" Height="45" Margin="146,0,0,0" VerticalAlignment="Top" Width="76" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
+            <Label x:Name="L_SplitT3" Content="29:46.9" HorizontalAlignment="Left" Height="45" Margin="232,0,0,0" VerticalAlignment="Top" Width="75" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
         </Grid>
         <Grid HorizontalAlignment="Left" Height="40" Margin="10,131,0,0" VerticalAlignment="Top" Width="305">
             <Label x:Name="L_TrackID4" Content="DDD" HorizontalAlignment="Left" Height="45" VerticalAlignment="Top" Width="67" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
-            <Label x:Name="L_GoldDiff4" Content="+44" HorizontalAlignment="Left" Height="45" Margin="67,0,0,0" VerticalAlignment="Top" Width="79" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
-            <Label x:Name="L_SplitDiff4" Content="+44" HorizontalAlignment="Left" Height="45" Margin="146,0,0,0" VerticalAlignment="Top" Width="76" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
-            <Label x:Name="L_SplitT4" Content="29:46" HorizontalAlignment="Left" Height="45" Margin="232,0,0,0" VerticalAlignment="Top" Width="75" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
+            <Label x:Name="L_GoldDiff4" Content="+44.6" HorizontalAlignment="Left" Height="45" Margin="67,0,0,0" VerticalAlignment="Top" Width="79" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
+            <Label x:Name="L_SplitDiff4" Content="+44.6" HorizontalAlignment="Left" Height="45" Margin="146,0,0,0" VerticalAlignment="Top" Width="76" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
+            <Label x:Name="L_SplitT4" Content="29:46.9" HorizontalAlignment="Left" Height="45" Margin="232,0,0,0" VerticalAlignment="Top" Width="75" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
         </Grid>
         <Grid HorizontalAlignment="Left" Height="40" Margin="10,158,0,0" VerticalAlignment="Top" Width="305">
             <Label x:Name="L_TrackID5" Content="DDD" HorizontalAlignment="Left" Height="45" VerticalAlignment="Top" Width="67" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
-            <Label x:Name="L_GoldDiff5" Content="+44" HorizontalAlignment="Left" Height="45" Margin="67,0,0,0" VerticalAlignment="Top" Width="79" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
-            <Label x:Name="L_SplitDiff5" Content="+44" HorizontalAlignment="Left" Height="45" Margin="146,0,0,0" VerticalAlignment="Top" Width="76" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
-            <Label x:Name="L_SplitT5" Content="29:46" HorizontalAlignment="Left" Height="45" Margin="232,0,0,0" VerticalAlignment="Top" Width="75" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
+            <Label x:Name="L_GoldDiff5" Content="+44.6" HorizontalAlignment="Left" Height="45" Margin="67,0,0,0" VerticalAlignment="Top" Width="79" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
+            <Label x:Name="L_SplitDiff5" Content="+44.6" HorizontalAlignment="Left" Height="45" Margin="146,0,0,0" VerticalAlignment="Top" Width="76" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
+            <Label x:Name="L_SplitT5" Content="29:46.9" HorizontalAlignment="Left" Height="45" Margin="232,0,0,0" VerticalAlignment="Top" Width="75" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
         </Grid>
         <Grid HorizontalAlignment="Left" Height="40" Margin="10,185,0,0" VerticalAlignment="Top" Width="305">
             <Label x:Name="L_TrackID6" Content="DDD" HorizontalAlignment="Left" Height="45" VerticalAlignment="Top" Width="67" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
-            <Label x:Name="L_GoldDiff6" Content="+44" HorizontalAlignment="Left" Height="45" Margin="67,0,0,0" VerticalAlignment="Top" Width="79" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
-            <Label x:Name="L_SplitDiff6" Content="+44" HorizontalAlignment="Left" Height="45" Margin="146,0,0,0" VerticalAlignment="Top" Width="76" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
-            <Label x:Name="L_SplitT6" Content="29:46" HorizontalAlignment="Left" Height="45" Margin="232,0,0,0" VerticalAlignment="Top" Width="75" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
+            <Label x:Name="L_GoldDiff6" Content="+44.6" HorizontalAlignment="Left" Height="45" Margin="67,0,0,0" VerticalAlignment="Top" Width="79" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
+            <Label x:Name="L_SplitDiff6" Content="+44.6" HorizontalAlignment="Left" Height="45" Margin="146,0,0,0" VerticalAlignment="Top" Width="76" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
+            <Label x:Name="L_SplitT6" Content="29:46.9" HorizontalAlignment="Left" Height="45" Margin="232,0,0,0" VerticalAlignment="Top" Width="75" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
         </Grid>
-        <Grid HorizontalAlignment="Left" Height="40" Margin="10,212,0,0" VerticalAlignment="Top" Width="305">
+        <Grid x:Name="SplitGrid7" HorizontalAlignment="Left" Height="40" Margin="10,212,0,0" VerticalAlignment="Top" Width="305">
             <Label x:Name="L_TrackID7" Content="DDD" HorizontalAlignment="Left" Height="45" VerticalAlignment="Top" Width="67" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
-            <Label x:Name="L_GoldDiff7" Content="+44" HorizontalAlignment="Left" Height="45" Margin="67,0,0,0" VerticalAlignment="Top" Width="79" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
-            <Label x:Name="L_SplitDiff7" Content="+44" HorizontalAlignment="Left" Height="45" Margin="146,0,0,0" VerticalAlignment="Top" Width="76" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
-            <Label x:Name="L_SplitT7" Content="29:46" HorizontalAlignment="Left" Height="45" Margin="232,0,0,0" VerticalAlignment="Top" Width="75" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
+            <Label x:Name="L_GoldDiff7" Content="+44.6" HorizontalAlignment="Left" Height="45" Margin="67,0,0,0" VerticalAlignment="Top" Width="79" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
+            <Label x:Name="L_SplitDiff7" Content="+44.6" HorizontalAlignment="Left" Height="45" Margin="146,0,0,0" VerticalAlignment="Top" Width="76" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
+            <Label x:Name="L_SplitT7" Content="29:46.9" HorizontalAlignment="Left" Height="45" Margin="232,0,0,0" VerticalAlignment="Top" Width="75" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
         </Grid>
         <Label x:Name="TimerLabel" Content="00:00" HorizontalAlignment="Left" Height="83" Margin="159,236,0,0" VerticalAlignment="Top" Width="154" Background="{x:Null}" Foreground="White" FontSize="60" />
+        <Label x:Name="SegmentLabel" Content="00:00" HorizontalAlignment="Left" Height="50" Margin="220,300,0,0" VerticalAlignment="Top" Width="89" Background="{x:Null}" Foreground="White" FontSize="33.333"/>
+        <Label x:Name="SoB_text" Content="Sum of Best:" HorizontalAlignment="Left" Height="34" Margin="10,339,0,0" VerticalAlignment="Top" Width="129" Background="{x:Null}" Foreground="White" FontSize="21.333"/>
+        <Label x:Name="SoB_Value" Content="33:05" HorizontalAlignment="Left" Height="34" Margin="254,339,0,0" VerticalAlignment="Top" Width="63" Background="{x:Null}" Foreground="White" FontSize="21.333"/>
+        <Rectangle Height="4" Margin="10,380,10,0" Width="307" Stroke="#FF313131" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Fill="#FF313131">
+            <Rectangle.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleY="-1"/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Rectangle.RenderTransform>
+        </Rectangle>
         <Grid HorizontalAlignment="Left" Height="140" Margin="10,398,0,0" VerticalAlignment="Top" Width="140" RenderTransformOrigin="0.5,0.5">
             <Grid.RowDefinitions>
                 <RowDefinition Height="15*"/>
@@ -75,35 +88,22 @@
                 <ColumnDefinition Width="15*"/>
                 <ColumnDefinition Width="15*"/>
             </Grid.ColumnDefinitions>
-            <Image x:Name="TrackLogo1" Source="LC.png" Grid.IsSharedSizeScope="True" Grid.Column="0" Grid.Row="0" Margin="4"/>
-            <Image x:Name="TrackLogo2" Source="LC.png" Grid.IsSharedSizeScope="True" Grid.Column="0" Grid.Row="1" Margin="4"/>
-            <Image x:Name="TrackLogo3" Source="LC.png" Grid.IsSharedSizeScope="True" Grid.Column="0" Grid.Row="2" Margin="4"/>
-            <Image x:Name="TrackLogo4" Source="LC.png" Grid.IsSharedSizeScope="True" Grid.Column="0" Grid.Row="3" Margin="4"/>
-            <Image x:Name="TrackLogo5" Source="LC.png" Grid.IsSharedSizeScope="True" Grid.Column="1" Grid.Row="0" Margin="4"/>
-            <Image x:Name="TrackLogo6" Source="LC.png" Grid.IsSharedSizeScope="True" Grid.Column="1" Grid.Row="1" Margin="4"/>
-            <Image x:Name="TrackLogo7" Source="LC.png" Grid.IsSharedSizeScope="True" Grid.Column="1" Grid.Row="2" Margin="4"/>
-            <Image x:Name="TrackLogo8" Source="LC.png" Grid.IsSharedSizeScope="True" Grid.Column="1" Grid.Row="3" Margin="4"/>
-            <Image x:Name="TrackLogo9" Source="LC.png" Grid.IsSharedSizeScope="True" Grid.Column="2" Grid.Row="0" Margin="4"/>
-            <Image x:Name="TrackLogo10" Source="LC.png" Grid.IsSharedSizeScope="True" Grid.Column="2" Grid.Row="1" Margin="4"/>
-            <Image x:Name="TrackLogo11" Source="LC.png" Grid.IsSharedSizeScope="True" Grid.Column="2" Grid.Row="2" Margin="4"/>
-            <Image x:Name="TrackLogo12" Source="LC.png" Grid.IsSharedSizeScope="True" Grid.Column="2" Grid.Row="3" Margin="4"/>
-            <Image x:Name="TrackLogo13" Source="LC.png" Grid.IsSharedSizeScope="True" Grid.Column="3" Grid.Row="0" Margin="4"/>
-            <Image x:Name="TrackLogo14" Source="LC.png" Grid.IsSharedSizeScope="True" Grid.Column="3" Grid.Row="1" Margin="4"/>
-            <Image x:Name="TrackLogo15" Source="LC.png" Grid.IsSharedSizeScope="True" Grid.Column="3" Grid.Row="2" Margin="4"/>
-            <Image x:Name="TrackLogo16" Source="LC.png" Grid.IsSharedSizeScope="True" Grid.Column="3" Grid.Row="3" Margin="4"/>
+            <Image x:Name="TrackLogo1" Source="LC.png" Grid.IsSharedSizeScope="True" Grid.Column="0" Grid.Row="0" Margin="4" MouseEnter="TrackLogo1_MouseEnter" MouseDown="TrackLogo1_MouseDown" MouseLeave="TrackLogo1_MouseLeave" Opacity="0.8"/>
+            <Image x:Name="TrackLogo2" Source="LC.png" Grid.IsSharedSizeScope="True" Grid.Column="0" Grid.Row="1" Margin="4" MouseEnter="TrackLogo2_MouseEnter" MouseDown="TrackLogo2_MouseDown" MouseLeave="TrackLogo2_MouseLeave" Opacity="0.8"/>
+            <Image x:Name="TrackLogo3" Source="LC.png" Grid.IsSharedSizeScope="True" Grid.Column="0" Grid.Row="2" Margin="4" MouseDown="TrackLogo3_MouseDown" MouseEnter="TrackLogo3_MouseEnter" MouseLeave="TrackLogo3_MouseLeave" Opacity="0.8"/>
+            <Image x:Name="TrackLogo4" Source="LC.png" Grid.IsSharedSizeScope="True" Grid.Column="0" Grid.Row="3" Margin="4" MouseDown="TrackLogo4_MouseDown" MouseEnter="TrackLogo4_MouseEnter" MouseLeave="TrackLogo4_MouseLeave" Opacity="0.8"/>
+            <Image x:Name="TrackLogo5" Source="LC.png" Grid.IsSharedSizeScope="True" Grid.Column="1" Grid.Row="0" Margin="4" MouseDown="TrackLogo5_MouseDown" MouseEnter="TrackLogo5_MouseEnter" MouseLeave="TrackLogo5_MouseLeave" Opacity="0.8"/>
+            <Image x:Name="TrackLogo6" Source="LC.png" Grid.IsSharedSizeScope="True" Grid.Column="1" Grid.Row="1" Margin="4" MouseDown="TrackLogo6_MouseDown" MouseEnter="TrackLogo6_MouseEnter" MouseLeave="TrackLogo6_MouseLeave" Opacity="0.8"/>
+            <Image x:Name="TrackLogo7" Source="LC.png" Grid.IsSharedSizeScope="True" Grid.Column="1" Grid.Row="2" Margin="4" MouseDown="TrackLogo7_MouseDown" MouseEnter="TrackLogo7_MouseEnter" MouseLeave="TrackLogo7_MouseLeave" Opacity="0.8"/>
+            <Image x:Name="TrackLogo8" Source="LC.png" Grid.IsSharedSizeScope="True" Grid.Column="1" Grid.Row="3" Margin="4" MouseDown="TrackLogo8_MouseDown" MouseEnter="TrackLogo8_MouseEnter" MouseLeave="TrackLogo8_MouseLeave" Opacity="0.8"/>
+            <Image x:Name="TrackLogo9" Source="LC.png" Grid.IsSharedSizeScope="True" Grid.Column="2" Grid.Row="0" Margin="4" MouseDown="TrackLogo9_MouseDown" MouseEnter="TrackLogo9_MouseEnter" MouseLeave="TrackLogo9_MouseLeave" Opacity="0.8"/>
+            <Image x:Name="TrackLogo10" Source="LC.png" Grid.IsSharedSizeScope="True" Grid.Column="2" Grid.Row="1" Margin="4" MouseDown="TrackLogo10_MouseDown" MouseEnter="TrackLogo10_MouseEnter" MouseLeave="TrackLogo10_MouseLeave" Opacity="0.8"/>
+            <Image x:Name="TrackLogo11" Source="LC.png" Grid.IsSharedSizeScope="True" Grid.Column="2" Grid.Row="2" Margin="4" MouseDown="TrackLogo11_MouseDown" MouseEnter="TrackLogo11_MouseEnter" MouseLeave="TrackLogo11_MouseLeave" Opacity="0.8"/>
+            <Image x:Name="TrackLogo12" Source="LC.png" Grid.IsSharedSizeScope="True" Grid.Column="2" Grid.Row="3" Margin="4" MouseDown="TrackLogo12_MouseDown" MouseEnter="TrackLogo12_MouseEnter" MouseLeave="TrackLogo12_MouseLeave" Opacity="0.8"/>
+            <Image x:Name="TrackLogo13" Source="LC.png" Grid.IsSharedSizeScope="True" Grid.Column="3" Grid.Row="0" Margin="4" MouseDown="TrackLogo13_MouseDown" MouseEnter="TrackLogo13_MouseEnter" MouseLeave="TrackLogo13_MouseLeave" Opacity="0.8"/>
+            <Image x:Name="TrackLogo14" Source="LC.png" Grid.IsSharedSizeScope="True" Grid.Column="3" Grid.Row="1" Margin="4" MouseDown="TrackLogo14_MouseDown" MouseEnter="TrackLogo14_MouseEnter" MouseLeave="TrackLogo14_MouseLeave" Opacity="0.8"/>
+            <Image x:Name="TrackLogo15" Source="LC.png" Grid.IsSharedSizeScope="True" Grid.Column="3" Grid.Row="2" Margin="4" MouseDown="TrackLogo15_MouseDown" MouseEnter="TrackLogo15_MouseEnter" MouseLeave="TrackLogo15_MouseLeave" Opacity="0.8"/>
+            <Image x:Name="TrackLogo16" Source="LC.png" Grid.IsSharedSizeScope="True" Grid.Column="3" Grid.Row="3" Margin="4" MouseDown="TrackLogo16_MouseDown" MouseEnter="TrackLogo16_MouseEnter" MouseLeave="TrackLogo16_MouseLeave" Opacity="0.8"/>
         </Grid>
-        <Rectangle Height="4" Margin="10,380,10,0" Width="307" Stroke="#FF313131" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Fill="#FF313131">
-            <Rectangle.RenderTransform>
-                <TransformGroup>
-                    <ScaleTransform ScaleY="-1"/>
-                    <SkewTransform/>
-                    <RotateTransform/>
-                    <TranslateTransform/>
-                </TransformGroup>
-            </Rectangle.RenderTransform>
-        </Rectangle>
-        <Label x:Name="SoB_text" Content="Sum of Best:" HorizontalAlignment="Left" Height="34" Margin="10,339,0,0" VerticalAlignment="Top" Width="129" Background="{x:Null}" Foreground="White" FontSize="21.333"/>
-        <Label x:Name="SoB_Value" Content="33:05" HorizontalAlignment="Left" Height="34" Margin="254,339,0,0" VerticalAlignment="Top" Width="63" Background="{x:Null}" Foreground="White" FontSize="21.333"/>
-        <Label x:Name="label1" Content="00:00" HorizontalAlignment="Left" Height="50" Margin="220,300,0,0" VerticalAlignment="Top" Width="89" Background="{x:Null}" Foreground="White" FontSize="33.333"/>
     </Grid>
 </Window>
