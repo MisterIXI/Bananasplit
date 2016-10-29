@@ -9,7 +9,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using MKDD_Splitter_V2;
+using BananaSplit;
 using System;
 using System.Diagnostics;
 using System.Windows;
@@ -32,7 +32,7 @@ using System.Windows.Shapes;
 using System.Windows.Shell;
 
 
-namespace MKDD_Splitter_V2 {
+namespace BananaSplit {
     
     
     /// <summary>
@@ -497,19 +497,19 @@ namespace MKDD_Splitter_V2 {
             case 1:
             
             #line 8 "..\..\MainWindow.xaml"
-            ((MKDD_Splitter_V2.MainWindow)(target)).MouseLeftButtonDown += new System.Windows.Input.MouseButtonEventHandler(this.Window_MouseLeftButtonDown);
+            ((BananaSplit.MainWindow)(target)).MouseLeftButtonDown += new System.Windows.Input.MouseButtonEventHandler(this.Window_MouseLeftButtonDown);
             
             #line default
             #line hidden
             
             #line 8 "..\..\MainWindow.xaml"
-            ((MKDD_Splitter_V2.MainWindow)(target)).KeyDown += new System.Windows.Input.KeyEventHandler(this.OnKeyDownHandler);
+            ((BananaSplit.MainWindow)(target)).KeyDown += new System.Windows.Input.KeyEventHandler(this.OnKeyDownHandler);
             
             #line default
             #line hidden
             
             #line 8 "..\..\MainWindow.xaml"
-            ((MKDD_Splitter_V2.MainWindow)(target)).MouseWheel += new System.Windows.Input.MouseWheelEventHandler(this.Window_MouseWheel);
+            ((BananaSplit.MainWindow)(target)).MouseWheel += new System.Windows.Input.MouseWheelEventHandler(this.Window_MouseWheel);
             
             #line default
             #line hidden

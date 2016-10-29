@@ -17,7 +17,7 @@ using System.Xml.Linq;
 //using System.Timers;
 
 
-namespace MKDD_Splitter_V2
+namespace BananaSplit
 { //LowLevelKeyboardHook << steal this from Livesplit
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -104,7 +104,7 @@ namespace MKDD_Splitter_V2
                 { L_TrackID6, L_GoldDiff6, L_SplitDiff6, L_SplitT6 },
                 { L_TrackID7, L_GoldDiff7, L_SplitDiff7, L_SplitT7 }};
             trackSelectionImages = new Image[] { TrackLogo1, TrackLogo2, TrackLogo3, TrackLogo4, TrackLogo5, TrackLogo6, TrackLogo7, TrackLogo8, TrackLogo9, TrackLogo10, TrackLogo11, TrackLogo12, TrackLogo13, TrackLogo14, TrackLogo15, TrackLogo16 };
-            LoadInXMLFile(defaultSaveFileName);
+            //LoadInXMLFile(defaultSaveFileName);
         }
 
         private void Init()
