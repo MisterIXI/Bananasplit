@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MKDD_Splitter_V2"
         mc:Ignorable="d"
-        Title="MainWindow" Height="547.774" Width="327.358" BorderThickness="0" WindowStyle="None" AllowsTransparency="True" MouseLeftButtonDown="Window_MouseLeftButtonDown" KeyDown="OnKeyDownHandler" ResizeMode="NoResize" MouseWheel="Window_MouseWheel">
+        Title="MainWindow" Height="547.774" Width="327.358" BorderThickness="0" MouseLeftButtonDown="Window_MouseLeftButtonDown" KeyDown="OnKeyDownHandler" ResizeMode="NoResize" MouseWheel="Window_MouseWheel" WindowStyle="None">
     <Window.Background>
         <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
             <GradientStop Color="Black"/>

@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Diagnostics;
+using System.Xml.Linq;
 //using System.Timers;
 
 
@@ -30,6 +31,14 @@ namespace MKDD_Splitter_V2
         LiveSplit.Model.Input.KeyboardHook HookInstance = new LiveSplit.Model.Input.KeyboardHook();
         LiveSplit.Model.Input.CompositeHook Hook { get; set; }
 
+        #region XMLVariables
+
+        XDocument saveFile;
+        string defaultSaveFileName = "MKDDSplitter_SaveFile.xml";
+
+        #endregion
+
+
         #region SplitterVariables
         //Splitter Variables
         int currentTrackIndex, currentSplitProgress = 0;
@@ -38,6 +47,7 @@ namespace MKDD_Splitter_V2
         TimeSpan[] Splittimes = new TimeSpan[16], PBSplits = new TimeSpan[16], UnsavedGoldSplits = new TimeSpan[16], GoldSplits = new TimeSpan[16];
         TimeSpan lastSplit;
         bool[] isSplitAGoldSplit = new bool[16];
+        bool isPendingTrackSelection;
 
         /*
         Variable explanation:
@@ -94,7 +104,7 @@ namespace MKDD_Splitter_V2
                 { L_TrackID6, L_GoldDiff6, L_SplitDiff6, L_SplitT6 },
                 { L_TrackID7, L_GoldDiff7, L_SplitDiff7, L_SplitT7 }};
             trackSelectionImages = new Image[] { TrackLogo1, TrackLogo2, TrackLogo3, TrackLogo4, TrackLogo5, TrackLogo6, TrackLogo7, TrackLogo8, TrackLogo9, TrackLogo10, TrackLogo11, TrackLogo12, TrackLogo13, TrackLogo14, TrackLogo15, TrackLogo16 };
-
+            LoadInXMLFile(defaultSaveFileName);
         }
 
         private void Init()
@@ -218,56 +228,61 @@ namespace MKDD_Splitter_V2
             currentTrackIndex = 0;
             currentSplitProgress = 0;
             lastSplit = TimeSpan.Zero;
+            TrackLogo1.Visibility = Visibility.Hidden;
+            isPendingTrackSelection = false;
         }
 
         void Split()
         {
-            TimeSpan TempTimeSpan = MainStopwatch.Elapsed;      
-            SegmentStopwatch.Stop();
-            if (currentTrackIndex == 15)
-            {                
-                //setting the Trackinfo in the TrackOrder Array
-                currentTrackOrder[15] = currentTrackIndex;
-
-                //saving the actual Splitted time in the Splittime Array
-                Splittimes[currentTrackIndex] = SegmentStopwatch.Elapsed;
-                splitTimesInRun[currentTrackIndex] = TempTimeSpan;
-
-                MainStopwatch.Stop();
-                TimerLabel.Content = SegmentStopwatch.Elapsed.ToString(@"mm\:ss");
-                MainRefreshTimer.Dispose();
-            }
-            else
+            if (!isPendingTrackSelection)
             {
-                //setting the Trackinfo in the TrackOrder Array
-                currentTrackOrder[currentSplitProgress] = currentTrackIndex;
+                TimeSpan TempTimeSpan = MainStopwatch.Elapsed;
+                SegmentStopwatch.Stop();
+                if (currentTrackIndex == 15)
+                {
+                    //setting the Trackinfo in the TrackOrder Array
+                    currentTrackOrder[15] = currentTrackIndex;
 
-                //saving the actual Splitted time in the Splittime Array
-                Splittimes[currentTrackIndex] = SegmentStopwatch.Elapsed;
-                splitTimesInRun[currentTrackIndex] = TempTimeSpan;
+                    //saving the actual Splitted time in the Splittime Array
+                    Splittimes[currentTrackIndex] = SegmentStopwatch.Elapsed;
+                    splitTimesInRun[currentTrackIndex] = TempTimeSpan;
 
-                lastSplit = SegmentStopwatch.Elapsed;
-                
+                    MainStopwatch.Stop();
+                    TimerLabel.Content = SegmentStopwatch.Elapsed.ToString(@"mm\:ss");
+                    MainRefreshTimer.Dispose();
+                }
+                else
+                {
+                    //setting the Trackinfo in the TrackOrder Array
+                    currentTrackOrder[currentSplitProgress] = currentTrackIndex;
+
+                    //saving the actual Splitted time in the Splittime Array
+                    Splittimes[currentTrackIndex] = SegmentStopwatch.Elapsed;
+                    splitTimesInRun[currentTrackIndex] = TempTimeSpan;
+
+                    lastSplit = SegmentStopwatch.Elapsed;
 
 
-                SegmentStopwatch.Reset();
-                SegmentStopwatch.Start();
+
+                    SegmentStopwatch.Reset();
+                    SegmentStopwatch.Start();
+                }
+
+                //checking if Gold Split happenend      
+                if (Splittimes[currentTrackIndex] < GoldSplits[currentTrackIndex])
+                {
+                    //Setting Gold Tag for Display function
+                    isSplitAGoldSplit[currentTrackIndex] = true;
+
+                    //caching Gold Split in Array
+                    UnsavedGoldSplits[currentTrackIndex] = Splittimes[currentTrackIndex];
+                }
+
+                ScrollOffset = 0;
+                currentSplitProgress++;
+                isPendingTrackSelection = true;
+                UpdateLabels();
             }
-
-            //checking if Gold Split happenend      
-            if (Splittimes[currentTrackIndex] < GoldSplits[currentTrackIndex])
-            {
-                //Setting Gold Tag for Display function
-                isSplitAGoldSplit[currentTrackIndex] = true;
-
-                //caching Gold Split in Array
-                UnsavedGoldSplits[currentTrackIndex] = Splittimes[currentTrackIndex];
-            }
-
-            ScrollOffset = 0;
-            currentSplitProgress++;
-            UpdateLabels();
-
         }
 
         void Reset()
@@ -276,13 +291,63 @@ namespace MKDD_Splitter_V2
             if (MainRefreshTimer != null) MainRefreshTimer.Dispose();
             TimerLabel.Content = ("00:00");
             currentTrackOrder = new int[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
-            foreach (Image pff in trackSelectionImages) pff.Visibility = System.Windows.Visibility.Visible;
-            //todo
+            foreach (Image stuff in trackSelectionImages) stuff.Visibility = System.Windows.Visibility.Visible;
+            currentSplitProgress = 0;
+            currentTrackIndex = 0;
         }
 
 
         #endregion
+/*
+        #region LoadandSave
 
+        void LoadInXMLFile(string givenFilePath)
+        {
+            try
+            {
+                saveFile = XDocument.Load(givenFilePath);
+            }
+            catch (System.IO.FileNotFoundException e)
+            {
+                saveFile = XDocument.Parse
+                    (@"
+                    <MKDD Splitter V2>
+                    ");
+            }
+        }
+
+        void LoadSplits()
+        {
+            
+        }
+
+        void SaveSplits()
+        {
+
+        }
+
+        void LoadGolds()
+        {
+
+        }
+
+        void SaveGolds()
+        {
+
+        }
+
+        void LoadMiscellaneous()
+        {
+
+        }
+
+        void SaveMiscellaneous()
+        {
+
+        }
+
+        #endregion
+    */
         #region ScrollSplits
 
         void UpdateLabels()
@@ -544,6 +609,7 @@ namespace MKDD_Splitter_V2
         {
             currentTrackIndex = 0;
             TrackLogo1.Visibility = Visibility.Hidden;
+            isPendingTrackSelection = false;
         }
 
         private void TrackLogo1_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
@@ -560,6 +626,7 @@ namespace MKDD_Splitter_V2
         {
             currentTrackIndex = 1;
             TrackLogo2.Visibility = Visibility.Hidden;
+            isPendingTrackSelection = false;
         }
 
         private void TrackLogo2_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
@@ -576,6 +643,7 @@ namespace MKDD_Splitter_V2
         {
             currentTrackIndex = 2;
             TrackLogo3.Visibility = Visibility.Hidden;
+            isPendingTrackSelection = false;
         }
 
         private void TrackLogo3_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
@@ -592,6 +660,7 @@ namespace MKDD_Splitter_V2
         {
             currentTrackIndex = 3;
             TrackLogo4.Visibility = Visibility.Hidden;
+            isPendingTrackSelection = false;
         }
 
         private void TrackLogo4_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
@@ -608,6 +677,7 @@ namespace MKDD_Splitter_V2
         {
             currentTrackIndex = 4;
             TrackLogo5.Visibility = Visibility.Hidden;
+            isPendingTrackSelection = false;
         }
 
         private void TrackLogo5_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
@@ -624,6 +694,7 @@ namespace MKDD_Splitter_V2
         {
             currentTrackIndex = 5;
             TrackLogo6.Visibility = Visibility.Hidden;
+            isPendingTrackSelection = false;
         }
 
         private void TrackLogo6_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
@@ -640,6 +711,7 @@ namespace MKDD_Splitter_V2
         {
             currentTrackIndex = 6;
             TrackLogo7.Visibility = Visibility.Hidden;
+            isPendingTrackSelection = false;
         }
 
         private void TrackLogo7_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
@@ -656,6 +728,7 @@ namespace MKDD_Splitter_V2
         {
             currentTrackIndex = 7;
             TrackLogo8.Visibility = Visibility.Hidden;
+            isPendingTrackSelection = false;
         }
 
         private void TrackLogo8_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
@@ -672,6 +745,7 @@ namespace MKDD_Splitter_V2
         {
             currentTrackIndex = 8;
             TrackLogo9.Visibility = Visibility.Hidden;
+            isPendingTrackSelection = false;
         }
 
         private void TrackLogo9_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
@@ -688,6 +762,7 @@ namespace MKDD_Splitter_V2
         {
             currentTrackIndex = 9;
             TrackLogo10.Visibility = Visibility.Hidden;
+            isPendingTrackSelection = false;
         }
 
         private void TrackLogo10_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
@@ -704,6 +779,7 @@ namespace MKDD_Splitter_V2
         {
             currentTrackIndex = 10;
             TrackLogo11.Visibility = Visibility.Hidden;
+            isPendingTrackSelection = false;
         }
 
         private void TrackLogo11_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
@@ -720,6 +796,7 @@ namespace MKDD_Splitter_V2
         {
             currentTrackIndex = 11;
             TrackLogo12.Visibility = Visibility.Hidden;
+            isPendingTrackSelection = false;
         }
 
         private void TrackLogo12_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
@@ -736,6 +813,7 @@ namespace MKDD_Splitter_V2
         {
             currentTrackIndex = 12;
             TrackLogo13.Visibility = Visibility.Hidden;
+            isPendingTrackSelection = false;
         }
 
         private void TrackLogo13_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
@@ -752,6 +830,7 @@ namespace MKDD_Splitter_V2
         {
             currentTrackIndex = 13;
             TrackLogo14.Visibility = Visibility.Hidden;
+            isPendingTrackSelection = false;
         }
 
         private void TrackLogo14_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
@@ -768,6 +847,7 @@ namespace MKDD_Splitter_V2
         {
             currentTrackIndex = 14;
             TrackLogo15.Visibility = Visibility.Hidden;
+            isPendingTrackSelection = false;
         }
 
         private void TrackLogo15_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
@@ -784,6 +864,7 @@ namespace MKDD_Splitter_V2
         {
             currentTrackIndex = 15;
             TrackLogo16.Visibility = Visibility.Hidden;
+            isPendingTrackSelection = false;
         }
 
         private void TrackLogo16_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
