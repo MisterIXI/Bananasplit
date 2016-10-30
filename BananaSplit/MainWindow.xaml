@@ -1,11 +1,11 @@
-﻿<Window x:Class="BananaSplit.MainWindow"
+﻿<Window x:Name="BananaSplit" x:Class="BananaSplit.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BananaSplit"
         mc:Ignorable="d"
-        Title="MainWindow" Height="547.774" Width="327.358" BorderThickness="0" MouseLeftButtonDown="Window_MouseLeftButtonDown" KeyDown="OnKeyDownHandler" ResizeMode="NoResize" MouseWheel="Window_MouseWheel" WindowStyle="None">
+        Title="BananaSplit" Height="547.774" Width="327.358" BorderThickness="0" MouseLeftButtonDown="Window_MouseLeftButtonDown" KeyDown="OnKeyDownHandler" ResizeMode="NoResize" MouseWheel="Window_MouseWheel" WindowStyle="None">
     <Window.Background>
         <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
             <GradientStop Color="Black"/>
@@ -105,5 +105,9 @@
             <Image x:Name="TrackLogo15" Source="LC.png" Grid.IsSharedSizeScope="True" Grid.Column="3" Grid.Row="2" Margin="4" MouseDown="TrackLogo15_MouseDown" MouseEnter="TrackLogo15_MouseEnter" MouseLeave="TrackLogo15_MouseLeave" Opacity="0.8"/>
             <Image x:Name="TrackLogo16" Source="LC.png" Grid.IsSharedSizeScope="True" Grid.Column="3" Grid.Row="3" Margin="4" MouseDown="TrackLogo16_MouseDown" MouseEnter="TrackLogo16_MouseEnter" MouseLeave="TrackLogo16_MouseLeave" Opacity="0.8"/>
         </Grid>
+        <Label x:Name="Previous_Segment_Label_info" Content="Previous Segment: " HorizontalAlignment="Left" Height="37" Margin="155,391,0,0" VerticalAlignment="Top" Width="162" Background="{x:Null}" Foreground="White" FontSize="18.667"/>
+        <Label x:Name="Previous_Segment_Label_Number" Content="-59.25" HorizontalAlignment="Left" Height="42" Margin="240,421,0,0" VerticalAlignment="Top" Width="77" Foreground="White" FontSize="24"/>
+        <Label x:Name="Possible_Time_Save_Label_Info" Content="Possible time save:" HorizontalAlignment="Left" Height="38" Margin="155,470,0,0" VerticalAlignment="Top" Width="162" Background="{x:Null}" Foreground="White" FontSize="18.667"/>
+        <Label x:Name="Possible_Time_Save_Label_Number" Content="42.56" HorizontalAlignment="Left" Height="42" Margin="250,490,0,0" VerticalAlignment="Top" Width="67" Foreground="White" FontSize="24"/>
     </Grid>
 </Window>
