@@ -31,6 +31,8 @@ namespace BananaSplit
         LiveSplit.Model.Input.KeyboardHook HookInstance = new LiveSplit.Model.Input.KeyboardHook();
         LiveSplit.Model.Input.CompositeHook Hook { get; set; }
 
+        bool unsavedChangesFlag = false, ifPBHasHappenend;
+
         #region SettingsVariables
 
         bool UseGlobalHotkeys = false; //todo: later set this to true
@@ -41,7 +43,7 @@ namespace BananaSplit
 
         XDocument saveFile;
         XElement saveFileElement;
-        string defaultSaveFileName = "BananaSplit_SaveFile.xml";
+        string defaultSaveFileName = "D:\\MisterIXI\\Documents\\Git Repos\\BananaSplit\\BananaSplit\\obj\\Debug\\BananaSplit_SaveFile.xml";
 
         #endregion
 
@@ -124,13 +126,6 @@ namespace BananaSplit
             LoadInXMLFile(defaultSaveFileName);
         }
 
-
-
-        private void OnHotkeyPoll(object sender, EventArgs e)
-        {
-            HookInstance.Poll();
-        }
-
         private void OnMainRefreshTimer(object source, EventArgs e)
         {
 
@@ -165,10 +160,60 @@ namespace BananaSplit
 
         void ResetKey()
         {
+            if (unsavedChangesFlag)
+            {
+                switch (System.Windows.MessageBox.Show("Some of your splits have been updated. Do you want to save them?", "Unsaved Times", MessageBoxButton.YesNoCancel, MessageBoxImage.Question))
+                {
+                    case MessageBoxResult.Yes:
+                        SaveRecords();
+                        Reset();
+                        break;
+                    case MessageBoxResult.No:
+                        Reset();
+                        break;
+                    case MessageBoxResult.Cancel:
+                        break;
+                }
+
+            }
+            else Reset();
 
         }
 
+        void UndoSplitKey()
+        {
+            //todo
+        }
+
+        void SkipSplitKey()
+        {
+            //todo
+        }
+
+        void OnHotkeyPoll(object sender, EventArgs e)
+        {
+            HookInstance.Poll();
+        }
+
         #endregion
+
+        void on_Window_Close(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if(unsavedChangesFlag)
+            switch (System.Windows.MessageBox.Show("Your splits have been updated but not yet saved. Do you want to save your spltis now?", "Save Splits?", MessageBoxButton.YesNoCancel, MessageBoxImage.Question))
+            {
+                case MessageBoxResult.Yes:
+                        SaveRecords();
+                        e.Cancel = false;
+                    break;
+                case MessageBoxResult.No:
+                        e.Cancel = false;
+                    break;
+                case MessageBoxResult.Cancel:
+                        e.Cancel = true;
+                    break;
+            }
+        }
 
         void Hook_OnKeyPress(object sender, LiveSplit.Model.Input.KeyOrButton e)
         {
@@ -227,17 +272,23 @@ namespace BananaSplit
            // }
         }
 
-
+        #region WindowEvents
 
         private void OnKeyDownHandler(object sender, System.Windows.Input.KeyEventArgs e)
         {
             if (!UseGlobalHotkeys)
             {
+                if (e.Key == System.Windows.Input.Key.NumPad1) SplitKey();
+                if (e.Key == System.Windows.Input.Key.NumPad3) ResetKey();
+                if (e.Key == System.Windows.Input.Key.NumPad2) SkipSplitKey();
+                if (e.Key == System.Windows.Input.Key.NumPad8) UndoSplitKey();
+
+
                 if (e.Key == System.Windows.Input.Key.Space) SplitKey();
                 if (e.Key == System.Windows.Input.Key.R) ResetKey();
                 if (e.Key == System.Windows.Input.Key.A)
                 {
-                    LoadInXMLFile("BananaSplit_SaveFile.xml");
+                    LoadInXMLFile(defaultSaveFileName);
                     LoadSplits();
                     //foreach (TimeSpan _u in PBSplits) Console.WriteLine(_u);
                     Console.WriteLine(totalPBTime);
@@ -272,10 +323,13 @@ namespace BananaSplit
             this.DragMove();
         }
 
+        #endregion
+
         #region Splitting Functions
 
         void StartSplitting()
         {
+            ResetVariables();
             MainStopwatch.Start();
             SegmentStopwatch.Start();
             MainRefreshTimer = new Timer();
@@ -341,11 +395,11 @@ namespace BananaSplit
                 {
                     if(PBSplits[currentTrackIndex] > Splittimes[currentTrackIndex])
                     {
-                        Previous_Segment_Label_Number.Content = "+ " + (PBSplits[currentTrackIndex] - Splittimes[currentTrackIndex]).ToString(@"ss\.f");
+                        Previous_Segment_Label_Number.Content = "- " + (Splittimes[currentTrackIndex] - PBSplits[currentTrackIndex]).ToString(@"ss\.f");
                     }
                     else
                     {
-                        Previous_Segment_Label_Number.Content = "- " + (Splittimes[currentTrackIndex] - PBSplits[currentTrackIndex]).ToString(@"ss\.f");
+                        Previous_Segment_Label_Number.Content = "+ " + (PBSplits[currentTrackIndex] - Splittimes[currentTrackIndex]).ToString(@"ss\.f");
                     }
                 }
                 else
@@ -389,12 +443,31 @@ namespace BananaSplit
             MainStopwatch.Stop();
             if (MainRefreshTimer != null) MainRefreshTimer.Dispose();
             TimerLabel.Content = ("00:00");
-            currentTrackOrder = new int[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
+            SegmentLabel.Content = ("00:00");
             foreach (Image stuff in trackSelectionImages) stuff.Visibility = System.Windows.Visibility.Visible;
-            currentSplitProgress = 0;
-            currentTrackIndex = 0;
+            currentSplitProgress = 15;
+            currentTrackOrder = new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+            Splittimes = PBSplits;
+            splitTimesInRun = PBTotalTimes;
+            isSplitAGoldSplit = new bool[16];
         }
 
+        void ResetVariables()
+        {
+            MainStopwatch.Reset();
+            currentSplitProgress = 0;
+            currentTrackIndex = 0;
+            currentTrackOrder = new int[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
+            Splittimes = new TimeSpan[16];
+            isSplitAGoldSplit = new bool[16];
+            if (MainRefreshTimer != null) MainRefreshTimer.Dispose();
+            TimerLabel.Content = ("00:00");
+            SegmentLabel.Content = ("00:00");
+            currentTotalTimes = new TimeSpan[16];
+            PBTotalTimes = new TimeSpan[16];
+            totalCurrentRunTime = TimeSpan.Zero;
+            totalPBTime = TimeSpan.Zero;
+        }
 
         #endregion
 
@@ -431,12 +504,8 @@ namespace BananaSplit
                 {
                     
                 }
-                if (PBSplits[i] == TimeSpan.Zero) isPBMissingSplits = true;
-                        
-            }
-
-
-            
+                if (PBSplits[i] == TimeSpan.Zero) isPBMissingSplits = true;     
+            }           
         }
 
         void SaveRecords()
@@ -464,12 +533,12 @@ namespace BananaSplit
 
         void LoadMiscellaneous()
         {
-
+            //todo
         }
 
         void SaveMiscellaneous()
         {
-
+            //todo
         }
 
         void saveSettings()
@@ -482,6 +551,7 @@ namespace BananaSplit
             {
                 saveFileElement = new XElement("SaveFile", new XElement("Settings"));
             }
+            //todo
         }
 
         #endregion
@@ -554,14 +624,14 @@ namespace BananaSplit
                     //Todo: fix yo shit bruh: calculations
                     if (GoldSplits[currentTrackOrder[currentSplitProgress -1 -6 + i + ScrollOffset]] != TimeSpan.Zero)
                     {
-                        if (splitTimesInRun[currentTrackOrder[currentSplitProgress -1 -6 + i + ScrollOffset]] >= GoldSplits[currentSplitProgress -1 -6 + i + ScrollOffset])
+                        if (Splittimes[currentTrackOrder[currentSplitProgress -1 -6 + i + ScrollOffset]] >= GoldSplits[currentSplitProgress -1 -6 + i + ScrollOffset])
                         {
-                            SplitLabelArray[i, 1].Content = (splitTimesInRun[currentTrackOrder[currentSplitProgress -1 -6 + i + ScrollOffset]] - GoldSplits[currentSplitProgress -1 -6 + i + ScrollOffset]).ToString(@"\+\ ss\.f");
+                            SplitLabelArray[i, 1].Content = (Splittimes[currentTrackOrder[currentSplitProgress -1 -6 + i + ScrollOffset]] - GoldSplits[currentSplitProgress -1 -6 + i + ScrollOffset]).ToString(@"\+\ ss\.f");
                             SplitLabelArray[i, 1].Foreground = System.Windows.Media.Brushes.White;
                         }
                         else
                         {
-                            SplitLabelArray[i, 1].Content = (GoldSplits[currentSplitProgress -1 -6 + i + ScrollOffset] - splitTimesInRun[currentTrackOrder[currentSplitProgress -1 -6 + i + ScrollOffset]]).ToString(@"\-\ ss\.f");
+                            SplitLabelArray[i, 1].Content = (GoldSplits[currentSplitProgress -1 -6 + i + ScrollOffset] - Splittimes[currentTrackOrder[currentSplitProgress -1 -6 + i + ScrollOffset]]).ToString(@"\-\ ss\.f");
                             SplitLabelArray[i, 1].Foreground = System.Windows.Media.Brushes.Gold;
                         }
                     }
@@ -659,14 +729,14 @@ namespace BananaSplit
                         //Gold Delta
                         if (GoldSplits[currentTrackOrder[i]] != TimeSpan.Zero)
                         {
-                            if (splitTimesInRun[currentTrackOrder[i]] >= GoldSplits[currentTrackOrder[i]])
+                            if (Splittimes[currentTrackOrder[i]] >= GoldSplits[currentTrackOrder[i]])
                             {
-                                SplitLabelArray[i, 1].Content = (splitTimesInRun[currentTrackOrder[i]] - GoldSplits[currentTrackOrder[i]]).ToString(@"\+\ ss\.f");
+                                SplitLabelArray[i, 1].Content = (Splittimes[currentTrackOrder[i]] - GoldSplits[currentTrackOrder[i]]).ToString(@"\+\ ss\.f");
                                 SplitLabelArray[i, 1].Foreground = System.Windows.Media.Brushes.White;
                             }
                             else
                             {
-                                SplitLabelArray[i, 1].Content = (GoldSplits[currentTrackOrder[i]] - splitTimesInRun[currentTrackOrder[i]]).ToString(@"\-\ ss\.f");
+                                SplitLabelArray[i, 1].Content = (GoldSplits[currentTrackOrder[i]] - Splittimes[currentTrackOrder[i]]).ToString(@"\-\ ss\.f");
                                 SplitLabelArray[i, 1].Foreground = System.Windows.Media.Brushes.Gold;                               
                             }
                         }
@@ -717,8 +787,6 @@ namespace BananaSplit
 
         }
 
-
-
         void ScrollUp()
         {
             if (currentSplitProgress -1 > 6)
@@ -738,13 +806,12 @@ namespace BananaSplit
                 ScrollOffset++;
                 UpdateLabels();
             }          
-        }
-
-       
+        }       
 
         void ResetScroll()
         {
-
+            ScrollOffset = 0;
+            UpdateLabels();
         }
 
         #endregion
