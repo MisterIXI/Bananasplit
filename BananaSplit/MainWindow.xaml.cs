@@ -53,7 +53,7 @@ namespace BananaSplit
 
         int[] currentTrackOrder = new int[] {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
         TimeSpan[] Splittimes = new TimeSpan[16], PBSplits = new TimeSpan[16], UnsavedGoldSplits = new TimeSpan[16], GoldSplits = new TimeSpan[16], currentTotalTimes = new TimeSpan[16], PBTotalTimes = new TimeSpan[16];
-        TimeSpan lastSplit, totalCurrentRunTime, totalPBTime;
+        TimeSpan lastSplit, totalCurrentRunTime, totalCurrentPBTime, PBEndTime;
         bool[] isSplitAGoldSplit = new bool[16];
         bool isPendingTrackSelection, isPBMissingSplits;
 
@@ -74,7 +74,7 @@ namespace BananaSplit
 
         lastSplit: Timespans (point in the run) where the last Split happenend for comparison
         totalCurrentRunTime: A Sum of all current Splits for comparison reasons
-        totalPBTime: A Sum of all tracks that were splitted but with PBTime
+        totalCurrentPBTime: A Sum of all tracks that were splitted but with PBTime
 
         isSplitAGoldSplit: Set Flag if Split in array Position is a Gold Split
 
@@ -291,7 +291,7 @@ namespace BananaSplit
                     LoadInXMLFile(defaultSaveFileName);
                     LoadSplits();
                     //foreach (TimeSpan _u in PBSplits) Console.WriteLine(_u);
-                    Console.WriteLine(totalPBTime);
+                    Console.WriteLine(totalCurrentPBTime);
                 }
             }
 
@@ -342,7 +342,7 @@ namespace BananaSplit
             TrackLogo1.Visibility = Visibility.Hidden;
             isPendingTrackSelection = false;
             totalCurrentRunTime = TimeSpan.Zero;
-            totalPBTime = TimeSpan.Zero;
+            totalCurrentPBTime = TimeSpan.Zero;
         }
         
         void Split()
@@ -409,16 +409,16 @@ namespace BananaSplit
                 }
 
                 totalCurrentRunTime += Splittimes[currentTrackIndex];
-                totalPBTime += PBSplits[currentTrackIndex];
+                totalCurrentPBTime += PBSplits[currentTrackIndex];
                 currentTotalTimes[currentTrackIndex] = totalCurrentRunTime;
                 if (currentSplitProgress > 0)
                 {
-                    if (PBTotalTimes[currentTrackOrder[currentSplitProgress - 1]] < totalPBTime) PBTotalTimes[currentTrackIndex] = totalPBTime;
+                    if (PBTotalTimes[currentTrackOrder[currentSplitProgress - 1]] < totalCurrentPBTime) PBTotalTimes[currentTrackIndex] = totalCurrentPBTime;
                     else PBTotalTimes[currentTrackIndex] = TimeSpan.Zero;
                 }
                 else
                 {
-                    if (totalPBTime > TimeSpan.Zero) PBTotalTimes[0] = totalPBTime;
+                    if (totalCurrentPBTime > TimeSpan.Zero) PBTotalTimes[0] = totalCurrentPBTime;
                     else PBTotalTimes[currentTrackIndex] = TimeSpan.Zero;
                 }
 
@@ -490,7 +490,7 @@ namespace BananaSplit
             currentTotalTimes = new TimeSpan[16];
             PBTotalTimes = new TimeSpan[16];
             totalCurrentRunTime = TimeSpan.Zero;
-            totalPBTime = TimeSpan.Zero;
+            totalCurrentPBTime = TimeSpan.Zero;
         }
 
         #endregion
@@ -506,7 +506,7 @@ namespace BananaSplit
             }
             else
             {
-                saveFileElement = new XElement("SaveFile", new XElement("Times"), new XElement("Settings"), new XElement("Miscellaneous"));
+                saveFileElement = new XElement("SaveFile", new XElement("Times", new XAttribute("TotalRunTime", TimeSpan.Zero)), new XElement("Settings"), new XElement("Miscellaneous"));
                 saveFile = new XDocument(saveFileElement);
                 for (int i = 0; i <= 15; i++)
                 {
@@ -518,6 +518,14 @@ namespace BananaSplit
 
         void LoadSplits()
         {
+            try
+            {
+                PBEndTime = XmlConvert.ToTimeSpan(saveFileElement.Element("Times").Attribute("TotalRunTime").Value);
+            }
+            catch (NullReferenceException)
+            {
+                PBEndTime = TimeSpan.Zero;
+            }
             isPBMissingSplits = false;
             for (int i = 0; i <= 15; i++)
             {
@@ -540,6 +548,7 @@ namespace BananaSplit
             if(saveFileElement.Element("Times") != null)
             {
                 //Replace Values
+                saveFileElement.Element("Times").SetAttributeValue("TotalRunTime", PBEndTime);
                 for (int i = 0; i <= 15; i++)
                 {
                     if(saveFileElement.Element("Times").Element("Track"+i.ToString()) != null)
