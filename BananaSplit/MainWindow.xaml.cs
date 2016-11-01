@@ -43,7 +43,7 @@ namespace BananaSplit
 
         XDocument saveFile;
         XElement saveFileElement;
-        string defaultSaveFileName = "D:\\MisterIXI\\Documents\\Git Repos\\BananaSplit\\BananaSplit\\obj\\Debug\\BananaSplit_SaveFile.xml";
+        string defaultSaveFileName = "C:\\temp\\BananaSplit_SaveFile.xml";
 
         #endregion
 
@@ -155,11 +155,12 @@ namespace BananaSplit
         void SplitKey()
         {
             if (MainStopwatch.IsRunning) Split();
-            else StartSplitting();
+            else if (MainStopwatch.Elapsed == TimeSpan.Zero) StartSplitting();
         }
 
         void ResetKey()
         {
+            CheckIfRecords();
             if (unsavedChangesFlag)
             {
                 switch (System.Windows.MessageBox.Show("Some of your splits have been updated. Do you want to save them?", "Unsaved Times", MessageBoxButton.YesNoCancel, MessageBoxImage.Question))
@@ -241,15 +242,6 @@ namespace BananaSplit
 
                     if (Keys.S == e.Key)
                     {
-                        //  saveFileElement.Element("SaveFile", new XElement("Times"), new XElement("Settings"), new XElement("Miscellaneous"));
-                        /*
-                        LoadInXMLFile("D:\\MisterIXI\\Documents\\Git Repos\\BananaSplit\\BananaSplit\\obj\\Debug\\BananaSplit_SaveFile.xml");
-                        LoadSplits();
-                        //foreach (TimeSpan _u in PBSplits) Console.WriteLine(_u);
-                        Console.WriteLine(totalPBTime);
-                        // if (saveFileElement.Element("Track1").Attribute("PBTime").Value == null) Console.WriteLine("RIP");
-
-                        */
 
                     }
                     if (Keys.D == e.Key)
@@ -282,7 +274,15 @@ namespace BananaSplit
                 if (e.Key == System.Windows.Input.Key.NumPad3) ResetKey();
                 if (e.Key == System.Windows.Input.Key.NumPad2) SkipSplitKey();
                 if (e.Key == System.Windows.Input.Key.NumPad8) UndoSplitKey();
-
+                if(e.Key == System.Windows.Input.Key.C)
+                {
+                    LoadInXMLFile(defaultSaveFileName);
+                    Console.WriteLine(saveFileElement);
+                }
+                if(e.Key == System.Windows.Input.Key.V)
+                {
+                    SaveRecords();
+                }
 
                 if (e.Key == System.Windows.Input.Key.Space) SplitKey();
                 if (e.Key == System.Windows.Input.Key.R) ResetKey();
@@ -344,7 +344,7 @@ namespace BananaSplit
             totalCurrentRunTime = TimeSpan.Zero;
             totalPBTime = TimeSpan.Zero;
         }
-
+        
         void Split()
         {
             if (!isPendingTrackSelection)
@@ -362,6 +362,7 @@ namespace BananaSplit
 
                     MainStopwatch.Stop();                    
                     MainRefreshTimer.Dispose();
+
                 }
                 else
                 {
@@ -438,8 +439,31 @@ namespace BananaSplit
             //todo
         }
 
+        void CheckIfRecords()
+        {
+            if (SumUpTimeArray(PBSplits) > SumUpTimeArray(Splittimes))//todo exchange with wholetime
+            {
+                PBSplits = Splittimes;
+                unsavedChangesFlag = true;
+            }
+            else if (SumUpTimeArray(PBSplits) == TimeSpan.Zero)
+            {
+                PBSplits = Splittimes;
+                unsavedChangesFlag = true;
+            }
+            for (int i = 0; i <= 15; i++)
+            {
+                if (isSplitAGoldSplit[i])
+                {
+                    GoldSplits[i] = Splittimes[i];
+                    unsavedChangesFlag = true;
+                }
+            }
+        }
+
         void Reset()
         {
+
             MainStopwatch.Stop();
             if (MainRefreshTimer != null) MainRefreshTimer.Dispose();
             TimerLabel.Content = ("00:00");
@@ -482,10 +506,14 @@ namespace BananaSplit
             }
             else
             {
-                saveFile = new XDocument();
                 saveFileElement = new XElement("SaveFile", new XElement("Times"), new XElement("Settings"), new XElement("Miscellaneous"));
-
+                saveFile = new XDocument(saveFileElement);
+                for (int i = 0; i <= 15; i++)
+                {
+                    saveFileElement.Element("Times").Add(new XElement("Track" + i.ToString(), new XAttribute("PBTime", TimeSpan.Zero), new XAttribute("GoldTime", TimeSpan.Zero)));
+                }
             }
+
         }
 
         void LoadSplits()
@@ -502,9 +530,8 @@ namespace BananaSplit
                 }
                 catch (NullReferenceException)
                 {
-                    
-                }
-                if (PBSplits[i] == TimeSpan.Zero) isPBMissingSplits = true;     
+                    isPBMissingSplits = true;
+                }  
             }           
         }
 
@@ -515,20 +542,30 @@ namespace BananaSplit
                 //Replace Values
                 for (int i = 0; i <= 15; i++)
                 {
-                    saveFileElement.Element("Track" + i.ToString()).SetAttributeValue("PBTime", PBSplits[i]);
-                    saveFileElement.Element("Track" + i.ToString()).SetAttributeValue("GoldTime", GoldSplits[i]);
+                    if(saveFileElement.Element("Times").Element("Track"+i.ToString()) != null)
+                    {
+                        saveFileElement.Element("Times").Element("Track" + i.ToString()).SetAttributeValue("PBTime", PBSplits[i]);
+                        saveFileElement.Element("Times").Element("Track" + i.ToString()).SetAttributeValue("GoldTime", GoldSplits[i]);
+                    }
+                    else
+                    {
+                        saveFileElement.Element("Times").Add(new XElement("Track" + i.ToString()));
+                        saveFileElement.Element("Times").Element("Track" + i.ToString()).SetAttributeValue("PBTime", PBSplits[i]);
+                        saveFileElement.Element("Times").Element("Track" + i.ToString()).SetAttributeValue("GoldTime", GoldSplits[i]);
+                    }
                 }
-
-
             }
             else
             {
+                saveFileElement.Add(new XElement("Times"));
                 for (int i = 0; i <= 15; i++)
                 {
                     saveFileElement.Element("Times").Add(new XElement("Track" + i.ToString(), new XAttribute("PBTime", Splittimes[i]), new XAttribute("GoldTime", UnsavedGoldSplits[i])));
                 }
 
             }
+            saveFile = new XDocument(saveFileElement);
+            saveFile.Save(defaultSaveFileName);
         }
 
         void LoadMiscellaneous()
@@ -1090,6 +1127,16 @@ namespace BananaSplit
             
         }
         #endregion
+
+        TimeSpan SumUpTimeArray(TimeSpan[] givenArray)
+        {
+            TimeSpan Result = new TimeSpan();
+            foreach (TimeSpan i in givenArray)
+            {
+                Result += i;
+            }
+            return Result;
+        }
 
     }
 }
