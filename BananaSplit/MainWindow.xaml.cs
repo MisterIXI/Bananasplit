@@ -167,6 +167,7 @@ namespace BananaSplit
                 {
                     case MessageBoxResult.Yes:
                         SaveRecords();
+                        LoadSplits();
                         Reset();
                         break;
                     case MessageBoxResult.No:
@@ -274,6 +275,7 @@ namespace BananaSplit
                 if (e.Key == System.Windows.Input.Key.NumPad3) ResetKey();
                 if (e.Key == System.Windows.Input.Key.NumPad2) SkipSplitKey();
                 if (e.Key == System.Windows.Input.Key.NumPad8) UndoSplitKey();
+                if (e.Key == System.Windows.Input.Key.X) LoadSplits();
                 if(e.Key == System.Windows.Input.Key.C)
                 {
                     LoadInXMLFile(defaultSaveFileName);
@@ -360,7 +362,8 @@ namespace BananaSplit
                     Splittimes[currentTrackIndex] = SegmentStopwatch.Elapsed;
                     splitTimesInRun[currentTrackIndex] = TempTimeSpan;
 
-                    MainStopwatch.Stop();                    
+                    MainStopwatch.Stop();
+                    PBEndTime = MainStopwatch.Elapsed;             
                     MainRefreshTimer.Dispose();
 
                 }
@@ -469,11 +472,14 @@ namespace BananaSplit
             TimerLabel.Content = ("00:00");
             SegmentLabel.Content = ("00:00");
             foreach (Image stuff in trackSelectionImages) stuff.Visibility = System.Windows.Visibility.Visible;
+            isPendingTrackSelection = false;            
             currentSplitProgress = 15;
             currentTrackOrder = new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
             Splittimes = PBSplits;
             splitTimesInRun = PBTotalTimes;
             isSplitAGoldSplit = new bool[16];
+            ScrollOffset = -8;
+            UpdateLabels();
         }
 
         void ResetVariables()
@@ -540,7 +546,8 @@ namespace BananaSplit
                 {
                     isPBMissingSplits = true;
                 }  
-            }           
+            }
+
         }
 
         void SaveRecords()
