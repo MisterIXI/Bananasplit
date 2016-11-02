@@ -136,6 +136,7 @@ namespace BananaSplit
                 LoadSplits();
             }
             UpdateLabels();
+            Previous_Segment_Label_Number.Content = "-";
         }
 
         private void OnMainRefreshTimer(object source, EventArgs e)
@@ -533,6 +534,7 @@ namespace BananaSplit
 
         void ResetVariables()
         {
+            SegmentStopwatch.Reset();
             MainStopwatch.Reset();
             currentSplitProgress = 0;
             currentTrackIndex = 0;
