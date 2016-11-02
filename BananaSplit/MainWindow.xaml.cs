@@ -31,7 +31,7 @@ namespace BananaSplit
         LiveSplit.Model.Input.KeyboardHook HookInstance = new LiveSplit.Model.Input.KeyboardHook();
         LiveSplit.Model.Input.CompositeHook Hook { get; set; }
 
-        bool unsavedChangesFlag = false, ifPBHasHappenend;
+        bool ifPBHasHappenend;
 
         #region SettingsVariables
 
@@ -52,10 +52,10 @@ namespace BananaSplit
         int currentTrackIndex, currentSplitProgress = 0;
 
         int[] currentTrackOrder = new int[] {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
-        TimeSpan[] Splittimes = new TimeSpan[16], PBSplits = new TimeSpan[16], UnsavedGoldSplits = new TimeSpan[16], GoldSplits = new TimeSpan[16], currentTotalTimes = new TimeSpan[16], PBTotalTimes = new TimeSpan[16];
+        TimeSpan[] Splittimes = new TimeSpan[16], PBSplits = new TimeSpan[16], UnsavedGoldSplits = new TimeSpan[16], GoldSplits = new TimeSpan[16], currentTotalTimes = new TimeSpan[16], PBTotalTimes = new TimeSpan[16], splitTimesInRun = new TimeSpan[16];
         TimeSpan lastSplit, totalCurrentRunTime, totalCurrentPBTime, PBEndTime;
         bool[] isSplitAGoldSplit = new bool[16];
-        bool isPendingTrackSelection, isPBMissingSplits;
+        bool isPendingTrackSelection, isPBMissingSplits, isPBMissingGoldSplits;
 
         /*
         Variable explanation:
@@ -69,33 +69,39 @@ namespace BananaSplit
         PBSplits: Timespans of saved & loaded PBSplits
         UnsavedGoldSplits: Timespans of eventual GoldSPlits ready to be saved or discarded
         GoldSplits: Timespans of saved & loaded GoldSPlits
-        currentTotalTime: Sum of splits happenend up to this point for comparison Reasons (still in correct Track Order)
+        currentTotalTime: Sum of splits happenend up to this point for comparison Reasons (still in correct Track Order == 0:Luigi Circuit; 1:Peach Beach; 15:Rainbow Road...)
         PBTotalTime: same as above, but with the PB Splits so both can compare to each other
+        splitTimesInRun: The exact moment of the MainStopwatch when splitted so the actual time can be shown in the splits.
 
         lastSplit: Timespans (point in the run) where the last Split happenend for comparison
         totalCurrentRunTime: A Sum of all current Splits for comparison reasons
         totalCurrentPBTime: A Sum of all tracks that were splitted but with PBTime
+        PBEndTime: MainStop.Elapsed of PB after the RR Split (actual RTA rating of the PB Run)
 
         isSplitAGoldSplit: Set Flag if Split in array Position is a Gold Split
 
         isPendingTrackSelection: to prevent splitting without picking a track
-        isPBMissingSplits: Set Flag if 
+        isPBMissingSplits: Set Flag if PB is Missing one or some of its Split.
+        isPBMissingGoldSplits: Set Flag if one or more Gold Values are missing.
         */
         #endregion
 
         #region InterfaceVariables
         //Interface Variables
         int ScrollOffset = 0;
-
-        TimeSpan[] splitTimesInRun = new TimeSpan[16];
         Image[] trackSelectionImages; 
         System.Windows.Controls.Label[,] SplitLabelArray;
+        bool unsavedChangesFlag;
 
         /*
         Variable Explanation:
+        ScrollOffset: -9 > x > 1 (= int has to be in between -8 and 0 (-8 and 0 are included)) This describes the offset of the scrollview. (e.g. -1 is one scrolled up) 
 
+        trackSelecitonImages: A collection of all 16 Track images used to select the tracks.
+    
+        SplitLabelArray: All 7 Label rows in Array form to go through them in a for loop.
 
-
+        unsavedChangesFlag: Flag that describes if there is 
         */
         #endregion
 
@@ -160,8 +166,8 @@ namespace BananaSplit
 
         void ResetKey()
         {
-            CheckIfRecords();
-            if (unsavedChangesFlag)
+            
+            if (CheckIfRecords())
             {
                 switch (System.Windows.MessageBox.Show("Some of your splits have been updated. Do you want to save them?", "Unsaved Times", MessageBoxButton.YesNoCancel, MessageBoxImage.Question))
                 {
@@ -362,8 +368,12 @@ namespace BananaSplit
                     Splittimes[currentTrackIndex] = SegmentStopwatch.Elapsed;
                     splitTimesInRun[currentTrackIndex] = TempTimeSpan;
 
+                    lastSplit = SegmentStopwatch.Elapsed;
+
                     MainStopwatch.Stop();
-                    PBEndTime = MainStopwatch.Elapsed;             
+
+                    if (CheckIfRecords()) OnPB();
+
                     MainRefreshTimer.Dispose();
 
                 }
@@ -443,7 +453,13 @@ namespace BananaSplit
             //todo
         }
 
-        void CheckIfRecords()
+        void OnPB()
+        {
+            PBEndTime = MainStopwatch.Elapsed;
+
+        }
+
+        bool CheckIfRecords()
         {
             if (SumUpTimeArray(PBSplits) > SumUpTimeArray(Splittimes))//todo exchange with wholetime
             {
@@ -463,6 +479,8 @@ namespace BananaSplit
                     unsavedChangesFlag = true;
                 }
             }
+            if (unsavedChangesFlag) return true;
+            else return false;
         }
 
         void Reset()
@@ -518,7 +536,7 @@ namespace BananaSplit
                 saveFile = new XDocument(saveFileElement);
                 for (int i = 0; i <= 15; i++)
                 {
-                    saveFileElement.Element("Times").Add(new XElement("Track" + i.ToString(), new XAttribute("PBTime", TimeSpan.Zero), new XAttribute("GoldTime", TimeSpan.Zero)));
+                    saveFileElement.Element("Times").Add(new XElement("Track" + i.ToString(), new XAttribute("PBTime", TimeSpan.Zero), new XAttribute("GoldTime", TimeSpan.Zero), new XAttribute("TimesInRun", TimeSpan.Zero)));
                 }
             }
 
@@ -535,6 +553,7 @@ namespace BananaSplit
                 PBEndTime = TimeSpan.Zero;
             }
             isPBMissingSplits = false;
+            isPBMissingGoldSplits = false;
             for (int i = 0; i <= 15; i++)
             {
                 PBSplits[i] = TimeSpan.Zero;
@@ -543,13 +562,14 @@ namespace BananaSplit
                 {
                     PBSplits[i] = XmlConvert.ToTimeSpan(saveFileElement.Element("Times").Element("Track" + i.ToString()).Attribute("PBTime").Value);
                     GoldSplits[i] = XmlConvert.ToTimeSpan(saveFileElement.Element("Times").Element("Track" + i.ToString()).Attribute("GoldTime").Value);
+                    PBTotalTimes[i] = XmlConvert.ToTimeSpan(saveFileElement.Element("Times").Element("Track" + i.ToString()).Attribute("TimesInRun").Value);
                 }
                 catch (NullReferenceException)
                 {
-                    isPBMissingSplits = true;
+                    if (PBSplits[i] == TimeSpan.Zero) isPBMissingSplits = true;
+                    if (GoldSplits[i] == TimeSpan.Zero) isPBMissingGoldSplits = true;
                 }  
             }
-
         }
 
 
@@ -566,12 +586,14 @@ namespace BananaSplit
                     {
                         saveFileElement.Element("Times").Element("Track" + i.ToString()).SetAttributeValue("PBTime", PBSplits[i]);
                         saveFileElement.Element("Times").Element("Track" + i.ToString()).SetAttributeValue("GoldTime", GoldSplits[i]);
+                        saveFileElement.Element("Times").Element("Track" + i.ToString()).SetAttributeValue("TimesInRun", PBTotalTimes[i]);
                     }
                     else
                     {
                         saveFileElement.Element("Times").Add(new XElement("Track" + i.ToString()));
                         saveFileElement.Element("Times").Element("Track" + i.ToString()).SetAttributeValue("PBTime", PBSplits[i]);
                         saveFileElement.Element("Times").Element("Track" + i.ToString()).SetAttributeValue("GoldTime", GoldSplits[i]);
+                        saveFileElement.Element("Times").Element("Track" + i.ToString()).SetAttributeValue("TimesInRun", PBTotalTimes[i]);
                     }
                 }
             }
@@ -580,7 +602,7 @@ namespace BananaSplit
                 saveFileElement.Add(new XElement("Times"));
                 for (int i = 0; i <= 15; i++)
                 {
-                    saveFileElement.Element("Times").Add(new XElement("Track" + i.ToString(), new XAttribute("PBTime", Splittimes[i]), new XAttribute("GoldTime", UnsavedGoldSplits[i])));
+                    saveFileElement.Element("Times").Add(new XElement("Track" + i.ToString(), new XAttribute("PBTime", Splittimes[i]), new XAttribute("GoldTime", UnsavedGoldSplits[i]), new XAttribute("TimesInRun", PBTotalTimes[i])));
                 }
 
             }
@@ -855,7 +877,7 @@ namespace BananaSplit
             else Possible_Time_Save_Label_Number.Content = "-";
 
 
-            SoB_Value.Content = SumUpTimeArray(GoldSplits);
+            if(!isPBMissingSplits) SoB_Value.Content = SumUpTimeArray(GoldSplits);
 
 
 

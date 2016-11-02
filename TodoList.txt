@@ -1,3 +1,6 @@
 Show a scrollable PB while not running:
 -PBTotalTimes is always zero
 -PBTotalTime has to be loaded and saved
+
+CheckIfRecords:
+- fix the case when splits are missing
