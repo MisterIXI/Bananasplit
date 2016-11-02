@@ -52,10 +52,10 @@ namespace BananaSplit
         int currentTrackIndex, currentSplitProgress = 0;
 
         int[] currentTrackOrder = new int[] {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
-        TimeSpan[] Splittimes = new TimeSpan[16], PBSplits = new TimeSpan[16], UnsavedGoldSplits = new TimeSpan[16], GoldSplits = new TimeSpan[16], currentTotalTimes = new TimeSpan[16], PBTotalTimes = new TimeSpan[16], splitTimesInRun = new TimeSpan[16];
-        TimeSpan lastSplit, totalCurrentRunTime, totalCurrentPBTime, PBEndTime;
+        TimeSpan[] Splittimes = new TimeSpan[16], PBSplits = new TimeSpan[16], UnsavedGoldSplits = new TimeSpan[16], GoldSplits = new TimeSpan[16], currentTotalTimes = new TimeSpan[16], PBTotalTimes = new TimeSpan[16];
+        TimeSpan lastSplit, totalCurrentRunTime, totalCurrentPBTime, PBEndTime, currentEndTime;
         bool[] isSplitAGoldSplit = new bool[16];
-        bool isPendingTrackSelection, isPBMissingSplits, isPBMissingGoldSplits;
+        bool isPendingTrackSelection, isPBMissingSplits, isPBMissingGoldSplits, isCurrentRunMissingSplits;
 
         /*
         Variable explanation:
@@ -71,18 +71,19 @@ namespace BananaSplit
         GoldSplits: Timespans of saved & loaded GoldSPlits
         currentTotalTime: Sum of splits happenend up to this point for comparison Reasons (still in correct Track Order == 0:Luigi Circuit; 1:Peach Beach; 15:Rainbow Road...)
         PBTotalTime: same as above, but with the PB Splits so both can compare to each other
-        splitTimesInRun: The exact moment of the MainStopwatch when splitted so the actual time can be shown in the splits.
 
         lastSplit: Timespans (point in the run) where the last Split happenend for comparison
         totalCurrentRunTime: A Sum of all current Splits for comparison reasons
         totalCurrentPBTime: A Sum of all tracks that were splitted but with PBTime
         PBEndTime: MainStop.Elapsed of PB after the RR Split (actual RTA rating of the PB Run)
+        currentEndTime: MainsTopwatch.Elapsed after RR Split
 
         isSplitAGoldSplit: Set Flag if Split in array Position is a Gold Split
 
         isPendingTrackSelection: to prevent splitting without picking a track
         isPBMissingSplits: Set Flag if PB is Missing one or some of its Split.
         isPBMissingGoldSplits: Set Flag if one or more Gold Values are missing.
+        isCurrentRunMissingSplits: Set Flag if one or more Splits in this run are missing.
         */
         #endregion
 
@@ -129,7 +130,12 @@ namespace BananaSplit
                 { L_TrackID6, L_GoldDiff6, L_SplitDiff6, L_SplitT6 },
                 { L_TrackID7, L_GoldDiff7, L_SplitDiff7, L_SplitT7 }};
             trackSelectionImages = new Image[] { TrackLogo1, TrackLogo2, TrackLogo3, TrackLogo4, TrackLogo5, TrackLogo6, TrackLogo7, TrackLogo8, TrackLogo9, TrackLogo10, TrackLogo11, TrackLogo12, TrackLogo13, TrackLogo14, TrackLogo15, TrackLogo16 };
-            LoadInXMLFile(defaultSaveFileName);
+            if (System.IO.File.Exists(defaultSaveFileName))
+            {
+                LoadInXMLFile(defaultSaveFileName);
+                LoadSplits();
+            }
+            UpdateLabels();
         }
 
         private void OnMainRefreshTimer(object source, EventArgs e)
@@ -159,7 +165,7 @@ namespace BananaSplit
         }
 
         void SplitKey()
-        {
+         {
             if (MainStopwatch.IsRunning) Split();
             else if (MainStopwatch.Elapsed == TimeSpan.Zero) StartSplitting();
         }
@@ -172,8 +178,7 @@ namespace BananaSplit
                 switch (System.Windows.MessageBox.Show("Some of your splits have been updated. Do you want to save them?", "Unsaved Times", MessageBoxButton.YesNoCancel, MessageBoxImage.Question))
                 {
                     case MessageBoxResult.Yes:
-                        SaveRecords();
-                        LoadSplits();
+                        UpdateRecords();
                         Reset();
                         break;
                     case MessageBoxResult.No:
@@ -196,6 +201,13 @@ namespace BananaSplit
         void SkipSplitKey()
         {
             //todo
+        }
+
+        void LoadKey()
+        {
+            LoadInXMLFile(defaultSaveFileName);
+            LoadSplits();
+            Console.WriteLine(saveFileElement);
         }
 
         void OnHotkeyPoll(object sender, EventArgs e)
@@ -281,7 +293,7 @@ namespace BananaSplit
                 if (e.Key == System.Windows.Input.Key.NumPad3) ResetKey();
                 if (e.Key == System.Windows.Input.Key.NumPad2) SkipSplitKey();
                 if (e.Key == System.Windows.Input.Key.NumPad8) UndoSplitKey();
-                if (e.Key == System.Windows.Input.Key.X) LoadSplits();
+                if (e.Key == System.Windows.Input.Key.L) LoadKey();
                 if(e.Key == System.Windows.Input.Key.C)
                 {
                     LoadInXMLFile(defaultSaveFileName);
@@ -366,13 +378,12 @@ namespace BananaSplit
 
                     //saving the actual Splitted time in the Splittime Array
                     Splittimes[currentTrackIndex] = SegmentStopwatch.Elapsed;
-                    splitTimesInRun[currentTrackIndex] = TempTimeSpan;
+                    currentTotalTimes[currentTrackIndex] = TempTimeSpan;
+                    currentEndTime = TempTimeSpan;
 
                     lastSplit = SegmentStopwatch.Elapsed;
 
                     MainStopwatch.Stop();
-
-                    if (CheckIfRecords()) OnPB();
 
                     MainRefreshTimer.Dispose();
 
@@ -384,7 +395,7 @@ namespace BananaSplit
 
                     //saving the actual Splitted time in the Splittime Array
                     Splittimes[currentTrackIndex] = SegmentStopwatch.Elapsed;
-                    splitTimesInRun[currentTrackIndex] = TempTimeSpan;
+                    currentTotalTimes[currentTrackIndex] = TempTimeSpan;
 
                     lastSplit = SegmentStopwatch.Elapsed;
 
@@ -423,7 +434,6 @@ namespace BananaSplit
 
                 totalCurrentRunTime += Splittimes[currentTrackIndex];
                 totalCurrentPBTime += PBSplits[currentTrackIndex];
-                currentTotalTimes[currentTrackIndex] = totalCurrentRunTime;
                 if (currentSplitProgress > 0)
                 {
                     if (PBTotalTimes[currentTrackOrder[currentSplitProgress - 1]] < totalCurrentPBTime) PBTotalTimes[currentTrackIndex] = totalCurrentPBTime;
@@ -439,7 +449,9 @@ namespace BananaSplit
                 currentSplitProgress++;
                 isPendingTrackSelection = true;
                 currentTrackIndex = -1;
+                if(!MainStopwatch.IsRunning)if (CheckIfRecords()) OnPB();
                 UpdateLabels();
+
             }
         }
 
@@ -461,9 +473,27 @@ namespace BananaSplit
 
         bool CheckIfRecords()
         {
-            if (SumUpTimeArray(PBSplits) > SumUpTimeArray(Splittimes))//todo exchange with wholetime
+            bool tempCheckingBool = false;
+
+            if (PBEndTime > currentEndTime && currentEndTime > TimeSpan.Zero)//todo exchange with wholetime
+            {
+                tempCheckingBool = true;
+            }
+            else if (SumUpTimeArray(PBSplits) == TimeSpan.Zero | PBEndTime == TimeSpan.Zero)
+            {
+                tempCheckingBool = true;
+            }
+
+            if (tempCheckingBool) return true;
+            else return false;
+        }
+
+        void UpdateRecords()
+        {
+            if (PBEndTime > currentEndTime && currentEndTime > TimeSpan.Zero)//todo exchange with wholetime
             {
                 PBSplits = Splittimes;
+                PBTotalTimes = currentTotalTimes;
                 unsavedChangesFlag = true;
             }
             else if (SumUpTimeArray(PBSplits) == TimeSpan.Zero)
@@ -479,25 +509,25 @@ namespace BananaSplit
                     unsavedChangesFlag = true;
                 }
             }
-            if (unsavedChangesFlag) return true;
-            else return false;
         }
 
         void Reset()
         {
 
             MainStopwatch.Stop();
+            MainStopwatch.Reset();
             if (MainRefreshTimer != null) MainRefreshTimer.Dispose();
             TimerLabel.Content = ("00:00");
             SegmentLabel.Content = ("00:00");
             foreach (Image stuff in trackSelectionImages) stuff.Visibility = System.Windows.Visibility.Visible;
             isPendingTrackSelection = false;            
-            currentSplitProgress = 15;
+            currentSplitProgress = 16;
             currentTrackOrder = new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
             Splittimes = PBSplits;
-            splitTimesInRun = PBTotalTimes;
+            currentTotalTimes = PBTotalTimes;
             isSplitAGoldSplit = new bool[16];
             ScrollOffset = -8;
+            currentEndTime = TimeSpan.Zero;
             UpdateLabels();
         }
 
@@ -513,10 +543,10 @@ namespace BananaSplit
             TimerLabel.Content = ("00:00");
             SegmentLabel.Content = ("00:00");
             currentTotalTimes = new TimeSpan[16];
-            splitTimesInRun = new TimeSpan[16];
             PBTotalTimes = new TimeSpan[16];
             totalCurrentRunTime = TimeSpan.Zero;
             totalCurrentPBTime = TimeSpan.Zero;
+
         }
 
         #endregion
@@ -573,12 +603,11 @@ namespace BananaSplit
         }
 
 
-        //todo save & load PBTotalTimes 
+
         void SaveRecords()
         {
             if(saveFileElement.Element("Times") != null)
             {
-                //Replace Values
                 saveFileElement.Element("Times").SetAttributeValue("TotalRunTime", PBEndTime);
                 for (int i = 0; i <= 15; i++)
                 {
@@ -608,6 +637,7 @@ namespace BananaSplit
             }
             saveFile = new XDocument(saveFileElement);
             saveFile.Save(defaultSaveFileName);
+            unsavedChangesFlag = false;
         }
 
         void LoadMiscellaneous()
@@ -728,6 +758,11 @@ namespace BananaSplit
                             SplitLabelArray[i, 2].Content = (currentTotalTimes[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]] - PBTotalTimes[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]]).ToString(@"\+\ ss\.f");
                             SplitLabelArray[i, 2].Foreground = System.Windows.Media.Brushes.Red;
                         }
+                        else if(currentTotalTimes[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]] == PBTotalTimes[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]])
+                        {
+                            SplitLabelArray[i, 2].Content = "-";
+                            SplitLabelArray[i, 2].Foreground = System.Windows.Media.Brushes.White;
+                        }
                         else
                         {
                             SplitLabelArray[i, 2].Content = (PBTotalTimes[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]] - currentTotalTimes[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]]).ToString(@"\-\ ss\.f");
@@ -742,7 +777,7 @@ namespace BananaSplit
                     }
 
                     //Update Split Time Label
-                    SplitLabelArray[i, 3].Content = splitTimesInRun[currentTrackOrder[currentSplitProgress -1 -6 + i + ScrollOffset]].ToString(@"mm\:ss\.f");
+                    SplitLabelArray[i, 3].Content = currentTotalTimes[currentTrackOrder[currentSplitProgress -1 -6 + i + ScrollOffset]].ToString(@"mm\:ss\.f");
 
                 }
                 else
@@ -808,9 +843,14 @@ namespace BananaSplit
                         //Gold Delta
                         if (GoldSplits[currentTrackOrder[i]] != TimeSpan.Zero)
                         {
-                            if (Splittimes[currentTrackOrder[i]] >= GoldSplits[currentTrackOrder[i]])
+                            if (Splittimes[currentTrackOrder[i]] > GoldSplits[currentTrackOrder[i]])
                             {
                                 SplitLabelArray[i, 1].Content = (Splittimes[currentTrackOrder[i]] - GoldSplits[currentTrackOrder[i]]).ToString(@"\+\ ss\.f");
+                                SplitLabelArray[i, 1].Foreground = System.Windows.Media.Brushes.White;
+                            }
+                            else if(Splittimes[currentTrackOrder[i]] == GoldSplits[currentTrackOrder[i]])
+                            {
+                                SplitLabelArray[i, 1].Content = "-";
                                 SplitLabelArray[i, 1].Foreground = System.Windows.Media.Brushes.White;
                             }
                             else
@@ -826,13 +866,17 @@ namespace BananaSplit
                         }
 
                         //Update PB Difference Label
-                    //Todo: fix yo shit bruh: calculations
                         if (PBTotalTimes[currentTrackOrder[i]] > TimeSpan.Zero)
                         {
                             if (currentTotalTimes[currentTrackOrder[i]] > PBTotalTimes[currentTrackOrder[i]])
                             {
                                 SplitLabelArray[i, 2].Content = (currentTotalTimes[currentTrackOrder[i]] - PBTotalTimes[currentTrackOrder[i]]).ToString(@"\+\ ss\.f");
                                 SplitLabelArray[i, 2].Foreground = System.Windows.Media.Brushes.Red;
+                            }
+                            else if (currentTotalTimes[currentTrackOrder[i]] == PBTotalTimes[currentTrackOrder[i]])
+                            {
+                                SplitLabelArray[i, 2].Content = "-";
+                                SplitLabelArray[i, 2].Foreground = System.Windows.Media.Brushes.White;
                             }
                             else
                             {
@@ -849,7 +893,7 @@ namespace BananaSplit
 
 
                         //Update Split Time Label
-                        SplitLabelArray[i, 3].Content = splitTimesInRun[currentTrackOrder[i]].ToString(@"mm\:ss\.f");
+                        SplitLabelArray[i, 3].Content = currentTotalTimes[currentTrackOrder[i]].ToString(@"mm\:ss\.f");
                     }
                     else
                     {
@@ -868,7 +912,7 @@ namespace BananaSplit
                 {
                     if(currentTrackIndex != -1)
                     {
-                        Possible_Time_Save_Label_Number.Content = (PBSplits[currentTrackOrder[currentSplitProgress]] - GoldSplits[currentTrackOrder[currentSplitProgress]]).ToString(@"\-\ ss\.ff");
+                        Possible_Time_Save_Label_Number.Content = (PBSplits[currentTrackIndex] - GoldSplits[currentTrackIndex]).ToString(@"\-\ ss\.ff");
                     }
                     else Possible_Time_Save_Label_Number.Content = "-";
                 }
@@ -877,7 +921,7 @@ namespace BananaSplit
             else Possible_Time_Save_Label_Number.Content = "-";
 
 
-            if(!isPBMissingSplits) SoB_Value.Content = SumUpTimeArray(GoldSplits);
+            if(!isPBMissingSplits) SoB_Value.Content = SumUpTimeArray(GoldSplits).ToString(@"mm\:ss");
 
 
 
@@ -918,8 +962,9 @@ namespace BananaSplit
             currentTrackIndex = 0;
             TrackLogo1.Visibility = Visibility.Hidden;
             isPendingTrackSelection = false;
+            UpdateLabels();
         }
-
+        
         private void TrackLogo1_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
             TrackLogo1.Opacity = 1;
@@ -935,6 +980,7 @@ namespace BananaSplit
             currentTrackIndex = 1;
             TrackLogo2.Visibility = Visibility.Hidden;
             isPendingTrackSelection = false;
+            UpdateLabels();
         }
 
         private void TrackLogo2_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
@@ -952,6 +998,7 @@ namespace BananaSplit
             currentTrackIndex = 2;
             TrackLogo3.Visibility = Visibility.Hidden;
             isPendingTrackSelection = false;
+            UpdateLabels();
         }
 
         private void TrackLogo3_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
@@ -969,6 +1016,7 @@ namespace BananaSplit
             currentTrackIndex = 3;
             TrackLogo4.Visibility = Visibility.Hidden;
             isPendingTrackSelection = false;
+            UpdateLabels();
         }
 
         private void TrackLogo4_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
@@ -986,6 +1034,7 @@ namespace BananaSplit
             currentTrackIndex = 4;
             TrackLogo5.Visibility = Visibility.Hidden;
             isPendingTrackSelection = false;
+            UpdateLabels();
         }
 
         private void TrackLogo5_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
@@ -1003,6 +1052,7 @@ namespace BananaSplit
             currentTrackIndex = 5;
             TrackLogo6.Visibility = Visibility.Hidden;
             isPendingTrackSelection = false;
+            UpdateLabels();
         }
 
         private void TrackLogo6_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
@@ -1020,6 +1070,7 @@ namespace BananaSplit
             currentTrackIndex = 6;
             TrackLogo7.Visibility = Visibility.Hidden;
             isPendingTrackSelection = false;
+            UpdateLabels();
         }
 
         private void TrackLogo7_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
@@ -1037,6 +1088,7 @@ namespace BananaSplit
             currentTrackIndex = 7;
             TrackLogo8.Visibility = Visibility.Hidden;
             isPendingTrackSelection = false;
+            UpdateLabels();
         }
 
         private void TrackLogo8_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
@@ -1054,6 +1106,7 @@ namespace BananaSplit
             currentTrackIndex = 8;
             TrackLogo9.Visibility = Visibility.Hidden;
             isPendingTrackSelection = false;
+            UpdateLabels();
         }
 
         private void TrackLogo9_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
@@ -1071,6 +1124,7 @@ namespace BananaSplit
             currentTrackIndex = 9;
             TrackLogo10.Visibility = Visibility.Hidden;
             isPendingTrackSelection = false;
+            UpdateLabels();
         }
 
         private void TrackLogo10_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
@@ -1088,6 +1142,7 @@ namespace BananaSplit
             currentTrackIndex = 10;
             TrackLogo11.Visibility = Visibility.Hidden;
             isPendingTrackSelection = false;
+            UpdateLabels();
         }
 
         private void TrackLogo11_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
@@ -1105,6 +1160,7 @@ namespace BananaSplit
             currentTrackIndex = 11;
             TrackLogo12.Visibility = Visibility.Hidden;
             isPendingTrackSelection = false;
+            UpdateLabels();
         }
 
         private void TrackLogo12_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
@@ -1122,6 +1178,7 @@ namespace BananaSplit
             currentTrackIndex = 12;
             TrackLogo13.Visibility = Visibility.Hidden;
             isPendingTrackSelection = false;
+            UpdateLabels();
         }
 
         private void TrackLogo13_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
@@ -1139,6 +1196,7 @@ namespace BananaSplit
             currentTrackIndex = 13;
             TrackLogo14.Visibility = Visibility.Hidden;
             isPendingTrackSelection = false;
+            UpdateLabels();
         }
 
         private void TrackLogo14_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
@@ -1156,6 +1214,7 @@ namespace BananaSplit
             currentTrackIndex = 14;
             TrackLogo15.Visibility = Visibility.Hidden;
             isPendingTrackSelection = false;
+            UpdateLabels();
         }
 
         private void TrackLogo15_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
@@ -1173,6 +1232,7 @@ namespace BananaSplit
             currentTrackIndex = 15;
             TrackLogo16.Visibility = Visibility.Hidden;
             isPendingTrackSelection = false;
+            UpdateLabels();
         }
 
         private void TrackLogo16_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
