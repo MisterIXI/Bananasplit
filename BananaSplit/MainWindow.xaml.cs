@@ -428,6 +428,7 @@ namespace BananaSplit
                 ScrollOffset = 0;
                 currentSplitProgress++;
                 isPendingTrackSelection = true;
+                currentTrackIndex = -1;
                 UpdateLabels();
             }
         }
@@ -494,6 +495,7 @@ namespace BananaSplit
             TimerLabel.Content = ("00:00");
             SegmentLabel.Content = ("00:00");
             currentTotalTimes = new TimeSpan[16];
+            splitTimesInRun = new TimeSpan[16];
             PBTotalTimes = new TimeSpan[16];
             totalCurrentRunTime = TimeSpan.Zero;
             totalCurrentPBTime = TimeSpan.Zero;
@@ -550,6 +552,8 @@ namespace BananaSplit
 
         }
 
+
+        //todo save & load PBTotalTimes 
         void SaveRecords()
         {
             if(saveFileElement.Element("Times") != null)
@@ -835,6 +839,23 @@ namespace BananaSplit
                 }
 
             }
+
+            if (MainStopwatch.IsRunning)
+            {
+                if (currentTrackOrder[currentSplitProgress] == -1)
+                {
+                    if(currentTrackIndex != -1)
+                    {
+                        Possible_Time_Save_Label_Number.Content = (PBSplits[currentTrackOrder[currentSplitProgress]] - GoldSplits[currentTrackOrder[currentSplitProgress]]).ToString(@"\-\ ss\.ff");
+                    }
+                    else Possible_Time_Save_Label_Number.Content = "-";
+                }
+                else Possible_Time_Save_Label_Number.Content = "-";
+            }
+            else Possible_Time_Save_Label_Number.Content = "-";
+
+
+            SoB_Value.Content = SumUpTimeArray(GoldSplits);
 
 
 
