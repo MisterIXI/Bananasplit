@@ -52,7 +52,7 @@ namespace BananaSplit
         int currentTrackIndex, currentSplitProgress = 0;
 
         int[] currentTrackOrder = new int[] {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
-        TimeSpan[] Splittimes = new TimeSpan[16], PBSplits = new TimeSpan[16], UnsavedGoldSplits = new TimeSpan[16], GoldSplits = new TimeSpan[16], currentTotalTimes = new TimeSpan[16], PBTotalTimes = new TimeSpan[16];
+        TimeSpan[] Splittimes = new TimeSpan[16], PBSplits = new TimeSpan[16], UnsavedGoldSplits = new TimeSpan[16], GoldSplits = new TimeSpan[16], currentTotalTimes = new TimeSpan[16], PBTotalTimes = new TimeSpan[16], PBTimesInRun = new TimeSpan[16];
         TimeSpan lastSplit, totalCurrentRunTime, totalCurrentPBTime, PBEndTime, currentEndTime;
         bool[] isSplitAGoldSplit = new bool[16];
         bool isPendingTrackSelection, isPBMissingSplits, isPBMissingGoldSplits, isCurrentRunMissingSplits;
@@ -220,6 +220,26 @@ namespace BananaSplit
 
         void on_Window_Close(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            if (CheckIfRecords())
+            {
+                if (!MainStopwatch.IsRunning)
+                {
+                    if((string)TimerLabel.Content == "ACTIVE")
+                    {
+                        switch (System.Windows.MessageBox.Show("Some of your splits have been updated. Do you want to save them?", "Unsaved Times", MessageBoxButton.YesNoCancel, MessageBoxImage.Question))
+                        {
+                            case MessageBoxResult.Yes:
+                                UpdateRecords();
+                                break;
+                            case MessageBoxResult.No:
+                                break;
+                            case MessageBoxResult.Cancel:
+                                e.Cancel = true;
+                                return;                                
+                        }
+                    }
+                }
+            }
             if(unsavedChangesFlag)
             switch (System.Windows.MessageBox.Show("Your splits have been updated but not yet saved. Do you want to save your spltis now?", "Save Splits?", MessageBoxButton.YesNoCancel, MessageBoxImage.Question))
             {
@@ -435,22 +455,19 @@ namespace BananaSplit
 
                 totalCurrentRunTime += Splittimes[currentTrackIndex];
                 totalCurrentPBTime += PBSplits[currentTrackIndex];
-                if (currentSplitProgress > 0)
+
+                if(PBTotalTimes[currentTrackIndex] == TimeSpan.Zero)
                 {
-                    if (PBTotalTimes[currentTrackOrder[currentSplitProgress - 1]] < totalCurrentPBTime) PBTotalTimes[currentTrackIndex] = totalCurrentPBTime;
-                    else PBTotalTimes[currentTrackIndex] = TimeSpan.Zero;
+                    PBTotalTimes[currentTrackIndex] = TempTimeSpan;
                 }
-                else
-                {
-                    if (totalCurrentPBTime > TimeSpan.Zero) PBTotalTimes[0] = totalCurrentPBTime;
-                    else PBTotalTimes[currentTrackIndex] = TimeSpan.Zero;
-                }
+
+
 
                 ScrollOffset = 0;
                 currentSplitProgress++;
                 isPendingTrackSelection = true;
                 currentTrackIndex = -1;
-                if(!MainStopwatch.IsRunning)if (CheckIfRecords()) OnPB();
+                //if(!MainStopwatch.IsRunning)if (CheckIfRecords()) OnPB();
                 UpdateLabels();
 
             }
@@ -495,6 +512,7 @@ namespace BananaSplit
             {
                 PBSplits = Splittimes;
                 PBTotalTimes = currentTotalTimes;
+                PBEndTime = currentEndTime;
                 unsavedChangesFlag = true;
             }
             else if (SumUpTimeArray(PBSplits) == TimeSpan.Zero)
@@ -544,8 +562,7 @@ namespace BananaSplit
             if (MainRefreshTimer != null) MainRefreshTimer.Dispose();
             TimerLabel.Content = ("00:00");
             SegmentLabel.Content = ("00:00");
-            currentTotalTimes = new TimeSpan[16];
-            PBTotalTimes = new TimeSpan[16];
+            currentTotalTimes = new TimeSpan[16];            
             totalCurrentRunTime = TimeSpan.Zero;
             totalCurrentPBTime = TimeSpan.Zero;
 
