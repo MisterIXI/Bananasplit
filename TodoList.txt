@@ -1,2 +1,5 @@
 Settings: 
 -variable MS on Main Splitter Label
+
+UpdateLabels:
+- Fix the weird things http://i.imgur.com/K3clHDo.png in Splits

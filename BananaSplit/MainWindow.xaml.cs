@@ -130,11 +130,8 @@ namespace BananaSplit
                 { L_TrackID6, L_GoldDiff6, L_SplitDiff6, L_SplitT6 },
                 { L_TrackID7, L_GoldDiff7, L_SplitDiff7, L_SplitT7 }};
             trackSelectionImages = new Image[] { TrackLogo1, TrackLogo2, TrackLogo3, TrackLogo4, TrackLogo5, TrackLogo6, TrackLogo7, TrackLogo8, TrackLogo9, TrackLogo10, TrackLogo11, TrackLogo12, TrackLogo13, TrackLogo14, TrackLogo15, TrackLogo16 };
-            if (System.IO.File.Exists(defaultSaveFileName))
-            {
                 LoadInXMLFile(defaultSaveFileName);
                 LoadSplits();
-            }
             UpdateLabels();
             Previous_Segment_Label_Number.Content = "-";
         }
@@ -218,43 +215,7 @@ namespace BananaSplit
 
         #endregion
 
-        void on_Window_Close(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            if (CheckIfRecords())
-            {
-                if (!MainStopwatch.IsRunning)
-                {
-                    if((string)TimerLabel.Content == "ACTIVE")
-                    {
-                        switch (System.Windows.MessageBox.Show("Some of your splits have been updated. Do you want to save them?", "Unsaved Times", MessageBoxButton.YesNoCancel, MessageBoxImage.Question))
-                        {
-                            case MessageBoxResult.Yes:
-                                UpdateRecords();
-                                break;
-                            case MessageBoxResult.No:
-                                break;
-                            case MessageBoxResult.Cancel:
-                                e.Cancel = true;
-                                return;                                
-                        }
-                    }
-                }
-            }
-            if(unsavedChangesFlag)
-            switch (System.Windows.MessageBox.Show("Your splits have been updated but not yet saved. Do you want to save your spltis now?", "Save Splits?", MessageBoxButton.YesNoCancel, MessageBoxImage.Question))
-            {
-                case MessageBoxResult.Yes:
-                        SaveRecords();
-                        e.Cancel = false;
-                    break;
-                case MessageBoxResult.No:
-                        e.Cancel = false;
-                    break;
-                case MessageBoxResult.Cancel:
-                        e.Cancel = true;
-                    break;
-            }
-        }
+
 
         void Hook_OnKeyPress(object sender, LiveSplit.Model.Input.KeyOrButton e)
         {
@@ -314,25 +275,27 @@ namespace BananaSplit
                 if (e.Key == System.Windows.Input.Key.NumPad3) ResetKey();
                 if (e.Key == System.Windows.Input.Key.NumPad2) SkipSplitKey();
                 if (e.Key == System.Windows.Input.Key.NumPad8) UndoSplitKey();
-                if (e.Key == System.Windows.Input.Key.L) LoadKey();
-                if(e.Key == System.Windows.Input.Key.C)
-                {
-                    LoadInXMLFile(defaultSaveFileName);
-                    Console.WriteLine(saveFileElement);
-                }
-                if(e.Key == System.Windows.Input.Key.V)
-                {
-                    SaveRecords();
-                }
 
                 if (e.Key == System.Windows.Input.Key.Space) SplitKey();
                 if (e.Key == System.Windows.Input.Key.R) ResetKey();
-                if (e.Key == System.Windows.Input.Key.A)
+
+                if(e.Key == System.Windows.Input.Key.S && System.Windows.Forms.Control.ModifierKeys == Keys.Control)
                 {
-                    LoadInXMLFile(defaultSaveFileName);
-                    LoadSplits();
-                    //foreach (TimeSpan _u in PBSplits) Console.WriteLine(_u);
-                    Console.WriteLine(totalCurrentPBTime);
+                    if (CheckIfRecords())
+                    {
+                        switch (System.Windows.MessageBox.Show("Some of your splits have been updated. Do you want to save them?", "Unsaved Times", MessageBoxButton.YesNoCancel, MessageBoxImage.Question))
+                        {
+                            case MessageBoxResult.Yes:
+                                UpdateRecords();
+                                break;
+                            case MessageBoxResult.No:
+                                Reset();
+                                break;
+                            case MessageBoxResult.Cancel:
+                                return;
+                        }
+
+                    }
                 }
             }
 
@@ -362,6 +325,44 @@ namespace BananaSplit
         private void Window_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             this.DragMove();
+        }
+
+        void on_Window_Close(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (CheckIfRecords())
+            {
+                if (!MainStopwatch.IsRunning)
+                {
+                    if ((string)TimerLabel.Content != "00:00")
+                    {
+                        switch (System.Windows.MessageBox.Show("Some of your splits have been updated. Do you want to save them?", "Unsaved Times", MessageBoxButton.YesNoCancel, MessageBoxImage.Question))
+                        {
+                            case MessageBoxResult.Yes:
+                                UpdateRecords();
+                                break;
+                            case MessageBoxResult.No:
+                                break;
+                            case MessageBoxResult.Cancel:
+                                e.Cancel = true;
+                                return;
+                        }
+                    }
+                }
+            }
+            if (unsavedChangesFlag)
+                switch (System.Windows.MessageBox.Show("Your splits have been updated but not yet saved. Do you want to save your spltis now?", "Save Splits?", MessageBoxButton.YesNoCancel, MessageBoxImage.Question))
+                {
+                    case MessageBoxResult.Yes:
+                        SaveRecords();
+                        e.Cancel = false;
+                        break;
+                    case MessageBoxResult.No:
+                        e.Cancel = false;
+                        break;
+                    case MessageBoxResult.Cancel:
+                        e.Cancel = true;
+                        break;
+                }
         }
 
         #endregion
@@ -607,6 +608,7 @@ namespace BananaSplit
             {
                 PBSplits[i] = TimeSpan.Zero;
                 GoldSplits[i] = TimeSpan.Zero;
+                PBTotalTimes[i] = TimeSpan.Zero;
                 try
                 {
                     PBSplits[i] = XmlConvert.ToTimeSpan(saveFileElement.Element("Times").Element("Track" + i.ToString()).Attribute("PBTime").Value);
