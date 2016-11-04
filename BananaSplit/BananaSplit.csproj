@@ -118,10 +118,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="LC.png" />
+    <Resource Include="Pictures\LC.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="PB.png" />
+    <Resource Include="Pictures\PB.png" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
@@ -134,6 +134,22 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Pictures\BC.png" />
+    <Resource Include="Pictures\BP.png" />
+    <Resource Include="Pictures\DC.png" />
+    <Resource Include="Pictures\DDD.png" />
+    <Resource Include="Pictures\DDJ.png" />
+    <Resource Include="Pictures\DKM.png" />
+    <Resource Include="Pictures\MaC.png" />
+    <Resource Include="Pictures\MB.png" />
+    <Resource Include="Pictures\MuC.png" />
+    <Resource Include="Pictures\RR.png" />
+    <Resource Include="Pictures\SL.png" />
+    <Resource Include="Pictures\WC.png" />
+    <Resource Include="Pictures\WS.png" />
+    <Resource Include="Pictures\YC.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

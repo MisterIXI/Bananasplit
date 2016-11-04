@@ -52,7 +52,7 @@ namespace BananaSplit
         int currentTrackIndex, currentSplitProgress = 0;
 
         int[] currentTrackOrder = new int[] {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
-        TimeSpan[] Splittimes = new TimeSpan[16], PBSplits = new TimeSpan[16], UnsavedGoldSplits = new TimeSpan[16], GoldSplits = new TimeSpan[16], currentTotalTimes = new TimeSpan[16], PBTotalTimes = new TimeSpan[16], PBTimesInRun = new TimeSpan[16];
+        TimeSpan[] Splittimes = new TimeSpan[16], PBSplits = new TimeSpan[16], UnsavedGoldSplits = new TimeSpan[16], GoldSplits = new TimeSpan[16], currentTotalTimes = new TimeSpan[16], PBTotalTimes = new TimeSpan[16];
         TimeSpan lastSplit, totalCurrentRunTime, totalCurrentPBTime, PBEndTime, currentEndTime;
         bool[] isSplitAGoldSplit = new bool[16];
         bool isPendingTrackSelection, isPBMissingSplits, isPBMissingGoldSplits, isCurrentRunMissingSplits;
@@ -279,33 +279,51 @@ namespace BananaSplit
                 if (e.Key == System.Windows.Input.Key.Space) SplitKey();
                 if (e.Key == System.Windows.Input.Key.R) ResetKey();
 
-                if(e.Key == System.Windows.Input.Key.S && System.Windows.Forms.Control.ModifierKeys == Keys.Control)
+                if (e.Key == System.Windows.Input.Key.S && System.Windows.Forms.Control.ModifierKeys == Keys.Control)
                 {
                     if (CheckIfRecords())
                     {
-                        switch (System.Windows.MessageBox.Show("Some of your splits have been updated. Do you want to save them?", "Unsaved Times", MessageBoxButton.YesNoCancel, MessageBoxImage.Question))
+                        switch (System.Windows.MessageBox.Show("Some of your splits have been updated. Do you want to save them?", "Unsaved Times", MessageBoxButton.YesNo, MessageBoxImage.Question))
                         {
                             case MessageBoxResult.Yes:
                                 UpdateRecords();
+                                SaveRecords();
                                 break;
                             case MessageBoxResult.No:
-                                Reset();
+                                return;
+
+                        }
+                    }
+                    else if (unsavedChangesFlag)
+                    {
+                        switch (System.Windows.MessageBox.Show("There are unsaved Changes, do you want to save them?", "Unsaved Times", MessageBoxButton.YesNo, MessageBoxImage.Question))
+                        {
+                            case MessageBoxResult.Yes:
+                                UpdateRecords();
+                                SaveRecords();
                                 break;
-                            case MessageBoxResult.Cancel:
+                            case MessageBoxResult.No:
                                 return;
                         }
-
+                    }
+                    else
+                    {
+                        switch (System.Windows.MessageBox.Show("There are no changes detected. Do you still want to save the current times?", "Unsaved Times", MessageBoxButton.YesNo, MessageBoxImage.Warning))
+                        {
+                            case MessageBoxResult.Yes:
+                                UpdateRecords();
+                                SaveRecords();
+                                break;
+                            case MessageBoxResult.No:
+                                return;
+                        }
                     }
                 }
-            }
-
-
                 if (e.Key == System.Windows.Input.Key.M && e.Key == System.Windows.Input.Key.K)
-            {
-                Console.Beep(800, 400);
+                {
+                    Console.Beep(800, 400);
+                }
             }
-            
-
         }
 
 
@@ -350,7 +368,7 @@ namespace BananaSplit
                 }
             }
             if (unsavedChangesFlag)
-                switch (System.Windows.MessageBox.Show("Your splits have been updated but not yet saved. Do you want to save your spltis now?", "Save Splits?", MessageBoxButton.YesNoCancel, MessageBoxImage.Question))
+                switch (System.Windows.MessageBox.Show("Your splits have been updated but not yet saved. Do you want to save your splits now?", "Save Splits?", MessageBoxButton.YesNoCancel, MessageBoxImage.Question))
                 {
                     case MessageBoxResult.Yes:
                         SaveRecords();
@@ -381,7 +399,8 @@ namespace BananaSplit
             currentTrackIndex = 0;
             currentSplitProgress = 0;
             lastSplit = TimeSpan.Zero;
-            TrackLogo1.Visibility = Visibility.Hidden;
+            TrackLogo1.IsEnabled = false;
+            TrackLogo1.Opacity = .2;
             isPendingTrackSelection = false;
             totalCurrentRunTime = TimeSpan.Zero;
             totalCurrentPBTime = TimeSpan.Zero;
@@ -456,13 +475,11 @@ namespace BananaSplit
 
                 totalCurrentRunTime += Splittimes[currentTrackIndex];
                 totalCurrentPBTime += PBSplits[currentTrackIndex];
-
-                if(PBTotalTimes[currentTrackIndex] == TimeSpan.Zero)
+                currentTotalTimes[currentTrackIndex] = totalCurrentRunTime;
+                if (!isPBMissingSplits)
                 {
-                    PBTotalTimes[currentTrackIndex] = TempTimeSpan;
+                    PBTotalTimes[currentTrackIndex] = totalCurrentPBTime;
                 }
-
-
 
                 ScrollOffset = 0;
                 currentSplitProgress++;
@@ -509,7 +526,7 @@ namespace BananaSplit
 
         void UpdateRecords()
         {
-            if (PBEndTime > currentEndTime && currentEndTime > TimeSpan.Zero)//todo exchange with wholetime
+            if ((PBEndTime > currentEndTime && currentEndTime > TimeSpan.Zero) | PBEndTime == TimeSpan.Zero)//todo exchange with wholetime
             {
                 PBSplits = Splittimes;
                 PBTotalTimes = currentTotalTimes;
@@ -538,8 +555,7 @@ namespace BananaSplit
             MainStopwatch.Reset();
             if (MainRefreshTimer != null) MainRefreshTimer.Dispose();
             TimerLabel.Content = ("00:00");
-            SegmentLabel.Content = ("00:00");
-            foreach (Image stuff in trackSelectionImages) stuff.Visibility = System.Windows.Visibility.Visible;
+            SegmentLabel.Content = ("00:00");            
             isPendingTrackSelection = false;            
             currentSplitProgress = 16;
             currentTrackOrder = new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
@@ -555,6 +571,11 @@ namespace BananaSplit
         {
             SegmentStopwatch.Reset();
             MainStopwatch.Reset();
+            foreach (Image stuff in trackSelectionImages)
+            {
+                stuff.IsEnabled = true;
+                stuff.Opacity = .5;
+            }
             currentSplitProgress = 0;
             currentTrackIndex = 0;
             currentTrackOrder = new int[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
@@ -586,7 +607,7 @@ namespace BananaSplit
                 saveFile = new XDocument(saveFileElement);
                 for (int i = 0; i <= 15; i++)
                 {
-                    saveFileElement.Element("Times").Add(new XElement("Track" + i.ToString(), new XAttribute("PBTime", TimeSpan.Zero), new XAttribute("GoldTime", TimeSpan.Zero), new XAttribute("TimesInRun", TimeSpan.Zero)));
+                    saveFileElement.Element("Times").Add(new XElement("Track" + i.ToString(), new XAttribute("PBTime", TimeSpan.Zero), new XAttribute("GoldTime", TimeSpan.Zero)));
                 }
             }
 
@@ -608,12 +629,10 @@ namespace BananaSplit
             {
                 PBSplits[i] = TimeSpan.Zero;
                 GoldSplits[i] = TimeSpan.Zero;
-                PBTotalTimes[i] = TimeSpan.Zero;
                 try
                 {
                     PBSplits[i] = XmlConvert.ToTimeSpan(saveFileElement.Element("Times").Element("Track" + i.ToString()).Attribute("PBTime").Value);
                     GoldSplits[i] = XmlConvert.ToTimeSpan(saveFileElement.Element("Times").Element("Track" + i.ToString()).Attribute("GoldTime").Value);
-                    PBTotalTimes[i] = XmlConvert.ToTimeSpan(saveFileElement.Element("Times").Element("Track" + i.ToString()).Attribute("TimesInRun").Value);
                 }
                 catch (NullReferenceException)
                 {
@@ -636,14 +655,12 @@ namespace BananaSplit
                     {
                         saveFileElement.Element("Times").Element("Track" + i.ToString()).SetAttributeValue("PBTime", PBSplits[i]);
                         saveFileElement.Element("Times").Element("Track" + i.ToString()).SetAttributeValue("GoldTime", GoldSplits[i]);
-                        saveFileElement.Element("Times").Element("Track" + i.ToString()).SetAttributeValue("TimesInRun", PBTotalTimes[i]);
                     }
                     else
                     {
                         saveFileElement.Element("Times").Add(new XElement("Track" + i.ToString()));
                         saveFileElement.Element("Times").Element("Track" + i.ToString()).SetAttributeValue("PBTime", PBSplits[i]);
                         saveFileElement.Element("Times").Element("Track" + i.ToString()).SetAttributeValue("GoldTime", GoldSplits[i]);
-                        saveFileElement.Element("Times").Element("Track" + i.ToString()).SetAttributeValue("TimesInRun", PBTotalTimes[i]);
                     }
                 }
             }
@@ -652,9 +669,8 @@ namespace BananaSplit
                 saveFileElement.Add(new XElement("Times"));
                 for (int i = 0; i <= 15; i++)
                 {
-                    saveFileElement.Element("Times").Add(new XElement("Track" + i.ToString(), new XAttribute("PBTime", Splittimes[i]), new XAttribute("GoldTime", UnsavedGoldSplits[i]), new XAttribute("TimesInRun", PBTotalTimes[i])));
+                    saveFileElement.Element("Times").Add(new XElement("Track" + i.ToString(), new XAttribute("PBTime", Splittimes[i]), new XAttribute("GoldTime", UnsavedGoldSplits[i])));
                 }
-
             }
             saveFile = new XDocument(saveFileElement);
             saveFile.Save(defaultSaveFileName);
@@ -743,7 +759,7 @@ namespace BananaSplit
                             SplitLabelArray[i, 0].Content = "BC";
                             break;
                         case 15:
-                            SplitLabelArray[i, 0].Content = "RRR";
+                            SplitLabelArray[i, 0].Content = "RR";
                             break;
                         default:
                             SplitLabelArray[i, 0].Content = "Error";
@@ -772,23 +788,39 @@ namespace BananaSplit
                     }
 
                     //Update PB Difference Label
-                    if (PBTotalTimes[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]] > TimeSpan.Zero)
+                    if (!isPBMissingSplits)
                     {
-                        if (currentTotalTimes[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]] > PBTotalTimes[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]])
+                        if (PBTotalTimes[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]] > TimeSpan.Zero)
                         {
-                            SplitLabelArray[i, 2].Content = (currentTotalTimes[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]] - PBTotalTimes[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]]).ToString(@"\+\ ss\.f");
-                            SplitLabelArray[i, 2].Foreground = System.Windows.Media.Brushes.Red;
-                        }
-                        else if(currentTotalTimes[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]] == PBTotalTimes[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]])
-                        {
-                            SplitLabelArray[i, 2].Content = "-";
-                            SplitLabelArray[i, 2].Foreground = System.Windows.Media.Brushes.White;
+                            if (currentTotalTimes[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]] > PBTotalTimes[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]])
+                            {
+                                SplitLabelArray[i, 2].Content = (currentTotalTimes[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]] - PBTotalTimes[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]]).ToString(@"\+\ ss\.f");
+                                if (PBSplits[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]] > Splittimes[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]])
+                                {
+                                    SplitLabelArray[i, 2].Foreground = new SolidColorBrush(Color.FromRgb(255, 165, 165));
+                                }
+                                else
+                                {
+                                    SplitLabelArray[i, 2].Foreground = System.Windows.Media.Brushes.Red;
+                                }
+                                if (isSplitAGoldSplit[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]]) SplitLabelArray[i, 2].Foreground = System.Windows.Media.Brushes.Gold;
+                            }
+                            else if (currentTotalTimes[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]] == PBTotalTimes[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]])
+                            {
+                                SplitLabelArray[i, 2].Content = "-";
+                                SplitLabelArray[i, 2].Foreground = System.Windows.Media.Brushes.White;
+                            }
+                            else
+                            {
+                                SplitLabelArray[i, 2].Content = (PBTotalTimes[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]] - currentTotalTimes[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]]).ToString(@"\-\ ss\.f");
+                                SplitLabelArray[i, 2].Foreground = System.Windows.Media.Brushes.Green;
+                                if (isSplitAGoldSplit[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]]) SplitLabelArray[i, 2].Foreground = System.Windows.Media.Brushes.Gold;
+                            }
                         }
                         else
                         {
-                            SplitLabelArray[i, 2].Content = (PBTotalTimes[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]] - currentTotalTimes[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]]).ToString(@"\-\ ss\.f");
-                            SplitLabelArray[i, 2].Foreground = System.Windows.Media.Brushes.Green;
-                            if(isSplitAGoldSplit[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]]) SplitLabelArray[i, 2].Foreground = System.Windows.Media.Brushes.Gold;
+                            SplitLabelArray[i, 2].Content = "-";
+                            SplitLabelArray[i, 2].Foreground = System.Windows.Media.Brushes.White;
                         }
                     }
                     else
@@ -796,6 +828,7 @@ namespace BananaSplit
                         SplitLabelArray[i, 2].Content = "-";
                         SplitLabelArray[i, 2].Foreground = System.Windows.Media.Brushes.White;
                     }
+
 
                     //Update Split Time Label
                     SplitLabelArray[i, 3].Content = currentTotalTimes[currentTrackOrder[currentSplitProgress -1 -6 + i + ScrollOffset]].ToString(@"mm\:ss\.f");
@@ -854,7 +887,7 @@ namespace BananaSplit
                                 SplitLabelArray[i, 0].Content = "BC";
                                 break;
                             case 15:
-                                SplitLabelArray[i, 0].Content = "RRR";
+                                SplitLabelArray[i, 0].Content = "RR";
                                 break;
                             default:
                                 SplitLabelArray[i, 0].Content = "Error";
@@ -892,7 +925,15 @@ namespace BananaSplit
                             if (currentTotalTimes[currentTrackOrder[i]] > PBTotalTimes[currentTrackOrder[i]])
                             {
                                 SplitLabelArray[i, 2].Content = (currentTotalTimes[currentTrackOrder[i]] - PBTotalTimes[currentTrackOrder[i]]).ToString(@"\+\ ss\.f");
-                                SplitLabelArray[i, 2].Foreground = System.Windows.Media.Brushes.Red;
+                                if (PBSplits[currentTrackOrder[i]] > Splittimes[currentTrackOrder[i]])
+                                {
+                                    SplitLabelArray[i, 2].Foreground = new SolidColorBrush(Color.FromRgb(255, 165, 165));
+                                }
+                                else
+                                {
+                                    SplitLabelArray[i, 2].Foreground = System.Windows.Media.Brushes.Red;
+                                }
+                                if (isSplitAGoldSplit[currentTrackOrder[i]]) SplitLabelArray[i, 2].Foreground = System.Windows.Media.Brushes.Gold;
                             }
                             else if (currentTotalTimes[currentTrackOrder[i]] == PBTotalTimes[currentTrackOrder[i]])
                             {
@@ -978,294 +1019,256 @@ namespace BananaSplit
         #endregion
 
         #region TrackImagesEvents
+
+        private void GeneralTrackLogo_MouseDown(int givenIndex)
+        {
+            if (isPendingTrackSelection)
+            {
+                currentTrackIndex = givenIndex;
+                trackSelectionImages[givenIndex].IsEnabled = false;
+                trackSelectionImages[givenIndex].Opacity = .2;
+                isPendingTrackSelection = false;
+                UpdateLabels();
+            }
+        }
+
+        private void GeneralTrackLogo_MouseEnter(int givenIndex)
+        {
+            if (isPendingTrackSelection) if (trackSelectionImages[givenIndex].IsEnabled) trackSelectionImages[givenIndex].Opacity = 1;
+        }
+
+        private void GeneralTrackLogo_MouseLeave(int givenIndex)
+        {
+            if (isPendingTrackSelection) if (trackSelectionImages[givenIndex].IsEnabled) trackSelectionImages[givenIndex].Opacity = .5;
+        }
+
+
+
         private void TrackLogo1_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            currentTrackIndex = 0;
-            TrackLogo1.Visibility = Visibility.Hidden;
-            isPendingTrackSelection = false;
-            UpdateLabels();
+            GeneralTrackLogo_MouseDown(0);
         }
         
         private void TrackLogo1_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            TrackLogo1.Opacity = 1;
+            GeneralTrackLogo_MouseEnter(0);
         }
         
         private void TrackLogo1_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            TrackLogo1.Opacity = .8;
+            GeneralTrackLogo_MouseLeave(0);
         }
-
         private void TrackLogo2_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            currentTrackIndex = 1;
-            TrackLogo2.Visibility = Visibility.Hidden;
-            isPendingTrackSelection = false;
-            UpdateLabels();
+            GeneralTrackLogo_MouseDown(1);
         }
 
         private void TrackLogo2_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            TrackLogo2.Opacity = 1;
+            GeneralTrackLogo_MouseEnter(1);
         }
 
         private void TrackLogo2_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            TrackLogo2.Opacity = .8;
+            GeneralTrackLogo_MouseLeave(1);
         }
-
         private void TrackLogo3_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            currentTrackIndex = 2;
-            TrackLogo3.Visibility = Visibility.Hidden;
-            isPendingTrackSelection = false;
-            UpdateLabels();
+            GeneralTrackLogo_MouseDown(2);
         }
 
         private void TrackLogo3_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            TrackLogo3.Opacity = 1;
+            GeneralTrackLogo_MouseEnter(2);
         }
 
         private void TrackLogo3_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            TrackLogo3.Opacity = .8;
+            GeneralTrackLogo_MouseLeave(2);
         }
-
         private void TrackLogo4_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            currentTrackIndex = 3;
-            TrackLogo4.Visibility = Visibility.Hidden;
-            isPendingTrackSelection = false;
-            UpdateLabels();
+            GeneralTrackLogo_MouseDown(3);
         }
 
         private void TrackLogo4_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            TrackLogo4.Opacity = 1;
+            GeneralTrackLogo_MouseEnter(3);
         }
 
         private void TrackLogo4_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            TrackLogo4.Opacity = .8;
+            GeneralTrackLogo_MouseLeave(3);
         }
-
         private void TrackLogo5_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            currentTrackIndex = 4;
-            TrackLogo5.Visibility = Visibility.Hidden;
-            isPendingTrackSelection = false;
-            UpdateLabels();
+            GeneralTrackLogo_MouseDown(4);
         }
 
         private void TrackLogo5_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            TrackLogo5.Opacity = 1;
+            GeneralTrackLogo_MouseEnter(4);
         }
 
         private void TrackLogo5_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            TrackLogo5.Opacity = .8;
+            GeneralTrackLogo_MouseLeave(4);
         }
-
         private void TrackLogo6_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            currentTrackIndex = 5;
-            TrackLogo6.Visibility = Visibility.Hidden;
-            isPendingTrackSelection = false;
-            UpdateLabels();
+            GeneralTrackLogo_MouseDown(5);
         }
 
         private void TrackLogo6_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            TrackLogo6.Opacity = 1;
+            GeneralTrackLogo_MouseEnter(5);
         }
 
         private void TrackLogo6_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            TrackLogo6.Opacity = .8;
+            GeneralTrackLogo_MouseLeave(5);
         }
-
         private void TrackLogo7_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            currentTrackIndex = 6;
-            TrackLogo7.Visibility = Visibility.Hidden;
-            isPendingTrackSelection = false;
-            UpdateLabels();
+            GeneralTrackLogo_MouseDown(6);
         }
 
         private void TrackLogo7_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            TrackLogo7.Opacity = 1;
+            GeneralTrackLogo_MouseEnter(6);
         }
 
         private void TrackLogo7_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            TrackLogo7.Opacity = .8;
+            GeneralTrackLogo_MouseLeave(6);
         }
-
         private void TrackLogo8_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            currentTrackIndex = 7;
-            TrackLogo8.Visibility = Visibility.Hidden;
-            isPendingTrackSelection = false;
-            UpdateLabels();
+            GeneralTrackLogo_MouseDown(7);
         }
 
         private void TrackLogo8_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            TrackLogo8.Opacity = 1;
+            GeneralTrackLogo_MouseEnter(7);
         }
 
         private void TrackLogo8_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            TrackLogo8.Opacity = .8;
+            GeneralTrackLogo_MouseLeave(7);
         }
-
         private void TrackLogo9_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            currentTrackIndex = 8;
-            TrackLogo9.Visibility = Visibility.Hidden;
-            isPendingTrackSelection = false;
-            UpdateLabels();
+            GeneralTrackLogo_MouseDown(8);
         }
 
         private void TrackLogo9_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            TrackLogo9.Opacity = 1;
+            GeneralTrackLogo_MouseEnter(8);
         }
 
         private void TrackLogo9_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            TrackLogo9.Opacity = .8;
+            GeneralTrackLogo_MouseLeave(8);
         }
-
         private void TrackLogo10_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            currentTrackIndex = 9;
-            TrackLogo10.Visibility = Visibility.Hidden;
-            isPendingTrackSelection = false;
-            UpdateLabels();
+            GeneralTrackLogo_MouseDown(9);
         }
 
         private void TrackLogo10_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            TrackLogo10.Opacity = 1;
+            GeneralTrackLogo_MouseEnter(9);
         }
 
         private void TrackLogo10_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            TrackLogo10.Opacity = .8;
+            GeneralTrackLogo_MouseLeave(9);
         }
-
         private void TrackLogo11_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            currentTrackIndex = 10;
-            TrackLogo11.Visibility = Visibility.Hidden;
-            isPendingTrackSelection = false;
-            UpdateLabels();
+            GeneralTrackLogo_MouseDown(10);
         }
 
         private void TrackLogo11_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            TrackLogo11.Opacity = 1;
+            GeneralTrackLogo_MouseEnter(10);
         }
 
         private void TrackLogo11_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            TrackLogo11.Opacity = .8;
+            GeneralTrackLogo_MouseLeave(10);
         }
-
         private void TrackLogo12_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            currentTrackIndex = 11;
-            TrackLogo12.Visibility = Visibility.Hidden;
-            isPendingTrackSelection = false;
-            UpdateLabels();
+            GeneralTrackLogo_MouseDown(11);
         }
 
         private void TrackLogo12_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            TrackLogo12.Opacity = 1;
+            GeneralTrackLogo_MouseEnter(11);
         }
 
         private void TrackLogo12_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            TrackLogo12.Opacity = .8;
+            GeneralTrackLogo_MouseLeave(11);
         }
-
         private void TrackLogo13_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            currentTrackIndex = 12;
-            TrackLogo13.Visibility = Visibility.Hidden;
-            isPendingTrackSelection = false;
-            UpdateLabels();
+            GeneralTrackLogo_MouseDown(12);
         }
 
         private void TrackLogo13_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            TrackLogo13.Opacity = 1;
+            GeneralTrackLogo_MouseEnter(12);
         }
 
         private void TrackLogo13_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            TrackLogo13.Opacity = .8;
+            GeneralTrackLogo_MouseLeave(12);
         }
-
         private void TrackLogo14_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            currentTrackIndex = 13;
-            TrackLogo14.Visibility = Visibility.Hidden;
-            isPendingTrackSelection = false;
-            UpdateLabels();
+            GeneralTrackLogo_MouseDown(13);
         }
 
         private void TrackLogo14_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            TrackLogo14.Opacity = 1;
+            GeneralTrackLogo_MouseEnter(13);
         }
 
         private void TrackLogo14_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            TrackLogo14.Opacity = .8;
+            GeneralTrackLogo_MouseLeave(13);
         }
-
         private void TrackLogo15_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            currentTrackIndex = 14;
-            TrackLogo15.Visibility = Visibility.Hidden;
-            isPendingTrackSelection = false;
-            UpdateLabels();
+            GeneralTrackLogo_MouseDown(14);
         }
 
         private void TrackLogo15_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            TrackLogo15.Opacity = 1;
+            GeneralTrackLogo_MouseEnter(14);
         }
 
         private void TrackLogo15_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            TrackLogo15.Opacity = .8;
+            GeneralTrackLogo_MouseLeave(14);
         }
-
         private void TrackLogo16_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            currentTrackIndex = 15;
-            TrackLogo16.Visibility = Visibility.Hidden;
-            isPendingTrackSelection = false;
-            UpdateLabels();
+            GeneralTrackLogo_MouseDown(15);
         }
 
         private void TrackLogo16_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            TrackLogo16.Opacity = 1;
+            GeneralTrackLogo_MouseEnter(15);
         }
 
         private void TrackLogo16_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            TrackLogo16.Opacity = 0.8;
-            
+            GeneralTrackLogo_MouseLeave(15);
         }
+    
         #endregion
 
         TimeSpan SumUpTimeArray(TimeSpan[] givenArray)
