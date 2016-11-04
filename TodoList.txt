@@ -3,3 +3,4 @@ Settings:
 
 UpdateLabels:
 - Fix the weird things http://i.imgur.com/K3clHDo.png in Splits
+- Fuck the ppl that are missing splits: only compare splits +/- if(!isPBMissingSplits)
