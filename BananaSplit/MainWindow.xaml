@@ -109,5 +109,7 @@
         <Label x:Name="Previous_Segment_Label_Number" Content="- 59.25" HorizontalAlignment="Left" Height="42" Margin="233,421,0,0" VerticalAlignment="Top" Width="84" Foreground="White" FontSize="24"/>
         <Label x:Name="Possible_Time_Save_Label_Info" Content="Possible time save:" HorizontalAlignment="Left" Height="38" Margin="155,470,0,0" VerticalAlignment="Top" Width="162" Background="{x:Null}" Foreground="White" FontSize="18.667"/>
         <Label x:Name="Possible_Time_Save_Label_Number" Content="- 42.56" HorizontalAlignment="Left" Height="42" Margin="233,490,0,0" VerticalAlignment="Top" Width="84" Foreground="White" FontSize="24"/>
+
+       
     </Grid>
 </Window>

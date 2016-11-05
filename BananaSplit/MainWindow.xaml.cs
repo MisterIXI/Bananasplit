@@ -171,15 +171,17 @@ namespace BananaSplit
         void ResetKey()
         {
             
-            if (CheckIfRecords())
+            if (CheckIfGolds())
             {
-                switch (System.Windows.MessageBox.Show("Some of your splits have been updated. Do you want to save them?", "Unsaved Times", MessageBoxButton.YesNoCancel, MessageBoxImage.Question))
+                switch (System.Windows.MessageBox.Show("You have beaten some of your best times. Do you want to update them?", "Unsaved Times", MessageBoxButton.YesNoCancel, MessageBoxImage.Question))
                 {
                     case MessageBoxResult.Yes:
-                        UpdateRecords();
+                        UpdateGolds();
                         Reset();
                         break;
                     case MessageBoxResult.No:
+                        isSplitAGoldSplit = new bool[16];
+                        UnsavedGoldSplits = new TimeSpan[16];
                         Reset();
                         break;
                     case MessageBoxResult.Cancel:
@@ -211,6 +213,12 @@ namespace BananaSplit
         void OnHotkeyPoll(object sender, EventArgs e)
         {
             HookInstance.Poll();
+        }
+
+        void SaveKey()
+        {
+            SaveRecords();
+            System.Windows.MessageBox.Show("All changes have been saved.", "Save Info", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         #endregion
@@ -279,46 +287,7 @@ namespace BananaSplit
                 if (e.Key == System.Windows.Input.Key.Space) SplitKey();
                 if (e.Key == System.Windows.Input.Key.R) ResetKey();
 
-                if (e.Key == System.Windows.Input.Key.S && System.Windows.Forms.Control.ModifierKeys == Keys.Control)
-                {
-                    if (CheckIfRecords())
-                    {
-                        switch (System.Windows.MessageBox.Show("Some of your splits have been updated. Do you want to save them?", "Unsaved Times", MessageBoxButton.YesNo, MessageBoxImage.Question))
-                        {
-                            case MessageBoxResult.Yes:
-                                UpdateRecords();
-                                SaveRecords();
-                                break;
-                            case MessageBoxResult.No:
-                                return;
-
-                        }
-                    }
-                    else if (unsavedChangesFlag)
-                    {
-                        switch (System.Windows.MessageBox.Show("There are unsaved Changes, do you want to save them?", "Unsaved Times", MessageBoxButton.YesNo, MessageBoxImage.Question))
-                        {
-                            case MessageBoxResult.Yes:
-                                UpdateRecords();
-                                SaveRecords();
-                                break;
-                            case MessageBoxResult.No:
-                                return;
-                        }
-                    }
-                    else
-                    {
-                        switch (System.Windows.MessageBox.Show("There are no changes detected. Do you still want to save the current times?", "Unsaved Times", MessageBoxButton.YesNo, MessageBoxImage.Warning))
-                        {
-                            case MessageBoxResult.Yes:
-                                UpdateRecords();
-                                SaveRecords();
-                                break;
-                            case MessageBoxResult.No:
-                                return;
-                        }
-                    }
-                }
+                if (e.Key == System.Windows.Input.Key.S && System.Windows.Forms.Control.ModifierKeys == Keys.Control) SaveKey();                                                    
                 if (e.Key == System.Windows.Input.Key.M && e.Key == System.Windows.Input.Key.K)
                 {
                     Console.Beep(800, 400);
@@ -347,28 +316,27 @@ namespace BananaSplit
 
         void on_Window_Close(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (CheckIfRecords())
+            if (CheckIfGolds())
             {
-                if (!MainStopwatch.IsRunning)
+                switch (System.Windows.MessageBox.Show("There are not yet updated gold splits. Do you want to update them and save everything to the save file?", "Save Times?", MessageBoxButton.YesNoCancel, MessageBoxImage.Question))
                 {
-                    if ((string)TimerLabel.Content != "00:00")
-                    {
-                        switch (System.Windows.MessageBox.Show("Some of your splits have been updated. Do you want to save them?", "Unsaved Times", MessageBoxButton.YesNoCancel, MessageBoxImage.Question))
-                        {
-                            case MessageBoxResult.Yes:
-                                UpdateRecords();
-                                break;
-                            case MessageBoxResult.No:
-                                break;
-                            case MessageBoxResult.Cancel:
-                                e.Cancel = true;
-                                return;
-                        }
-                    }
+                    case MessageBoxResult.Yes:
+                        UpdateGolds();
+                        SaveRecords();
+                        e.Cancel = false;
+                        break;
+                    case MessageBoxResult.No:
+                        e.Cancel = false;
+                        break;
+                    case MessageBoxResult.Cancel:
+                        e.Cancel = true;
+                        return;
+
+
                 }
             }
-            if (unsavedChangesFlag)
-                switch (System.Windows.MessageBox.Show("Your splits have been updated but not yet saved. Do you want to save your splits now?", "Save Splits?", MessageBoxButton.YesNoCancel, MessageBoxImage.Question))
+            else if (unsavedChangesFlag)
+                switch (System.Windows.MessageBox.Show("There are unsaved changes. Do you want to save them to the save file?", "Save Splits?", MessageBoxButton.YesNoCancel, MessageBoxImage.Question))
                 {
                     case MessageBoxResult.Yes:
                         SaveRecords();
@@ -485,7 +453,7 @@ namespace BananaSplit
                 currentSplitProgress++;
                 isPendingTrackSelection = true;
                 currentTrackIndex = -1;
-                //if(!MainStopwatch.IsRunning)if (CheckIfRecords()) OnPB();
+                if(!MainStopwatch.IsRunning)if (CheckIfPB()) UpdatePB();
                 UpdateLabels();
 
             }
@@ -499,50 +467,53 @@ namespace BananaSplit
         void UndoSplit()
         {
             //todo
-        }
+        }       
 
-        void OnPB()
-        {
-            PBEndTime = MainStopwatch.Elapsed;
-
-        }
-
-        bool CheckIfRecords()
+        bool CheckIfPB()
         {
             bool tempCheckingBool = false;
-
-            if (PBEndTime > currentEndTime && currentEndTime > TimeSpan.Zero)//todo exchange with wholetime
+            if (PBEndTime > currentEndTime && currentEndTime > TimeSpan.Zero)
             {
                 tempCheckingBool = true;
             }
-            else if (SumUpTimeArray(PBSplits) == TimeSpan.Zero | PBEndTime == TimeSpan.Zero)
+            else if (SumUpTimeArray(PBSplits) == TimeSpan.Zero || PBEndTime == TimeSpan.Zero)
             {
                 tempCheckingBool = true;
             }
-
             if (tempCheckingBool) return true;
             else return false;
         }
 
-        void UpdateRecords()
+        bool CheckIfGolds()
         {
-            if ((PBEndTime > currentEndTime && currentEndTime > TimeSpan.Zero) | PBEndTime == TimeSpan.Zero)//todo exchange with wholetime
-            {
-                PBSplits = Splittimes;
-                PBTotalTimes = currentTotalTimes;
-                PBEndTime = currentEndTime;
-                unsavedChangesFlag = true;
-            }
-            else if (SumUpTimeArray(PBSplits) == TimeSpan.Zero)
-            {
-                PBSplits = Splittimes;
-                unsavedChangesFlag = true;
-            }
+            bool tempCheckingBool = false;
             for (int i = 0; i <= 15; i++)
             {
                 if (isSplitAGoldSplit[i])
                 {
-                    GoldSplits[i] = Splittimes[i];
+                    tempCheckingBool = true;
+                }
+            }
+            if (tempCheckingBool) return true;
+            else return false;
+        }
+
+        void UpdatePB()
+        {
+            PBSplits = Splittimes;
+            PBTotalTimes = currentTotalTimes;
+            totalCurrentPBTime = totalCurrentRunTime;
+            PBEndTime = currentEndTime;
+            unsavedChangesFlag = true;
+        }
+
+        void UpdateGolds()
+        {
+            for (int i = 0; i <= 15; i++)
+            {
+                if (isSplitAGoldSplit[i])
+                {
+                    GoldSplits[i] = UnsavedGoldSplits[i];
                     unsavedChangesFlag = true;
                 }
             }
@@ -587,7 +558,6 @@ namespace BananaSplit
             currentTotalTimes = new TimeSpan[16];            
             totalCurrentRunTime = TimeSpan.Zero;
             totalCurrentPBTime = TimeSpan.Zero;
-
         }
 
         #endregion
@@ -767,18 +737,17 @@ namespace BananaSplit
                     }
 
                     //Gold Delta
-                    //Todo: fix yo shit bruh: calculations
-                    if (GoldSplits[currentTrackOrder[currentSplitProgress -1 -6 + i + ScrollOffset]] != TimeSpan.Zero)
+                    if (GoldSplits[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]] != TimeSpan.Zero)
                     {
-                        if (Splittimes[currentTrackOrder[currentSplitProgress -1 -6 + i + ScrollOffset]] >= GoldSplits[currentSplitProgress -1 -6 + i + ScrollOffset])
+                        if (isSplitAGoldSplit[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]])
                         {
-                            SplitLabelArray[i, 1].Content = (Splittimes[currentTrackOrder[currentSplitProgress -1 -6 + i + ScrollOffset]] - GoldSplits[currentSplitProgress -1 -6 + i + ScrollOffset]).ToString(@"\+\ ss\.f");
-                            SplitLabelArray[i, 1].Foreground = System.Windows.Media.Brushes.White;
+                            SplitLabelArray[i, 1].Content = (GoldSplits[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]] - Splittimes[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]]).ToString(@"\-\ ss\.f");
+                            SplitLabelArray[i, 1].Foreground = System.Windows.Media.Brushes.Gold;
                         }
                         else
                         {
-                            SplitLabelArray[i, 1].Content = (GoldSplits[currentSplitProgress -1 -6 + i + ScrollOffset] - Splittimes[currentTrackOrder[currentSplitProgress -1 -6 + i + ScrollOffset]]).ToString(@"\-\ ss\.f");
-                            SplitLabelArray[i, 1].Foreground = System.Windows.Media.Brushes.Gold;
+                            SplitLabelArray[i, 1].Content = (Splittimes[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]] - GoldSplits[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]]).ToString(@"\+\ ss\.f");
+                            SplitLabelArray[i, 1].Foreground = System.Windows.Media.Brushes.White;
                         }
                     }
                     else
@@ -897,20 +866,15 @@ namespace BananaSplit
                         //Gold Delta
                         if (GoldSplits[currentTrackOrder[i]] != TimeSpan.Zero)
                         {
-                            if (Splittimes[currentTrackOrder[i]] > GoldSplits[currentTrackOrder[i]])
+                            if (isSplitAGoldSplit[currentTrackOrder[i]])
                             {
-                                SplitLabelArray[i, 1].Content = (Splittimes[currentTrackOrder[i]] - GoldSplits[currentTrackOrder[i]]).ToString(@"\+\ ss\.f");
-                                SplitLabelArray[i, 1].Foreground = System.Windows.Media.Brushes.White;
-                            }
-                            else if(Splittimes[currentTrackOrder[i]] == GoldSplits[currentTrackOrder[i]])
-                            {
-                                SplitLabelArray[i, 1].Content = "-";
-                                SplitLabelArray[i, 1].Foreground = System.Windows.Media.Brushes.White;
+                                SplitLabelArray[i, 1].Content = (GoldSplits[currentTrackOrder[i]] - Splittimes[currentTrackOrder[i]]).ToString(@"\-\ ss\.f");
+                                SplitLabelArray[i, 1].Foreground = System.Windows.Media.Brushes.Gold;
                             }
                             else
                             {
-                                SplitLabelArray[i, 1].Content = (GoldSplits[currentTrackOrder[i]] - Splittimes[currentTrackOrder[i]]).ToString(@"\-\ ss\.f");
-                                SplitLabelArray[i, 1].Foreground = System.Windows.Media.Brushes.Gold;                               
+                                SplitLabelArray[i, 1].Content = (Splittimes[currentTrackOrder[i]] - GoldSplits[currentTrackOrder[i]]).ToString(@"\+\ ss\.f");
+                                SplitLabelArray[i, 1].Foreground = System.Windows.Media.Brushes.White;
                             }
                         }
                         else
@@ -1046,6 +1010,7 @@ namespace BananaSplit
 
         private void TrackLogo1_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            Possible_Time_Save_Label_Number.Content = (PBSplits[currentTrackIndex] - GoldSplits[currentTrackIndex]).ToString(@"\-\ ss\.ff");
             GeneralTrackLogo_MouseDown(0);
         }
         
