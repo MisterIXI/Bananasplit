@@ -26,3 +26,5 @@ C:\Git Repos\BananaSplit\BananaSplit\obj\Debug\BananaSplit.Properties.Resources.
 C:\Git Repos\BananaSplit\BananaSplit\obj\Debug\BananaSplit.csproj.GenerateResource.Cache
 C:\Git Repos\BananaSplit\BananaSplit\obj\Debug\BananaSplit.exe
 C:\Git Repos\BananaSplit\BananaSplit\obj\Debug\BananaSplit.pdb
+D:\MisterIXI\Documents\Git Repos\BananaSplit\BananaSplit\obj\Debug\SettingsWindow.g.cs
+D:\MisterIXI\Documents\Git Repos\BananaSplit\BananaSplit\obj\Debug\SettingsWindow.baml

@@ -1,0 +1,24 @@
+﻿<Window x:Name="Var_SettingsWindow" x:Class="BananaSplit.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BananaSplit"
+        mc:Ignorable="d"
+        Title="SettingsWindow" Height="332.665" Width="300" ResizeMode="NoResize" Icon="BananaSplitIcon.png">
+    <Grid Background="#FFF0F0F0">
+        
+        <Label Content="Hotkeys:" HorizontalAlignment="Left" Height="30" Margin="10,10,0,0" VerticalAlignment="Top" Width="111" FontWeight="Bold"/>
+        <Label Content="Start / Split:" HorizontalAlignment="Left" Height="30" Margin="10,45,0,0" VerticalAlignment="Top" Width="111" />
+        <TextBox x:Name="TB_Split" HorizontalAlignment="Left" Height="20" Margin="130,50,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="89" Background="{x:Null}" KeyDown="TB_Split_KeyDown" PreviewMouseDown="TB_Split_PreviewMouseDown" IsTabStop="False"/>
+        <Label Content="Reset:" HorizontalAlignment="Left" Height="30" Margin="10,75,0,0" VerticalAlignment="Top" Width="111"/>
+        <TextBox x:Name="TB_Reset" HorizontalAlignment="Left" Height="20" Margin="130,80,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="89" Background="{x:Null}" KeyDown="TB_Reset_KeyDown" PreviewMouseDown="TB_Reset_PreviewMouseDown" IsTabStop="False"/>
+        <Label Content="Skip Split:" HorizontalAlignment="Left" Height="30" Margin="10,105,0,0" VerticalAlignment="Top" Width="111"/>
+        <TextBox x:Name="TB_SkipSplit" HorizontalAlignment="Left" Height="20" Margin="130,110,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="89" Background="{x:Null}" KeyDown="TB_SkipSplit_KeyDown" PreviewMouseDown="TB_SkipSplit_PreviewMouseDown" IsTabStop="False"/>
+        <Label Content="Undo Selection:" HorizontalAlignment="Left" Height="30" Margin="10,135,0,0" VerticalAlignment="Top" Width="111"/>
+        <TextBox x:Name="TB_UndoSel" HorizontalAlignment="Left" Height="20" Margin="130,140,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="89" Background="{x:Null}" KeyDown="TB_UndoSel_KeyDown" PreviewMouseDown="TB_UndoSel_PreviewMouseDown" IsTabStop="False"/>
+        <Button x:Name="Button_OK" Content="OK" HorizontalAlignment="Left" Height="22" Margin="144,256,0,0" VerticalAlignment="Top" Width="55" PreviewMouseDown="Button_OK_MouseDown"/>
+        <Button x:Name="Button_Cancel" Content="Cancel" HorizontalAlignment="Left" Height="22" Margin="204,256,0,0" VerticalAlignment="Top" Width="55" PreviewMouseDown="Button_Cancel_MouseDown"/>
+        <CheckBox x:Name="CheckBox_GlobalHotkeys" Content="Global Hotkeys" HorizontalAlignment="Left" Height="16" Margin="10,235,0,0" VerticalAlignment="Top" Width="189"/>
+    </Grid>
+</Window>

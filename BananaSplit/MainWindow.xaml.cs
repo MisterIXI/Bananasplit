@@ -35,15 +35,28 @@ namespace BananaSplit
 
         #region SettingsVariables
 
-        bool UseGlobalHotkeys = false; //todo: later set this to true
+        SettingsWindow var_SettingsWindow;
+
+        public static Keys SplitKeyCode, ResetKeyCode, SkipSplitKeyCode, UndoSelectionKeyCode;
+
+        public static bool UseGlobalHotkeys = false, unsavedChangesFlag; //todo: later set this to true
+
+        /*
+
+            var_SettingsWindow
+
+
+        UseGlobalHotkeys: Should the Hotkeys be globally reachable
+        unsavedChangesFlag: Flag that describes if there is 
+        */
 
         #endregion
 
         #region XMLVariables
 
-        XDocument saveFile;
-        XElement saveFileElement;
-        string defaultSaveFileName = "C:\\temp\\BananaSplit_SaveFile.xml";
+        public static XDocument saveFile;
+        public static XElement saveFileElement;
+        public static string defaultSaveFileName = "C:\\temp\\BananaSplit_SaveFile.xml";
 
         #endregion
 
@@ -51,7 +64,7 @@ namespace BananaSplit
         //Splitter Variables
         int currentTrackIndex, currentSplitProgress = 0;
 
-        int[] currentTrackOrder = new int[] {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
+        int[] currentTrackOrder = new int[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
         TimeSpan[] Splittimes = new TimeSpan[16], PBSplits = new TimeSpan[16], UnsavedGoldSplits = new TimeSpan[16], GoldSplits = new TimeSpan[16], currentTotalTimes = new TimeSpan[16], PBTotalTimes = new TimeSpan[16];
         TimeSpan lastSplit, totalCurrentRunTime, totalCurrentPBTime, PBEndTime, currentEndTime;
         bool[] isSplitAGoldSplit = new bool[16];
@@ -90,9 +103,8 @@ namespace BananaSplit
         #region InterfaceVariables
         //Interface Variables
         int ScrollOffset = 0;
-        Image[] trackSelectionImages; 
+        Image[] trackSelectionImages;
         System.Windows.Controls.Label[,] SplitLabelArray;
-        bool unsavedChangesFlag;
 
         /*
         Variable Explanation:
@@ -116,11 +128,6 @@ namespace BananaSplit
             Hook = new LiveSplit.Model.Input.CompositeHook();
             Hook.KeyOrButtonPressed += Hook_OnKeyPress;
 
-            if (UseGlobalHotkeys)
-            {
-                RegisterAllHotkeys();
-            }
-
             SplitLabelArray = new System.Windows.Controls.Label[,] {
                 { L_TrackID1, L_GoldDiff1, L_SplitDiff1, L_SplitT1 },
                 { L_TrackID2, L_GoldDiff2, L_SplitDiff2, L_SplitT2 },
@@ -130,10 +137,15 @@ namespace BananaSplit
                 { L_TrackID6, L_GoldDiff6, L_SplitDiff6, L_SplitT6 },
                 { L_TrackID7, L_GoldDiff7, L_SplitDiff7, L_SplitT7 }};
             trackSelectionImages = new Image[] { TrackLogo1, TrackLogo2, TrackLogo3, TrackLogo4, TrackLogo5, TrackLogo6, TrackLogo7, TrackLogo8, TrackLogo9, TrackLogo10, TrackLogo11, TrackLogo12, TrackLogo13, TrackLogo14, TrackLogo15, TrackLogo16 };
-                LoadInXMLFile(defaultSaveFileName);
-                LoadSplits();
+            LoadInXMLFile(defaultSaveFileName);
+            LoadSplits();
             UpdateLabels();
+            LoadSettings();
             Previous_Segment_Label_Number.Content = "-";
+            if (UseGlobalHotkeys)
+            {
+                RegisterAllHotkeys();
+            }
         }
 
         private void OnMainRefreshTimer(object source, EventArgs e)
@@ -143,7 +155,7 @@ namespace BananaSplit
             this.Dispatcher.Invoke(() =>
             {
                 TimerLabel.Content = MainStopwatch.Elapsed.ToString(@"mm\:ss");
-                SegmentLabel.Content = SegmentStopwatch.Elapsed.ToString(@"mm\:ss");          
+                SegmentLabel.Content = SegmentStopwatch.Elapsed.ToString(@"mm\:ss");
             });
             //LiveSplit.Model.Input.KeyboardHook.RegisterHotKey(System.Windows.Forms.Keys.Space);
         }
@@ -156,21 +168,21 @@ namespace BananaSplit
         #region KeyFunctions
         void RegisterAllHotkeys()
         {
-            Hook.RegisterHotKey(Keys.Space);
-            Hook.RegisterHotKey(Keys.A);
-            Hook.RegisterHotKey(Keys.S);
-            Hook.RegisterHotKey(Keys.D);
+            if(SplitKeyCode != default(Keys))Hook.RegisterHotKey(SplitKeyCode);
+            if (ResetKeyCode != default(Keys)) Hook.RegisterHotKey(ResetKeyCode);
+            if (SkipSplitKeyCode != default(Keys)) Hook.RegisterHotKey(SkipSplitKeyCode);
+            if (UndoSelectionKeyCode != default(Keys)) Hook.RegisterHotKey(UndoSelectionKeyCode);
         }
 
         void SplitKey()
-         {
+        {
             if (MainStopwatch.IsRunning) Split();
             else if (MainStopwatch.Elapsed == TimeSpan.Zero) StartSplitting();
         }
 
         void ResetKey()
         {
-            
+
             if (CheckIfGolds())
             {
                 switch (System.Windows.MessageBox.Show("You have beaten some of your best times. Do you want to update them?", "Unsaved Times", MessageBoxButton.YesNoCancel, MessageBoxImage.Question))
@@ -193,7 +205,7 @@ namespace BananaSplit
 
         }
 
-        void UndoSplitKey()
+        void UndoSelectionKey()
         {
             //todo
         }
@@ -217,7 +229,10 @@ namespace BananaSplit
 
         void SaveKey()
         {
-            SaveRecords();
+            UpdateSettings();
+            UpdateGolds();
+            UpdateRecords();
+            SaveTheSaveFile();
             System.Windows.MessageBox.Show("All changes have been saved.", "Save Info", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
@@ -227,38 +242,15 @@ namespace BananaSplit
 
         void Hook_OnKeyPress(object sender, LiveSplit.Model.Input.KeyOrButton e)
         {
-
-            //Console.WriteLine("pressing triggered");
-          //  if (UseGlobalHotkeys)
-           // {
+            if (UseGlobalHotkeys)
+            {
                 Action action = () =>
                 {
-                    if (Keys.Space == e.Key)
-                    {
-                        SplitKey();
-    
-
-
-                    }
-                    if (Keys.A == e.Key)
-                    {
-                        saveFileElement = new XElement("SaveFile", new XElement("Times"), new XElement("Settings"), new XElement("Miscellaneous"));
-                        for (int i = 0; i <= 15; i++)
-                        {
-                            saveFileElement.Element("Times").Add(new XElement("Track" + i.ToString(), new XAttribute("PBTime", Splittimes[i]), new XAttribute("GoldTime", UnsavedGoldSplits[i])));
-                        }
-                    }
-
-                    if (Keys.S == e.Key)
-                    {
-
-                    }
-                    if (Keys.D == e.Key)
-                    {
-                        Console.WriteLine(saveFileElement);
-                    }
+                    if (e.Key == SplitKeyCode) SplitKey();
+                    if (e.Key == ResetKeyCode) ResetKey();
+                    if (e.Key == SkipSplitKeyCode) SkipSplitKey();
+                    if (e.Key == UndoSelectionKeyCode) UndoSelectionKey();
                 };
-
                 new Task(() =>
                 {
                     try
@@ -270,7 +262,7 @@ namespace BananaSplit
                         Console.WriteLine(ex);
                     }
                 }).Start();
-           // }
+            }
         }
 
         #region WindowEvents
@@ -279,34 +271,29 @@ namespace BananaSplit
         {
             if (!UseGlobalHotkeys)
             {
-                if (e.Key == System.Windows.Input.Key.NumPad1) SplitKey();
-                if (e.Key == System.Windows.Input.Key.NumPad3) ResetKey();
-                if (e.Key == System.Windows.Input.Key.NumPad2) SkipSplitKey();
-                if (e.Key == System.Windows.Input.Key.NumPad8) UndoSplitKey();
+                if (e.Key == System.Windows.Input.KeyInterop.KeyFromVirtualKey((int)SplitKeyCode)) SplitKey();
+                if (e.Key == System.Windows.Input.KeyInterop.KeyFromVirtualKey((int)ResetKeyCode)) ResetKey();
+                if (e.Key == System.Windows.Input.KeyInterop.KeyFromVirtualKey((int)SkipSplitKeyCode)) SkipSplitKey();
+                if (e.Key == System.Windows.Input.KeyInterop.KeyFromVirtualKey((int)UndoSelectionKeyCode)) UndoSelectionKey();
 
-                if (e.Key == System.Windows.Input.Key.Space) SplitKey();
-                if (e.Key == System.Windows.Input.Key.R) ResetKey();
-
-                if (e.Key == System.Windows.Input.Key.S && System.Windows.Forms.Control.ModifierKeys == Keys.Control) SaveKey();                                                    
-                if (e.Key == System.Windows.Input.Key.M && e.Key == System.Windows.Input.Key.K)
-                {
-                    Console.Beep(800, 400);
-                }
+                
             }
+
+            if (e.Key == System.Windows.Input.Key.S && System.Windows.Forms.Control.ModifierKeys == Keys.Control) SaveKey();
         }
 
 
         private void Window_MouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
         {
-            if(e.Delta > 0)
+            if (e.Delta > 0)
             {
                 ScrollUp();
             }
-            if(e.Delta < 0)
+            if (e.Delta < 0)
             {
                 ScrollDown();
             }
-            
+
         }
 
         private void Window_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -322,7 +309,9 @@ namespace BananaSplit
                 {
                     case MessageBoxResult.Yes:
                         UpdateGolds();
-                        SaveRecords();
+                        UpdateRecords();
+                        UpdateSettings();
+                        SaveTheSaveFile();
                         e.Cancel = false;
                         break;
                     case MessageBoxResult.No:
@@ -339,7 +328,8 @@ namespace BananaSplit
                 switch (System.Windows.MessageBox.Show("There are unsaved changes. Do you want to save them to the save file?", "Save Splits?", MessageBoxButton.YesNoCancel, MessageBoxImage.Question))
                 {
                     case MessageBoxResult.Yes:
-                        SaveRecords();
+                        UpdateSettings();
+                        SaveTheSaveFile();
                         e.Cancel = false;
                         break;
                     case MessageBoxResult.No:
@@ -350,6 +340,18 @@ namespace BananaSplit
                         break;
                 }
         }
+
+        private void ContextMenueSettingClick(object sender, RoutedEventArgs e)
+        {
+            var_SettingsWindow = new SettingsWindow();
+            var_SettingsWindow.ShowDialog();
+        }
+
+        private void ContextMenueCloseClick(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Application.Current.Shutdown();                        
+        }
+
 
         #endregion
 
@@ -507,18 +509,6 @@ namespace BananaSplit
             unsavedChangesFlag = true;
         }
 
-        void UpdateGolds()
-        {
-            for (int i = 0; i <= 15; i++)
-            {
-                if (isSplitAGoldSplit[i])
-                {
-                    GoldSplits[i] = UnsavedGoldSplits[i];
-                    unsavedChangesFlag = true;
-                }
-            }
-        }
-
         void Reset()
         {
 
@@ -612,9 +602,64 @@ namespace BananaSplit
             }
         }
 
+        void LoadSettings()
+        {
+            if (saveFileElement.Element("Settings").Element("Hotkeys") != null)
+            {
+                if (saveFileElement.Element("Settings").Element("Hotkeys").Element("Split").Attribute("Primary") != null && saveFileElement.Element("Settings").Element("Hotkeys").Element("Split").Attribute("Primary").Value != null)
+                {
+                    SplitKeyCode = (Keys)XmlConvert.ToInt32(saveFileElement.Element("Settings").Element("Hotkeys").Element("Split").Attribute("Primary").Value);
+                }
+                else SplitKeyCode = Keys.NumPad1;
+                if (saveFileElement.Element("Settings").Element("Hotkeys").Element("Reset").Attribute("Primary") != null && saveFileElement.Element("Settings").Element("Hotkeys").Element("Reset").Attribute("Primary").Value != null)
+                {
+                    ResetKeyCode = (Keys)XmlConvert.ToInt32(saveFileElement.Element("Settings").Element("Hotkeys").Element("Reset").Attribute("Primary").Value);
+                }
+                else ResetKeyCode = Keys.NumPad3;
+                if (saveFileElement.Element("Settings").Element("Hotkeys").Element("SkipSplit").Attribute("Primary") != null && saveFileElement.Element("Settings").Element("Hotkeys").Element("SkipSplit").Attribute("Primary").Value != null)
+                {
+                    SkipSplitKeyCode = (Keys)XmlConvert.ToInt32(saveFileElement.Element("Settings").Element("Hotkeys").Element("SkipSplit").Attribute("Primary").Value);
+                }
+                else SkipSplitKeyCode = Keys.NumPad1;
+                if (saveFileElement.Element("Settings").Element("Hotkeys").Element("UndoSelection").Attribute("Primary") != null && saveFileElement.Element("Settings").Element("Hotkeys").Element("UndoSelection").Attribute("Primary").Value != null)
+                {
+                    UndoSelectionKeyCode = (Keys)XmlConvert.ToInt32(saveFileElement.Element("Settings").Element("Hotkeys").Element("UndoSelection").Attribute("Primary").Value);
+                }
+                else UndoSelectionKeyCode = Keys.NumPad8;
+            }
+            else
+            {
+                saveFileElement.Element("Settings").Add(new XElement("Hotkeys",
+                    new XElement("Split", new XAttribute("Primary", (int)Keys.NumPad1)),
+                    new XElement("Reset", new XAttribute("Primary", (int)Keys.NumPad3)),
+                    new XElement("SkipSplit", new XAttribute("Primary", (int)Keys.NumPad2)),
+                    new XElement("UndoSelection", new XAttribute("Primary", (int)Keys.NumPad8))));
+                SplitKeyCode = Keys.NumPad1;
+                ResetKeyCode = Keys.NumPad3;
+                SkipSplitKeyCode = Keys.NumPad1;
+                UndoSelectionKeyCode = Keys.NumPad8;
+            }
+            if (saveFileElement.Element("Settings").Element("UseGlobalHotkeys") != null)
+            {
+                if (saveFileElement.Element("Settings").Element("UseGlobalHotkeys").Attribute("Enabled") != null && saveFileElement.Element("Settings").Element("UseGlobalHotkeys").Attribute("Enabled").Value != null)
+                {
+                    UseGlobalHotkeys = XmlConvert.ToBoolean(saveFileElement.Element("Settings").Element("UseGlobalHotkeys").Attribute("Enabled").Value);
+                }
+                else UseGlobalHotkeys = false;
+            }
+            else
+            {
+                saveFileElement.Element("Settings").Add(new XElement("UseGlobalHotkeys", new XAttribute("Enabled", false)));
+                UseGlobalHotkeys = false;
+            }
+        }
 
+        void LoadMiscellaneous()
+        {
+            //todo
+        }
 
-        void SaveRecords()
+        void UpdateRecords()
         {
             if(saveFileElement.Element("Times") != null)
             {
@@ -642,34 +687,42 @@ namespace BananaSplit
                     saveFileElement.Element("Times").Add(new XElement("Track" + i.ToString(), new XAttribute("PBTime", Splittimes[i]), new XAttribute("GoldTime", UnsavedGoldSplits[i])));
                 }
             }
+        }
+
+        void UpdateGolds()
+        {
+            for (int i = 0; i <= 15; i++)
+            {
+                if (isSplitAGoldSplit[i])
+                {
+                    GoldSplits[i] = UnsavedGoldSplits[i];
+                    unsavedChangesFlag = true;
+                }
+            }
+        }
+
+
+        void UpdateMiscellaneous()
+        {
+            //todo
+        }
+
+        void UpdateSettings()
+        {
+            saveFileElement.Element("Settings").Element("Hotkeys").Element("Split").SetAttributeValue("Primary", (int)SplitKeyCode);
+            saveFileElement.Element("Settings").Element("Hotkeys").Element("Reset").SetAttributeValue("Primary", (int)ResetKeyCode);
+            saveFileElement.Element("Settings").Element("Hotkeys").Element("SkipSplit").SetAttributeValue("Primary", (int)SkipSplitKeyCode);
+            saveFileElement.Element("Settings").Element("Hotkeys").Element("UndoSelection").SetAttributeValue("Primary", (int)UndoSelectionKeyCode);
+
+            saveFileElement.Element("Settings").Element("UseGlobalHotkeys").SetAttributeValue("Enabled", UseGlobalHotkeys);
+        }
+
+        void SaveTheSaveFile()
+        {
             saveFile = new XDocument(saveFileElement);
             saveFile.Save(defaultSaveFileName);
             unsavedChangesFlag = false;
         }
-
-        void LoadMiscellaneous()
-        {
-            //todo
-        }
-
-        void SaveMiscellaneous()
-        {
-            //todo
-        }
-
-        void saveSettings()
-        {
-            if (saveFileElement.Element("Times") != null)
-            {
-
-            }
-            else
-            {
-                saveFileElement = new XElement("SaveFile", new XElement("Settings"));
-            }
-            //todo
-        }
-
         #endregion
     
         #region ScrollSplits
@@ -1177,6 +1230,9 @@ namespace BananaSplit
         {
             GeneralTrackLogo_MouseLeave(11);
         }
+
+
+
         private void TrackLogo13_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             GeneralTrackLogo_MouseDown(12);

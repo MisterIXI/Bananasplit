@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BananaSplit"
         mc:Ignorable="d"
-        Title="BananaSplit" Height="547.774" Width="327.358" BorderThickness="0" MouseLeftButtonDown="Window_MouseLeftButtonDown" Closing="on_Window_Close" KeyDown="OnKeyDownHandler" ResizeMode="NoResize" MouseWheel="Window_MouseWheel" WindowStyle="None">
+        Title="BananaSplit" Height="547.774" Width="327.358" BorderThickness="0" MouseLeftButtonDown="Window_MouseLeftButtonDown" Closing="on_Window_Close" KeyDown="OnKeyDownHandler" ResizeMode="NoResize" MouseWheel="Window_MouseWheel" WindowStyle="None" Icon="BananaSplitIcon.png">
     <Window.Background>
         <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
             <GradientStop Color="Black"/>
@@ -112,4 +112,12 @@
 
        
     </Grid>
+    <Window.ContextMenu>
+        <ContextMenu>
+            <MenuItem Header="Settings" Click="ContextMenueSettingClick">
+            </MenuItem>
+            <Separator />
+            <MenuItem Header="Close" Click="ContextMenueCloseClick"/>
+        </ContextMenu>
+    </Window.ContextMenu>
 </Window>
