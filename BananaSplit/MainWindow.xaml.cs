@@ -37,16 +37,95 @@ namespace BananaSplit
 
         SettingsWindow var_SettingsWindow;
 
-        public static Keys SplitKeyCode, ResetKeyCode, SkipSplitKeyCode, UndoSelectionKeyCode;
+        static Keys splitKeyCode, resetKeyCode, skipSplitKeyCode, undoSelectionKeyCode;
 
-        public static bool UseGlobalHotkeys = false, unsavedChangesFlag; //todo: later set this to true
+        public static Keys SplitKeyCode
+        {
+            get
+            {
+                return splitKeyCode;
+            }
+            set
+            {
+                if (splitKeyCode != value)
+                {
+                    splitKeyCode = value;
+                    unsavedChangesFlag = true;
+                }
+            }
+        }
+        public static Keys ResetKeyCode
+        {
+            get
+            {
+                return resetKeyCode;
+            }
+            set
+            {
+                if (resetKeyCode != value)
+                {
+                    resetKeyCode = value;
+                    unsavedChangesFlag = true;
+                }
+            }
+        }
+        public static Keys SkipSplitKeyCode
+        {
+            get
+            {
+                return skipSplitKeyCode;
+            }
+            set
+            {
+                if (skipSplitKeyCode != value)
+                {
+                    skipSplitKeyCode = value;
+                    unsavedChangesFlag = true;
+                }
+            }
+        }
+        public static Keys UndoSelectionKeyCode
+        {
+            get
+            {
+                return undoSelectionKeyCode;
+            }
+            set
+            {
+                if (undoSelectionKeyCode != value)
+                {
+                    undoSelectionKeyCode = value;
+                    unsavedChangesFlag = true;
+                }
+            }
+        }
+
+
+        static bool useGlobalHotkeys = false, unsavedChangesFlag; 
+        public static bool UseGlobalHotkeys
+        {
+            get
+            {
+                return useGlobalHotkeys;
+            }
+            set
+            {
+                if (useGlobalHotkeys != value)
+                {
+                    useGlobalHotkeys = value;
+                    unsavedChangesFlag = true;
+                }
+            }
+        }
+
+
 
         /*
 
             var_SettingsWindow
 
 
-        UseGlobalHotkeys: Should the Hotkeys be globally reachable
+        useGlobalHotkeys: Should the Hotkeys be globally reachable
         unsavedChangesFlag: Flag that describes if there is 
         */
 
@@ -142,7 +221,7 @@ namespace BananaSplit
             UpdateLabels();
             LoadSettings();
             Previous_Segment_Label_Number.Content = "-";
-            if (UseGlobalHotkeys)
+            if (useGlobalHotkeys)
             {
                 RegisterAllHotkeys();
             }
@@ -168,10 +247,10 @@ namespace BananaSplit
         #region KeyFunctions
         void RegisterAllHotkeys()
         {
-            if(SplitKeyCode != default(Keys))Hook.RegisterHotKey(SplitKeyCode);
-            if (ResetKeyCode != default(Keys)) Hook.RegisterHotKey(ResetKeyCode);
-            if (SkipSplitKeyCode != default(Keys)) Hook.RegisterHotKey(SkipSplitKeyCode);
-            if (UndoSelectionKeyCode != default(Keys)) Hook.RegisterHotKey(UndoSelectionKeyCode);
+            if(splitKeyCode != default(Keys))Hook.RegisterHotKey(splitKeyCode);
+            if (resetKeyCode != default(Keys)) Hook.RegisterHotKey(resetKeyCode);
+            if (skipSplitKeyCode != default(Keys)) Hook.RegisterHotKey(skipSplitKeyCode);
+            if (undoSelectionKeyCode != default(Keys)) Hook.RegisterHotKey(undoSelectionKeyCode);
         }
 
         void SplitKey()
@@ -242,14 +321,14 @@ namespace BananaSplit
 
         void Hook_OnKeyPress(object sender, LiveSplit.Model.Input.KeyOrButton e)
         {
-            if (UseGlobalHotkeys)
+            if (useGlobalHotkeys)
             {
                 Action action = () =>
                 {
-                    if (e.Key == SplitKeyCode) SplitKey();
-                    if (e.Key == ResetKeyCode) ResetKey();
-                    if (e.Key == SkipSplitKeyCode) SkipSplitKey();
-                    if (e.Key == UndoSelectionKeyCode) UndoSelectionKey();
+                    if (e.Key == splitKeyCode) SplitKey();
+                    if (e.Key == resetKeyCode) ResetKey();
+                    if (e.Key == skipSplitKeyCode) SkipSplitKey();
+                    if (e.Key == undoSelectionKeyCode) UndoSelectionKey();
                 };
                 new Task(() =>
                 {
@@ -269,13 +348,12 @@ namespace BananaSplit
 
         private void OnKeyDownHandler(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            if (!UseGlobalHotkeys)
+            if (!useGlobalHotkeys)
             {
-                if (e.Key == System.Windows.Input.KeyInterop.KeyFromVirtualKey((int)SplitKeyCode)) SplitKey();
-                if (e.Key == System.Windows.Input.KeyInterop.KeyFromVirtualKey((int)ResetKeyCode)) ResetKey();
-                if (e.Key == System.Windows.Input.KeyInterop.KeyFromVirtualKey((int)SkipSplitKeyCode)) SkipSplitKey();
-                if (e.Key == System.Windows.Input.KeyInterop.KeyFromVirtualKey((int)UndoSelectionKeyCode)) UndoSelectionKey();
-
+                if (e.Key == System.Windows.Input.KeyInterop.KeyFromVirtualKey((int)splitKeyCode)) SplitKey();
+                if (e.Key == System.Windows.Input.KeyInterop.KeyFromVirtualKey((int)resetKeyCode)) ResetKey();
+                if (e.Key == System.Windows.Input.KeyInterop.KeyFromVirtualKey((int)skipSplitKeyCode)) SkipSplitKey();
+                if (e.Key == System.Windows.Input.KeyInterop.KeyFromVirtualKey((int)undoSelectionKeyCode)) UndoSelectionKey();
                 
             }
 
@@ -608,24 +686,24 @@ namespace BananaSplit
             {
                 if (saveFileElement.Element("Settings").Element("Hotkeys").Element("Split").Attribute("Primary") != null && saveFileElement.Element("Settings").Element("Hotkeys").Element("Split").Attribute("Primary").Value != null)
                 {
-                    SplitKeyCode = (Keys)XmlConvert.ToInt32(saveFileElement.Element("Settings").Element("Hotkeys").Element("Split").Attribute("Primary").Value);
+                    splitKeyCode = (Keys)XmlConvert.ToInt32(saveFileElement.Element("Settings").Element("Hotkeys").Element("Split").Attribute("Primary").Value);
                 }
-                else SplitKeyCode = Keys.NumPad1;
+                else splitKeyCode = Keys.NumPad1;
                 if (saveFileElement.Element("Settings").Element("Hotkeys").Element("Reset").Attribute("Primary") != null && saveFileElement.Element("Settings").Element("Hotkeys").Element("Reset").Attribute("Primary").Value != null)
                 {
-                    ResetKeyCode = (Keys)XmlConvert.ToInt32(saveFileElement.Element("Settings").Element("Hotkeys").Element("Reset").Attribute("Primary").Value);
+                    resetKeyCode = (Keys)XmlConvert.ToInt32(saveFileElement.Element("Settings").Element("Hotkeys").Element("Reset").Attribute("Primary").Value);
                 }
-                else ResetKeyCode = Keys.NumPad3;
+                else resetKeyCode = Keys.NumPad3;
                 if (saveFileElement.Element("Settings").Element("Hotkeys").Element("SkipSplit").Attribute("Primary") != null && saveFileElement.Element("Settings").Element("Hotkeys").Element("SkipSplit").Attribute("Primary").Value != null)
                 {
-                    SkipSplitKeyCode = (Keys)XmlConvert.ToInt32(saveFileElement.Element("Settings").Element("Hotkeys").Element("SkipSplit").Attribute("Primary").Value);
+                    skipSplitKeyCode = (Keys)XmlConvert.ToInt32(saveFileElement.Element("Settings").Element("Hotkeys").Element("SkipSplit").Attribute("Primary").Value);
                 }
-                else SkipSplitKeyCode = Keys.NumPad1;
+                else skipSplitKeyCode = Keys.NumPad1;
                 if (saveFileElement.Element("Settings").Element("Hotkeys").Element("UndoSelection").Attribute("Primary") != null && saveFileElement.Element("Settings").Element("Hotkeys").Element("UndoSelection").Attribute("Primary").Value != null)
                 {
-                    UndoSelectionKeyCode = (Keys)XmlConvert.ToInt32(saveFileElement.Element("Settings").Element("Hotkeys").Element("UndoSelection").Attribute("Primary").Value);
+                    undoSelectionKeyCode = (Keys)XmlConvert.ToInt32(saveFileElement.Element("Settings").Element("Hotkeys").Element("UndoSelection").Attribute("Primary").Value);
                 }
-                else UndoSelectionKeyCode = Keys.NumPad8;
+                else undoSelectionKeyCode = Keys.NumPad8;
             }
             else
             {
@@ -634,23 +712,23 @@ namespace BananaSplit
                     new XElement("Reset", new XAttribute("Primary", (int)Keys.NumPad3)),
                     new XElement("SkipSplit", new XAttribute("Primary", (int)Keys.NumPad2)),
                     new XElement("UndoSelection", new XAttribute("Primary", (int)Keys.NumPad8))));
-                SplitKeyCode = Keys.NumPad1;
-                ResetKeyCode = Keys.NumPad3;
-                SkipSplitKeyCode = Keys.NumPad1;
-                UndoSelectionKeyCode = Keys.NumPad8;
+                splitKeyCode = Keys.NumPad1;
+                resetKeyCode = Keys.NumPad3;
+                skipSplitKeyCode = Keys.NumPad1;
+                undoSelectionKeyCode = Keys.NumPad8;
             }
-            if (saveFileElement.Element("Settings").Element("UseGlobalHotkeys") != null)
+            if (saveFileElement.Element("Settings").Element("useGlobalHotkeys") != null)
             {
-                if (saveFileElement.Element("Settings").Element("UseGlobalHotkeys").Attribute("Enabled") != null && saveFileElement.Element("Settings").Element("UseGlobalHotkeys").Attribute("Enabled").Value != null)
+                if (saveFileElement.Element("Settings").Element("useGlobalHotkeys").Attribute("Enabled") != null && saveFileElement.Element("Settings").Element("useGlobalHotkeys").Attribute("Enabled").Value != null)
                 {
-                    UseGlobalHotkeys = XmlConvert.ToBoolean(saveFileElement.Element("Settings").Element("UseGlobalHotkeys").Attribute("Enabled").Value);
+                    useGlobalHotkeys = XmlConvert.ToBoolean(saveFileElement.Element("Settings").Element("useGlobalHotkeys").Attribute("Enabled").Value);
                 }
-                else UseGlobalHotkeys = false;
+                else useGlobalHotkeys = false;
             }
             else
             {
-                saveFileElement.Element("Settings").Add(new XElement("UseGlobalHotkeys", new XAttribute("Enabled", false)));
-                UseGlobalHotkeys = false;
+                saveFileElement.Element("Settings").Add(new XElement("useGlobalHotkeys", new XAttribute("Enabled", false)));
+                useGlobalHotkeys = false;
             }
         }
 
@@ -709,12 +787,12 @@ namespace BananaSplit
 
         void UpdateSettings()
         {
-            saveFileElement.Element("Settings").Element("Hotkeys").Element("Split").SetAttributeValue("Primary", (int)SplitKeyCode);
-            saveFileElement.Element("Settings").Element("Hotkeys").Element("Reset").SetAttributeValue("Primary", (int)ResetKeyCode);
-            saveFileElement.Element("Settings").Element("Hotkeys").Element("SkipSplit").SetAttributeValue("Primary", (int)SkipSplitKeyCode);
-            saveFileElement.Element("Settings").Element("Hotkeys").Element("UndoSelection").SetAttributeValue("Primary", (int)UndoSelectionKeyCode);
+            saveFileElement.Element("Settings").Element("Hotkeys").Element("Split").SetAttributeValue("Primary", (int)splitKeyCode);
+            saveFileElement.Element("Settings").Element("Hotkeys").Element("Reset").SetAttributeValue("Primary", (int)resetKeyCode);
+            saveFileElement.Element("Settings").Element("Hotkeys").Element("SkipSplit").SetAttributeValue("Primary", (int)skipSplitKeyCode);
+            saveFileElement.Element("Settings").Element("Hotkeys").Element("UndoSelection").SetAttributeValue("Primary", (int)undoSelectionKeyCode);
 
-            saveFileElement.Element("Settings").Element("UseGlobalHotkeys").SetAttributeValue("Enabled", UseGlobalHotkeys);
+            saveFileElement.Element("Settings").Element("useGlobalHotkeys").SetAttributeValue("Enabled", useGlobalHotkeys);
         }
 
         void SaveTheSaveFile()
