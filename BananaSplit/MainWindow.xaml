@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BananaSplit"
         mc:Ignorable="d"
-        Title="BananaSplit" Height="547.774" Width="327.358" BorderThickness="0" MouseLeftButtonDown="Window_MouseLeftButtonDown" Closing="on_Window_Close" KeyDown="OnKeyDownHandler" ResizeMode="NoResize" MouseWheel="Window_MouseWheel" WindowStyle="None" Icon="BananaSplitIcon.png">
+        Title="BananaSplit" Height="547.774" Width="327.358" BorderThickness="0" MouseLeftButtonDown="Window_MouseLeftButtonDown" Closing="on_Window_Close" KeyDown="OnKeyDownHandler" ResizeMode="NoResize" MouseWheel="Window_MouseWheel" WindowStyle="None" Icon="BS.ico">
     <Window.Background>
         <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
             <GradientStop Color="Black"/>
@@ -62,7 +62,7 @@
             <Label x:Name="L_SplitT7" Content="29:46.9" HorizontalAlignment="Left" Height="45" Margin="232,0,0,0" VerticalAlignment="Top" Width="75" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
         </Grid>
         <Label x:Name="TimerLabel" Content="00:00" HorizontalAlignment="Left" Height="83" Margin="159,236,0,0" VerticalAlignment="Top" Width="154" Background="{x:Null}" Foreground="White" FontSize="60" />
-        <Label x:Name="SegmentLabel" Content="00:00" HorizontalAlignment="Left" Height="50" Margin="220,300,0,0" VerticalAlignment="Top" Width="89" Background="{x:Null}" Foreground="White" FontSize="33.333"/>
+        <Label x:Name="ProgramInfoLabel" Content="Press splitkey to split on Wario Colosseum." HorizontalAlignment="Left" Height="34" Margin="10,316,0,0" VerticalAlignment="Top" Width="299" Background="{x:Null}" Foreground="White" FontSize="14.667"/>
         <Label x:Name="SoB_text" Content="Sum of Best:" HorizontalAlignment="Left" Height="34" Margin="10,339,0,0" VerticalAlignment="Top" Width="129" Background="{x:Null}" Foreground="White" FontSize="21.333"/>
         <Label x:Name="SoB_Value" Content="33:05" HorizontalAlignment="Left" Height="34" Margin="254,339,0,0" VerticalAlignment="Top" Width="63" Background="{x:Null}" Foreground="White" FontSize="21.333"/>
         <Rectangle Height="4" Margin="10,380,10,0" Width="307" Stroke="#FF313131" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Fill="#FF313131">
@@ -105,12 +105,12 @@
             <Image x:Name="TrackLogo15" Source="Pictures/BC.png" Grid.IsSharedSizeScope="True" Grid.Column="3" Grid.Row="2" Margin="4" MouseDown="TrackLogo15_MouseDown" MouseEnter="TrackLogo15_MouseEnter" MouseLeave="TrackLogo15_MouseLeave" Opacity="0.5"/>
             <Image x:Name="TrackLogo16" Source="Pictures/RR.png" Grid.IsSharedSizeScope="True" Grid.Column="3" Grid.Row="3" Margin="4" MouseDown="TrackLogo16_MouseDown" MouseEnter="TrackLogo16_MouseEnter" MouseLeave="TrackLogo16_MouseLeave" Opacity="0.5"/>
         </Grid>
-        <Label x:Name="Previous_Segment_Label_info" Content="Previous Segment: " HorizontalAlignment="Left" Height="37" Margin="155,391,0,0" VerticalAlignment="Top" Width="162" Background="{x:Null}" Foreground="White" FontSize="18.667"/>
+        <Label x:Name="Previous_Segment_Label_info" Content="Previous Segment: " HorizontalAlignment="Left" Height="37" Margin="155,391,0,0" VerticalAlignment="Top" Width="162" Background="{x:Null}" Foreground="White" FontSize="17.333"/>
         <Label x:Name="Previous_Segment_Label_Number" Content="- 59.25" HorizontalAlignment="Left" Height="42" Margin="233,421,0,0" VerticalAlignment="Top" Width="84" Foreground="White" FontSize="24"/>
-        <Label x:Name="Possible_Time_Save_Label_Info" Content="Possible time save:" HorizontalAlignment="Left" Height="38" Margin="155,470,0,0" VerticalAlignment="Top" Width="162" Background="{x:Null}" Foreground="White" FontSize="18.667"/>
+        <Label x:Name="Possible_Time_Save_Label_Info" Content="Possible time save:" HorizontalAlignment="Left" Height="38" Margin="155,470,0,0" VerticalAlignment="Top" Width="162" Background="{x:Null}" Foreground="White" FontSize="17.333"/>
         <Label x:Name="Possible_Time_Save_Label_Number" Content="- 42.56" HorizontalAlignment="Left" Height="42" Margin="233,490,0,0" VerticalAlignment="Top" Width="84" Foreground="White" FontSize="24"/>
 
-       
+
     </Grid>
     <Window.ContextMenu>
         <ContextMenu>
