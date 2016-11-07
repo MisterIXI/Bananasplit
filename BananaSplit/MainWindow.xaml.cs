@@ -179,6 +179,20 @@ namespace BananaSplit
         */
         #endregion
 
+        #region MiscellaneousVariables
+
+        int startedRunCount, completedRunCount;
+
+        /*
+          
+         startedRunCount: count of started runs in total.
+         completedRunCount: count of completed runs.
+        startedRuns - completed runs = Resets
+
+        */
+
+        #endregion
+
         #region InterfaceVariables
         //Interface Variables
         int ScrollOffset = 0;
@@ -222,7 +236,7 @@ namespace BananaSplit
             trackSelectionImages = new Image[] { TrackLogo1, TrackLogo2, TrackLogo3, TrackLogo4, TrackLogo5, TrackLogo6, TrackLogo7, TrackLogo8, TrackLogo9, TrackLogo10, TrackLogo11, TrackLogo12, TrackLogo13, TrackLogo14, TrackLogo15, TrackLogo16 };
             LoadInXMLFile(defaultSaveFileName);
             LoadSplits();
-
+            LoadMiscellaneous();
             currentTrackOrder = new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
             if (!isPBMissingSplits)
             {
@@ -336,6 +350,7 @@ namespace BananaSplit
             UpdateSettings();
             UpdateGolds();
             UpdateRecords();
+            UpdateMiscellaneous();
             SaveTheSaveFile();
             System.Windows.MessageBox.Show("All changes have been saved.", "Save Info", MessageBoxButton.OK, MessageBoxImage.Information);
         }
@@ -414,6 +429,7 @@ namespace BananaSplit
                         UpdateGolds();
                         UpdateRecords();
                         UpdateSettings();
+                        UpdateMiscellaneous();
                         SaveTheSaveFile();
                         e.Cancel = false;
                         break;
@@ -433,6 +449,7 @@ namespace BananaSplit
                     case MessageBoxResult.Yes:
                         UpdateSettings();
                         UpdateRecords();
+                        UpdateMiscellaneous();
                         SaveTheSaveFile();
                         e.Cancel = false;
                         break;
@@ -479,6 +496,8 @@ namespace BananaSplit
             totalCurrentRunTime = TimeSpan.Zero;
             totalCurrentPBTime = TimeSpan.Zero;
             ProgramInfoLabel.Content = "Press splitkey to split on Luigi Circuit.";
+            startedRunCount++;
+            unsavedChangesFlag = true;
         }
         
         void Split()
@@ -505,6 +524,8 @@ namespace BananaSplit
 
                     PBTotalTimes_afterRunInLabel = PBTotalTimes;
                     PBSplits_afterRunInLabel = PBSplits;
+                    completedRunCount++;
+                    unsavedChangesFlag = true;
                 }
                 else
                 {
@@ -774,7 +795,15 @@ namespace BananaSplit
 
         void LoadMiscellaneous()
         {
-            //todo
+            if(saveFileElement.Element("Miscellaneous").Element("RunCounter") != null)
+            {
+                startedRunCount = XmlConvert.ToInt32(saveFileElement.Element("Miscellaneous").Element("RunCounter").Attribute("startedRunCount").Value);
+                completedRunCount = XmlConvert.ToInt32(saveFileElement.Element("Miscellaneous").Element("RunCounter").Attribute("completedRunCount").Value);
+            }
+            else
+            {
+                saveFileElement.Element("Miscellaneous").Add(new XElement("RunCounter", new XAttribute("startedRunCount", 0), new XAttribute("completedRunCount", 0)));
+            }
         }
 
         void UpdateRecords()
@@ -824,7 +853,12 @@ namespace BananaSplit
 
         void UpdateMiscellaneous()
         {
-            //todo
+            if(XmlConvert.ToInt32(saveFileElement.Element("Miscellaneous").Element("RunCounter").Attribute("startedRunCount").Value) != startedRunCount || XmlConvert.ToInt32(saveFileElement.Element("Miscellaneous").Element("RunCounter").Attribute("completedRunCount").Value) != completedRunCount)
+            {
+                saveFileElement.Element("Miscellaneous").Element("RunCounter").Attribute("startedRunCount").SetValue(startedRunCount);
+                saveFileElement.Element("Miscellaneous").Element("RunCounter").Attribute("completedRunCount").SetValue(completedRunCount);
+                unsavedChangesFlag = true;
+            }
         }
 
         void UpdateSettings()

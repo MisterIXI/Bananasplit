@@ -14,3 +14,6 @@ D:\MisterIXI\Documents\Git Repos\BananaSplit\BananaSplit\obj\Debug\BananaSplit.c
 D:\MisterIXI\Documents\Git Repos\BananaSplit\BananaSplit\obj\Debug\BananaSplit.exe
 D:\MisterIXI\Documents\Git Repos\BananaSplit\BananaSplit\obj\Debug\BananaSplit.pdb
 D:\MisterIXI\Documents\Git Repos\BananaSplit\BananaSplit\obj\Debug\BananaSplit.csprojResolveAssemblyReference.cache
+C:\Users\MisterIXI\Documents\bananasplit\BananaSplit\bin\Debug\BananaSplit.exe.config
+C:\Users\MisterIXI\Documents\bananasplit\BananaSplit\obj\Debug\BananaSplit.exe
+C:\Users\MisterIXI\Documents\bananasplit\BananaSplit\obj\Debug\BananaSplit.pdb
