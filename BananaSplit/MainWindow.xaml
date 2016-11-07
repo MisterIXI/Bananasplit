@@ -106,9 +106,11 @@
             <Image x:Name="TrackLogo16" Source="Pictures/RR.png" Grid.IsSharedSizeScope="True" Grid.Column="3" Grid.Row="3" Margin="4" MouseDown="TrackLogo16_MouseDown" MouseEnter="TrackLogo16_MouseEnter" MouseLeave="TrackLogo16_MouseLeave" Opacity="0.5"/>
         </Grid>
         <Label x:Name="Previous_Segment_Label_info" Content="Previous Segment: " HorizontalAlignment="Left" Height="37" Margin="155,391,0,0" VerticalAlignment="Top" Width="162" Background="{x:Null}" Foreground="White" FontSize="17.333"/>
-        <Label x:Name="Previous_Segment_Label_Number" Content="- 59.25" HorizontalAlignment="Left" Height="42" Margin="233,421,0,0" VerticalAlignment="Top" Width="84" Foreground="White" FontSize="24"/>
-        <Label x:Name="Possible_Time_Save_Label_Info" Content="Possible time save:" HorizontalAlignment="Left" Height="38" Margin="155,470,0,0" VerticalAlignment="Top" Width="162" Background="{x:Null}" Foreground="White" FontSize="17.333"/>
-        <Label x:Name="Possible_Time_Save_Label_Number" Content="- 42.56" HorizontalAlignment="Left" Height="42" Margin="233,490,0,0" VerticalAlignment="Top" Width="84" Foreground="White" FontSize="24"/>
+        <Label x:Name="Previous_Segment_Label_Number" Content="- 59.25" HorizontalAlignment="Left" Height="42" Margin="233,409,0,0" VerticalAlignment="Top" Width="84" Foreground="White" FontSize="24" HorizontalContentAlignment="Right"/>
+        <Label x:Name="Possible_Time_Save_Label_Info" Content="Possible time save:" HorizontalAlignment="Left" Height="37" Margin="155,439,0,0" VerticalAlignment="Top" Width="162" Background="{x:Null}" Foreground="White" FontSize="17.333"/>
+        <Label x:Name="Possible_Time_Save_Label_Number" Content="- 42.56" HorizontalAlignment="Left" Height="42" Margin="233,458,0,0" VerticalAlignment="Top" Width="84" Foreground="White" FontSize="24" HorizontalContentAlignment="Right"/>
+        <Label x:Name="Run_Counter_Label_Info" Content="Run Counter:" HorizontalAlignment="Left" Height="37" Margin="155,487,0,0" VerticalAlignment="Top" Width="162" Background="{x:Null}" Foreground="White" FontSize="17.333"/>
+        <Label x:Name="Run_Counter_Label_Number" Content="500/2" HorizontalAlignment="Left" Height="42" Margin="159,506,0,0" VerticalAlignment="Top" Width="158" Foreground="White" FontSize="24" HorizontalContentAlignment="Right"/>
 
 
     </Grid>
