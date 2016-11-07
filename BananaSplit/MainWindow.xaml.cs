@@ -471,6 +471,11 @@ namespace BananaSplit
             var_SettingsWindow.ShowDialog();
         }
 
+        private void ContextMenueAboutClick(object sender, RoutedEventArgs e)
+        {
+            System.Windows.MessageBox.Show("BananaSplit Version 1.0" + Environment.NewLine + "Programmed by Yannik Brändle (aka MisterIXI)" + Environment.NewLine + Environment.NewLine + "For questions, bug reports or anything else regarding this splitter, just send an e-mail at misterixi@t-online.de or contact me on Twitch or Youtube." + Environment.NewLine + Environment.NewLine + "Big shoutouts to GoombaNL for the great help during the development of this program." + Environment.NewLine + Environment.NewLine + "Thank you, Livesplit, for being open-source. You gave Inspiration to the design and the added global hotkey functionality.", "BananaSplit About", MessageBoxButton.OK, MessageBoxImage.None);
+        }
+
         private void ContextMenueCloseClick(object sender, RoutedEventArgs e)
         {
             System.Windows.Application.Current.Shutdown();                        
@@ -1274,7 +1279,8 @@ namespace BananaSplit
                 else Possible_Time_Save_Label_Number.Content = "-";
             }
             else Possible_Time_Save_Label_Number.Content = "-";
-            if(!isPBMissingSplits) SoB_Value.Content = SumUpTimeArray(GoldSplits).ToString(@"mm\:ss");
+            if (!isPBMissingSplits) SoB_Value.Content = SumUpTimeArray(GoldSplits).ToString(@"mm\:ss");
+            else SoB_Value.Content = "-";
 
             Run_Counter_Label_Number.Content = startedRunCount + "/" + completedRunCount;
         }

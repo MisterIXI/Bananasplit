@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Xml.Linq;
 using System.Xml;
+using System.Media;
 
 namespace BananaSplit
 {
@@ -24,6 +25,8 @@ namespace BananaSplit
     {
 
         Key TempSplitKey, TempResetKey, TempSkipSplitKey, TempUndoSelKey;
+        
+
 
         public SettingsWindow()
         {
@@ -112,6 +115,12 @@ namespace BananaSplit
                 TB_UndoSel.Text = e.Key.ToString();
                 TempUndoSelKey = e.Key;
                 Keyboard.ClearFocus();
+                if (TempSplitKey == Key.M && TempResetKey == Key.K && TempSkipSplitKey == Key.D && TempUndoSelKey == Key.D)
+                {
+                    System.IO.Stream str = BananaSplit.Properties.Resources.MKDD;
+                    SoundPlayer snd = new SoundPlayer(str);
+                    snd.Play();
+                }
             }
         }
 
@@ -119,5 +128,6 @@ namespace BananaSplit
         {
             TB_UndoSel.Text = "Set Hotkey...";
         }
+
     }
 }
