@@ -17,3 +17,16 @@ D:\MisterIXI\Documents\Git Repos\BananaSplit\BananaSplit\obj\Debug\BananaSplit.c
 C:\Users\MisterIXI\Documents\bananasplit\BananaSplit\bin\Debug\BananaSplit.exe.config
 C:\Users\MisterIXI\Documents\bananasplit\BananaSplit\obj\Debug\BananaSplit.exe
 C:\Users\MisterIXI\Documents\bananasplit\BananaSplit\obj\Debug\BananaSplit.pdb
+C:\Users\MisterIXI\Documents\bananasplit\BananaSplit\bin\Debug\BananaSplit.exe
+C:\Users\MisterIXI\Documents\bananasplit\BananaSplit\bin\Debug\BananaSplit.pdb
+C:\Users\MisterIXI\Documents\bananasplit\BananaSplit\obj\Debug\BananaSplit.csprojResolveAssemblyReference.cache
+C:\Users\MisterIXI\Documents\bananasplit\BananaSplit\obj\Debug\MainWindow.g.cs
+C:\Users\MisterIXI\Documents\bananasplit\BananaSplit\obj\Debug\SettingsWindow.g.cs
+C:\Users\MisterIXI\Documents\bananasplit\BananaSplit\obj\Debug\App.g.cs
+C:\Users\MisterIXI\Documents\bananasplit\BananaSplit\obj\Debug\BananaSplit_MarkupCompile.cache
+C:\Users\MisterIXI\Documents\bananasplit\BananaSplit\obj\Debug\BananaSplit_MarkupCompile.lref
+C:\Users\MisterIXI\Documents\bananasplit\BananaSplit\obj\Debug\MainWindow.baml
+C:\Users\MisterIXI\Documents\bananasplit\BananaSplit\obj\Debug\SettingsWindow.baml
+C:\Users\MisterIXI\Documents\bananasplit\BananaSplit\obj\Debug\BananaSplit.g.resources
+C:\Users\MisterIXI\Documents\bananasplit\BananaSplit\obj\Debug\BananaSplit.Properties.Resources.resources
+C:\Users\MisterIXI\Documents\bananasplit\BananaSplit\obj\Debug\BananaSplit.csproj.GenerateResource.Cache

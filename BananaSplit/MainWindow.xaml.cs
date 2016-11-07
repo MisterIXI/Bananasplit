@@ -325,7 +325,12 @@ namespace BananaSplit
 
         void UndoSelectionKey()
         {
-            //todo
+            
+            trackSelectionImages[currentTrackIndex].IsEnabled = true;
+            trackSelectionImages[currentTrackIndex].Opacity = .5;
+            isPendingTrackSelection = true;
+            ProgramInfoLabel.Content = "Select the correct track now.";
+            currentTrackIndex = -1;
         }
 
         void SkipSplitKey()
@@ -498,6 +503,7 @@ namespace BananaSplit
             ProgramInfoLabel.Content = "Press splitkey to split on Luigi Circuit.";
             startedRunCount++;
             unsavedChangesFlag = true;
+            UpdateLabels();
         }
         
         void Split()
@@ -1319,7 +1325,6 @@ namespace BananaSplit
 
         private void TrackLogo1_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            Possible_Time_Save_Label_Number.Content = (PBSplits[currentTrackIndex] - GoldSplits[currentTrackIndex]).ToString(@"\-\ ss\.f");
             GeneralTrackLogo_MouseDown(0);
         }
         
