@@ -135,7 +135,7 @@ namespace BananaSplit
 
         public static XDocument saveFile;
         public static XElement saveFileElement;
-        public static string defaultSaveFileName = "BananaSplit_SaveFile.xml";//C:\\temp\\BananaSplit_SaveFile.xml
+        public static string defaultSaveFileName = "C:\\temp\\BananaSplit_SaveFile.xml";//C:\\temp\\BananaSplit_SaveFile.xml
 
         #endregion
 
@@ -147,7 +147,7 @@ namespace BananaSplit
         TimeSpan[] Splittimes = new TimeSpan[16], PBSplits = new TimeSpan[16], UnsavedGoldSplits = new TimeSpan[16], GoldSplits = new TimeSpan[16], currentTotalTimes = new TimeSpan[16], PBTotalTimes = new TimeSpan[16];
         TimeSpan lastSplit, totalCurrentRunTime, totalCurrentPBTime, PBEndTime, currentEndTime;
         bool[] isSplitAGoldSplit = new bool[16];
-        bool isPendingTrackSelection, isPBMissingSplits, isPBMissingGoldSplits, isCurrentRunMissingSplits;
+        bool isPendingTrackSelection, isPBMissingSplits, wasLastSplitSkipped, isPBMissingGoldSplits, isCurrentRunMissingSplits;
 
         /*
         Variable explanation:
@@ -335,7 +335,7 @@ namespace BananaSplit
 
         void SkipSplitKey()
         {
-            //todo
+            SkipSplit();
         }
 
         void LoadKey()
@@ -599,13 +599,45 @@ namespace BananaSplit
 
         void SkipSplit()
         {
-            //todo
-        }
+            if (!isPendingTrackSelection)
+            {
+                TimeSpan TempTimeSpan = MainStopwatch.Elapsed;
+                if (currentTrackIndex != 15)
+                {
+                    //setting the Trackinfo in the TrackOrder Array
+                    currentTrackOrder[currentSplitProgress] = currentTrackIndex;
 
-        void UndoSplit()
-        {
-            //todo
-        }       
+                    //saving the actual Splitted time in the Splittime Array
+                    Splittimes[currentTrackIndex] = TimeSpan.Zero;
+                    currentTotalTimes[currentTrackIndex] = TimeSpan.Zero;
+
+                    lastSplit = TimeSpan.Zero;
+
+
+
+
+                }
+
+
+                    Previous_Segment_Label_Number.Content = "Skipped";
+
+                totalCurrentPBTime += PBSplits[currentTrackIndex];
+                currentTotalTimes[currentTrackIndex] = TimeSpan.Zero;
+                if (!isPBMissingSplits)
+                {
+                    PBTotalTimes[currentTrackIndex] = totalCurrentPBTime;
+                }
+
+                ScrollOffset = 0;
+                currentSplitProgress++;
+                isPendingTrackSelection = true;
+                currentTrackIndex = -1;
+                ProgramInfoLabel.Content = "Select the next track.";
+                UpdateLabels();
+                wasLastSplitSkipped = true;
+
+            }
+        }
 
         bool CheckIfPB()
         {
@@ -671,7 +703,9 @@ namespace BananaSplit
             isSplitAGoldSplit = new bool[16];
             ScrollOffset = -9;
             currentEndTime = TimeSpan.Zero;
+            PBTotalTimes_afterRunInLabel = new TimeSpan[16];
             UpdateLabels();
+                
         }
 
         void ResetVariables()
@@ -741,9 +775,10 @@ namespace BananaSplit
                 }
                 catch (NullReferenceException)
                 {
-                    if (PBSplits[i] == TimeSpan.Zero) isPBMissingSplits = true;
-                    if (GoldSplits[i] == TimeSpan.Zero) isPBMissingGoldSplits = true;
-                }  
+
+                }
+                if (PBSplits[i] == TimeSpan.Zero) isPBMissingSplits = true;
+                if (GoldSplits[i] == TimeSpan.Zero) isPBMissingGoldSplits = true;
             }
         }
 
@@ -1060,7 +1095,18 @@ namespace BananaSplit
 
 
                     //Update Split Time Label
-                    SplitLabelArray[i, 3].Content = currentTotalTimes[currentTrackOrder[currentSplitProgress -1 -6 + i + ScrollOffset]].ToString(@"mm\:ss\.f");
+                    if(currentTotalTimes[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]] != TimeSpan.Zero)
+                    {
+                        SplitLabelArray[i, 3].Content = currentTotalTimes[currentTrackOrder[currentSplitProgress -1 -6 + i + ScrollOffset]].ToString(@"mm\:ss\.f");
+                    }
+                    else
+                    {
+                        SplitLabelArray[i, 1].Foreground = System.Windows.Media.Brushes.White;
+                        SplitLabelArray[i, 1].Content = "-";
+                        SplitLabelArray[i, 2].Foreground = System.Windows.Media.Brushes.White;
+                        SplitLabelArray[i, 2].Content = "-";
+                        SplitLabelArray[i, 3].Content = "-";
+                    }
 
                 }
                 else
@@ -1179,7 +1225,18 @@ namespace BananaSplit
 
 
                         //Update Split Time Label
-                        SplitLabelArray[i, 3].Content = currentTotalTimes[currentTrackOrder[i]].ToString(@"mm\:ss\.f");
+                        if(currentTotalTimes[currentTrackOrder[i]] != TimeSpan.Zero)
+                        {
+                            SplitLabelArray[i, 3].Content = currentTotalTimes[currentTrackOrder[i]].ToString(@"mm\:ss\.f");
+                        }
+                        else
+                        {
+                            SplitLabelArray[i, 1].Foreground = System.Windows.Media.Brushes.White;
+                            SplitLabelArray[i, 1].Content = "-";
+                            SplitLabelArray[i, 2].Foreground = System.Windows.Media.Brushes.White;
+                            SplitLabelArray[i, 2].Content = "-";
+                            SplitLabelArray[i, 3].Content = "-";
+                        }
                     }
                     else
                     {
@@ -1194,6 +1251,7 @@ namespace BananaSplit
                     }
                 }
 
+                if(TimerLabel.Content.ToString() == "00:00") SplitLabelArray[i, 1].Foreground = System.Windows.Media.Brushes.White;
             }
 
             if (MainStopwatch.IsRunning)
@@ -1209,12 +1267,7 @@ namespace BananaSplit
                 else Possible_Time_Save_Label_Number.Content = "-";
             }
             else Possible_Time_Save_Label_Number.Content = "-";
-
-
             if(!isPBMissingSplits) SoB_Value.Content = SumUpTimeArray(GoldSplits).ToString(@"mm\:ss");
-
-
-
         }
 
         void ScrollUp()
