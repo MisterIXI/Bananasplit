@@ -133,7 +133,7 @@ namespace BananaSplit
 
         public static XDocument saveFile;
         public static XElement saveFileElement;
-        public static string defaultSaveFileName = "BananaSplit_SaveFile.xml";//C:\\temp\\BananaSplit_SaveFile.xml
+        public static string defaultSaveFileName = "C:\\temp\\BananaSplit_SaveFile.xml";//C:\\temp\\BananaSplit_SaveFile.xml
 
         #endregion
 
@@ -145,7 +145,7 @@ namespace BananaSplit
         TimeSpan[] Splittimes = new TimeSpan[16], PBSplits = new TimeSpan[16], UnsavedGoldSplits = new TimeSpan[16], GoldSplits = new TimeSpan[16], currentTotalTimes = new TimeSpan[16], PBTotalTimes = new TimeSpan[16];
         TimeSpan lastSplit, totalCurrentRunTime, totalCurrentPBTime, PBEndTime, currentEndTime;
         bool[] isSplitAGoldSplit = new bool[16];
-        bool isPendingTrackSelection, isPBMissingSplits, wasLastSplitSkipped;
+        bool isPendingTrackSelection, isPBMissingSplits, isPBMissingGoldSplits, wasLastSplitSkipped, waitingForFirstSplit;
 
         /*
         Variable explanation:
@@ -495,20 +495,25 @@ namespace BananaSplit
             MainRefreshTimer.Interval = 50;
             MainRefreshTimer.Tick += new EventHandler(OnMainRefreshTimer);
             MainRefreshTimer.Start();
-            currentTrackIndex = 0;
             currentSplitProgress = 0;
             lastSplit = TimeSpan.Zero;
-            TrackLogo1.IsEnabled = false;
             TrackLogo1.Opacity = .2;
-            isPendingTrackSelection = false;
             totalCurrentRunTime = TimeSpan.Zero;
             totalCurrentPBTime = TimeSpan.Zero;
             ProgramInfoLabel.Content = "Press splitkey to split on Luigi Circuit.";
+            isPendingTrackSelection = true;
             startedRunCount++;
             unsavedChangesFlag = true;
             UpdateLabels();
+
+            waitingForFirstSplit = true;
+            System.Windows.Threading.DispatcherTimer leTimer = new System.Windows.Threading.DispatcherTimer();
+            leTimer.Interval = TimeSpan.FromSeconds(3);
+            leTimer.Tag = new Action(delegate { GeneralTrackLogo_MouseDown(0); });
+            leTimer.Tick += new EventHandler(leTimer_Tick);
+            leTimer.Start();
         }
-        
+
         void Split()
         {
             if (!isPendingTrackSelection)
@@ -708,29 +713,25 @@ namespace BananaSplit
                 totalCurrentPBTime += PBSplits[i];
                 PBTotalTimes[i] = totalCurrentPBTime;
             }
+            foreach (Image stuff in trackSelectionImages)
+            {
+                stuff.IsEnabled = false;
+                stuff.Opacity = .5;
+            }
             currentTotalTimes = PBTotalTimes;
             isSplitAGoldSplit = new bool[16];
             ScrollOffset = -9;
             currentEndTime = TimeSpan.Zero;
             PBTotalTimes_afterRunInLabel = new TimeSpan[16];
-            foreach (Image stuff in trackSelectionImages)
-            {
-                stuff.IsEnabled = true;
-                stuff.Opacity = .5;
-            }
             UpdateLabels();
                 
         }
 
         void ResetVariables()
         {
+            waitingForFirstSplit = false;
             SegmentStopwatch.Reset();
             MainStopwatch.Reset();
-            foreach (Image stuff in trackSelectionImages)
-            {
-                stuff.IsEnabled = true;
-                stuff.Opacity = .5;
-            }
             currentSplitProgress = 0;
             currentTrackIndex = 0;
             currentTrackOrder = new int[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
@@ -738,6 +739,7 @@ namespace BananaSplit
             isSplitAGoldSplit = new bool[16];
             if (MainRefreshTimer != null) MainRefreshTimer.Dispose();
             TimerLabel.Content = ("00:00");
+            PBTotalTimes = new TimeSpan[16];
             currentTotalTimes = new TimeSpan[16];            
             totalCurrentRunTime = TimeSpan.Zero;
             totalCurrentPBTime = TimeSpan.Zero;
@@ -777,6 +779,7 @@ namespace BananaSplit
                 PBEndTime = TimeSpan.Zero;
             }
             isPBMissingSplits = false;
+            isPBMissingGoldSplits = false;
             for (int i = 0; i <= 15; i++)
             {
                 PBSplits[i] = TimeSpan.Zero;
@@ -790,6 +793,7 @@ namespace BananaSplit
                 {
 
                 }
+                if (GoldSplits[i] == TimeSpan.Zero) isPBMissingGoldSplits = true;
                 if (PBSplits[i] == TimeSpan.Zero) isPBMissingSplits = true;
             }
         }
@@ -1279,10 +1283,24 @@ namespace BananaSplit
                 else Possible_Time_Save_Label_Number.Content = "-";
             }
             else Possible_Time_Save_Label_Number.Content = "-";
-            if (!isPBMissingSplits) SoB_Value.Content = SumUpTimeArray(GoldSplits).ToString(@"mm\:ss");
+            UpdateSumOfBest();
+            Run_Counter_Label_Number.Content = startedRunCount + "/" + completedRunCount;
+        }
+
+        void UpdateSumOfBest()
+        {
+            if (!isPBMissingGoldSplits)
+            {
+                TimeSpan tempCalcTimeSpan = new TimeSpan();
+                for (int i = 0; i < 16; i++)
+                {
+                    if (isSplitAGoldSplit[i]) tempCalcTimeSpan += UnsavedGoldSplits[i];
+                    else tempCalcTimeSpan += GoldSplits[i];
+                }
+                SoB_Value.Content = tempCalcTimeSpan.ToString(@"mm\:ss");
+            }
             else SoB_Value.Content = "-";
 
-            Run_Counter_Label_Number.Content = startedRunCount + "/" + completedRunCount;
         }
 
         void ScrollUp()
@@ -1315,6 +1333,21 @@ namespace BananaSplit
         #endregion
 
         #region TrackImagesEvents
+
+        private void leTimer_Tick(object sender, EventArgs e)
+        {
+            foreach (Image stuff in trackSelectionImages)
+            {
+                stuff.IsEnabled = true;
+            }
+            System.Windows.Threading.DispatcherTimer timer = (System.Windows.Threading.DispatcherTimer)sender;
+            Action action = (Action)timer.Tag;
+            isPendingTrackSelection = true;
+            action.Invoke();
+            timer.Stop();
+            waitingForFirstSplit = false;
+        }
+
 
         private void GeneralTrackLogo_MouseDown(int givenIndex)
         {
@@ -1381,12 +1414,12 @@ namespace BananaSplit
 
         private void GeneralTrackLogo_MouseEnter(int givenIndex)
         {
-            if (isPendingTrackSelection) if (trackSelectionImages[givenIndex].IsEnabled) trackSelectionImages[givenIndex].Opacity = 1;
+            if (isPendingTrackSelection) if(!waitingForFirstSplit) if (trackSelectionImages[givenIndex].IsEnabled) trackSelectionImages[givenIndex].Opacity = 1;
         }
 
         private void GeneralTrackLogo_MouseLeave(int givenIndex)
         {
-            if (isPendingTrackSelection) if (trackSelectionImages[givenIndex].IsEnabled) trackSelectionImages[givenIndex].Opacity = .5;
+            if (isPendingTrackSelection) if(!waitingForFirstSplit) if (trackSelectionImages[givenIndex].IsEnabled) trackSelectionImages[givenIndex].Opacity = .5;
         }
 
 
