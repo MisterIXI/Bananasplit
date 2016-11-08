@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SaveFile>
+  <Times TotalRunTime="PT0S">
+    <Track0 PBTime="PT0S" GoldTime="PT0S" />
+    <Track1 PBTime="PT0S" GoldTime="PT0S" />
+    <Track2 PBTime="PT0S" GoldTime="PT0S" />
+    <Track3 PBTime="PT0S" GoldTime="PT0S" />
+    <Track4 PBTime="PT0S" GoldTime="PT0S" />
+    <Track5 PBTime="PT0S" GoldTime="PT0S" />
+    <Track6 PBTime="PT0S" GoldTime="PT0S" />
+    <Track7 PBTime="PT0S" GoldTime="PT0S" />
+    <Track8 PBTime="PT0S" GoldTime="PT0S" />
+    <Track9 PBTime="PT0S" GoldTime="PT0S" />
+    <Track10 PBTime="PT0S" GoldTime="PT0S" />
+    <Track11 PBTime="PT0S" GoldTime="PT0S" />
+    <Track12 PBTime="PT0S" GoldTime="PT0S" />
+    <Track13 PBTime="PT0S" GoldTime="PT0S" />
+    <Track14 PBTime="PT0S" GoldTime="PT0S" />
+    <Track15 PBTime="PT0S" GoldTime="PT0S" />
+  </Times>
+  <Settings>
+    <Hotkeys>
+      <Split Primary="97" />
+      <Reset Primary="99" />
+      <SkipSplit Primary="97" />
+      <UndoSelection Primary="104" />
+    </Hotkeys>
+    <useGlobalHotkeys Enabled="false" />
+  </Settings>
+  <Miscellaneous>
+    <RunCounter startedRunCount="0" completedRunCount="0" />
+  </Miscellaneous>
+</SaveFile>

@@ -133,7 +133,7 @@ namespace BananaSplit
 
         public static XDocument saveFile;
         public static XElement saveFileElement;
-        public static string defaultSaveFileName = "C:\\temp\\BananaSplit_SaveFile.xml";//C:\\temp\\BananaSplit_SaveFile.xml
+        public static string defaultSaveFileName = "BananaSplit_SaveFile.xml";//C:\\temp\\BananaSplit_SaveFile.xml
 
         #endregion
 
@@ -723,6 +723,7 @@ namespace BananaSplit
             ScrollOffset = -9;
             currentEndTime = TimeSpan.Zero;
             PBTotalTimes_afterRunInLabel = new TimeSpan[16];
+            Previous_Segment_Label_Number.Content = "";
             UpdateLabels();
                 
         }
