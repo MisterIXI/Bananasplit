@@ -892,6 +892,13 @@ namespace BananaSplit
                     saveFileElement.Element("Times").Add(new XElement("Track" + i.ToString(), new XAttribute("PBTime", PBSplits[i]), new XAttribute("GoldTime", UnsavedGoldSplits[i])));
                 }
             }
+            isPBMissingSplits = false;
+            isPBMissingGoldSplits = false;
+            for (int i = 0; i < 16; i++)
+            {
+                if (GoldSplits[i] == TimeSpan.Zero) isPBMissingGoldSplits = true;
+                if (PBSplits[i] == TimeSpan.Zero) isPBMissingSplits = true;
+            }
         }
 
         void UpdateGolds()
