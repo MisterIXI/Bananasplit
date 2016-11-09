@@ -340,12 +340,14 @@ namespace BananaSplit
 
         void UndoSelectionKey()
         {
-            
-            trackSelectionImages[currentTrackIndex].IsEnabled = true;
-            trackSelectionImages[currentTrackIndex].Opacity = .5;
-            isPendingTrackSelection = true;
-            ProgramInfoLabel.Content = "Select the correct track now.";
-            currentTrackIndex = -1;
+            if(currentTrackIndex > -1)
+            {
+                trackSelectionImages[currentTrackIndex].IsEnabled = true;
+                trackSelectionImages[currentTrackIndex].Opacity = .5;
+                isPendingTrackSelection = true;
+                ProgramInfoLabel.Content = "Select the correct track now.";
+                currentTrackIndex = -1;
+            }
         }
 
         void SkipSplitKey()
@@ -1081,7 +1083,7 @@ namespace BananaSplit
                                     {
                                         SplitLabelArray[i, 2].Foreground = System.Windows.Media.Brushes.Red;
                                     }
-                                    if((currentTotalTimes[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]] - PBTotalTimes[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]]) > TimeSpan.FromMinutes(1)) SplitLabelArray[i, 2].Content = (currentTotalTimes[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]] - PBTotalTimes[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]]).ToString(@"\+\ m\:ss ");
+                                    if((currentTotalTimes[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]] - PBTotalTimes[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]]) > TimeSpan.FromMinutes(1)) SplitLabelArray[i, 2].Content = (currentTotalTimes[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]] - PBTotalTimes[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]]).ToString(@"\+\ m\:ss");
                                     if (isSplitAGoldSplit[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]]) SplitLabelArray[i, 2].Foreground = System.Windows.Media.Brushes.Gold;
                                 }
                                 else if (currentTotalTimes[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]] == PBTotalTimes[currentTrackOrder[currentSplitProgress - 1 - 6 + i + ScrollOffset]])
