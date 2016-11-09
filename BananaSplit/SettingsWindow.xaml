@@ -19,7 +19,9 @@
         <TextBox x:Name="TB_UndoSel" HorizontalAlignment="Left" Height="20" Margin="130,140,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="89" Background="{x:Null}" PreviewMouseDown="TB_UndoSel_PreviewMouseDown" IsTabStop="False" PreviewKeyDown="TB_UndoSel_KeyDown"/>
         <Button x:Name="Button_OK" Content="OK" HorizontalAlignment="Left" Height="22" Margin="144,256,0,0" VerticalAlignment="Top" Width="55" PreviewMouseDown="Button_OK_MouseDown"/>
         <Button x:Name="Button_Cancel" Content="Cancel" HorizontalAlignment="Left" Height="22" Margin="204,256,0,0" VerticalAlignment="Top" Width="55" PreviewMouseDown="Button_Cancel_MouseDown"/>
+        <CheckBox x:Name="CheckBox_ChromaKeyMode" Content="Chroma Key mode" HorizontalAlignment="Left" Height="16" Margin="10,219,0,0" VerticalAlignment="Top" Width="189"/>
         <CheckBox x:Name="CheckBox_GlobalHotkeys" Content="Global Hotkeys" HorizontalAlignment="Left" Height="16" Margin="10,235,0,0" VerticalAlignment="Top" Width="189"/>
+        
 
     </Grid>
     

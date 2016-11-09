@@ -25,7 +25,7 @@ namespace BananaSplit
     {
 
         Key TempSplitKey, TempResetKey, TempSkipSplitKey, TempUndoSelKey;
-        bool TempGloabelHotkeys;
+        bool TempChromaMode, TempGloabelHotkeys;
         
 
 
@@ -39,8 +39,10 @@ namespace BananaSplit
             TB_UndoSel.Text = MainWindow.UndoSelectionKeyCode.ToString();
 
             CheckBox_GlobalHotkeys.IsChecked = MainWindow.UseGlobalHotkeys;
+            CheckBox_ChromaKeyMode.IsChecked = MainWindow.IsInChromaMode;
 
             TempGloabelHotkeys = MainWindow.UseGlobalHotkeys;
+            TempChromaMode = MainWindow.IsInChromaMode;
         }
 
         private void Button_OK_MouseDown(object sender, MouseButtonEventArgs e)
@@ -57,6 +59,7 @@ namespace BananaSplit
             if (TempUndoSelKey != default(Key)) MainWindow.UndoSelectionKeyCode = (Keys)KeyInterop.VirtualKeyFromKey(TempUndoSelKey);
 
             MainWindow.UseGlobalHotkeys = CheckBox_GlobalHotkeys.IsChecked.Value;
+            MainWindow.IsInChromaMode = CheckBox_ChromaKeyMode.IsChecked.Value;
 
             if (CheckBox_GlobalHotkeys.IsChecked.Value && !TempGloabelHotkeys) System.Windows.MessageBox.Show("In order for the Global Hotkeys to work you have to restart the program.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
 
