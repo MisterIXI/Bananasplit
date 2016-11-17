@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BananaSplit"
         mc:Ignorable="d"
-        Title="SettingsWindow" Height="332.665" Width="300" ResizeMode="NoResize" Icon="BS.ico">
+        Title="SettingsWindow" Height="400" Width="300" ResizeMode="NoResize" Icon="BS.ico">
     <Grid Background="#FFF0F0F0">
 
         <Label Content="Hotkeys:" HorizontalAlignment="Left" Height="30" Margin="10,10,0,0" VerticalAlignment="Top" Width="111" FontWeight="Bold"/>
@@ -17,12 +17,15 @@
         <TextBox x:Name="TB_SkipSplit" HorizontalAlignment="Left" Height="20" Margin="130,110,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="89" Background="{x:Null}" PreviewMouseDown="TB_SkipSplit_PreviewMouseDown" IsTabStop="False" PreviewKeyDown="TB_SkipSplit_KeyDown"/>
         <Label Content="Undo Selection:" HorizontalAlignment="Left" Height="30" Margin="10,135,0,0" VerticalAlignment="Top" Width="111"/>
         <TextBox x:Name="TB_UndoSel" HorizontalAlignment="Left" Height="20" Margin="130,140,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="89" Background="{x:Null}" PreviewMouseDown="TB_UndoSel_PreviewMouseDown" IsTabStop="False" PreviewKeyDown="TB_UndoSel_KeyDown"/>
-        <Label Content="Splitkey Delay (ms):" HorizontalAlignment="Left" Height="30" Margin="10,165,0,0" VerticalAlignment="Top" Width="115"/>
-        <TextBox x:Name="TB_SplitDelay" HorizontalAlignment="Left" Height="20" Margin="130,170,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="89" Background="{x:Null}" PreviewTextInput="TheNewTruePreviewTextInput"/>
-        <Button x:Name="Button_OK" Content="OK" HorizontalAlignment="Left" Height="22" Margin="144,256,0,0" VerticalAlignment="Top" Width="55" PreviewMouseDown="Button_OK_MouseDown"/>
-        <Button x:Name="Button_Cancel" Content="Cancel" HorizontalAlignment="Left" Height="22" Margin="204,256,0,0" VerticalAlignment="Top" Width="55" PreviewMouseDown="Button_Cancel_MouseDown"/>
-        <CheckBox x:Name="CheckBox_ChromaKeyMode" Content="Chroma Key mode" HorizontalAlignment="Left" Height="16" Margin="10,219,0,0" VerticalAlignment="Top" Width="189"/>
-        <CheckBox x:Name="CheckBox_GlobalHotkeys" Content="Global Hotkeys" HorizontalAlignment="Left" Height="16" Margin="10,235,0,0" VerticalAlignment="Top" Width="189"/>
+        <Label Content="Undo Split:" HorizontalAlignment="Left" Height="30" Margin="10,165,0,0" VerticalAlignment="Top" Width="115"/>
+        <TextBox x:Name="TB_UndoSplit" HorizontalAlignment="Left" Height="20" Margin="130,170,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="89" Background="{x:Null}" PreviewTextInput="TheNewTruePreviewTextInput" PreviewMouseDown="TB_UndoSplit_PreviewMouseDown" IsTabStop="False" PreviewKeyDown="TB_UndoSplit_KeyDown"/>
+        <Label Content="Splitkey Delay (ms):" HorizontalAlignment="Left" Height="30" Margin="10,195,0,0" VerticalAlignment="Top" Width="115"/>
+        <TextBox x:Name="TB_SplitDelay" HorizontalAlignment="Left" Height="20" Margin="130,200,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="89" Background="{x:Null}" PreviewTextInput="TheNewTruePreviewTextInput"/>
+        <Button x:Name="Button_OK" Content="OK" HorizontalAlignment="Left" Height="22" Margin="144,335,0,0" VerticalAlignment="Top" Width="55" PreviewMouseDown="Button_OK_MouseDown"/>
+        <Button x:Name="Button_Cancel" Content="Cancel" HorizontalAlignment="Left" Height="22" Margin="204,335,0,0" VerticalAlignment="Top" Width="55" PreviewMouseDown="Button_Cancel_MouseDown"/>
+        <CheckBox x:Name="CheckBox_TintMainTimer" Content="Tint Main Timer" HorizontalAlignment="Left" Height="16" Margin="10,282,0,0" VerticalAlignment="Top" Width="189"/>
+        <CheckBox x:Name="CheckBox_ChromaKeyMode" Content="Chroma Key mode" HorizontalAlignment="Left" Height="16" Margin="10,298,0,0" VerticalAlignment="Top" Width="189"/>
+        <CheckBox x:Name="CheckBox_GlobalHotkeys" Content="Global Hotkeys" HorizontalAlignment="Left" Height="16" Margin="10,314,0,0" VerticalAlignment="Top" Width="189"/>
     </Grid>
 
 </Window>
