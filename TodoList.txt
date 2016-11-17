@@ -1,1 +1,7 @@
 - Add Undo Split  Button
+- Add Popup on right click to manually fix skipped splits in PB
+- Add Popup info on start/PB to warn for skipped splits
+- Add option to make the Timer change color 
+
+for later:
+- Add feature that the timeloss is like a preview of the timeloss even before you split (like livesplit)
