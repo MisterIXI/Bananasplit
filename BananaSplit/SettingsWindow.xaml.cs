@@ -37,6 +37,7 @@ namespace BananaSplit
             TB_Reset.Text = MainWindow.ResetKeyCode.ToString();
             TB_SkipSplit.Text = MainWindow.SkipSplitKeyCode.ToString();
             TB_UndoSel.Text = MainWindow.UndoSelectionKeyCode.ToString();
+            TB_SplitDelay.Text = MainWindow.SplitDelay.ToString();
 
             CheckBox_GlobalHotkeys.IsChecked = MainWindow.UseGlobalHotkeys;
             CheckBox_ChromaKeyMode.IsChecked = MainWindow.IsInChromaMode;
@@ -58,6 +59,7 @@ namespace BananaSplit
             if (TempSkipSplitKey != default(Key)) MainWindow.SkipSplitKeyCode = (Keys)KeyInterop.VirtualKeyFromKey(TempSkipSplitKey);
             if (TempUndoSelKey != default(Key)) MainWindow.UndoSelectionKeyCode = (Keys)KeyInterop.VirtualKeyFromKey(TempUndoSelKey);
 
+            MainWindow.SplitDelay = Convert.ToInt32(TB_SplitDelay.Text.ToString());
             MainWindow.UseGlobalHotkeys = CheckBox_GlobalHotkeys.IsChecked.Value;
             MainWindow.IsInChromaMode = CheckBox_ChromaKeyMode.IsChecked.Value;
 
@@ -65,6 +67,17 @@ namespace BananaSplit
 
 
              Close();
+        }
+
+        private void TheNewTruePreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs  e)
+        {
+            e.Handled = !IsTextAllowed(e.Text);
+        }
+
+        private static bool IsTextAllowed(string text)
+        {
+            System.Text.RegularExpressions.Regex regex = new System.Text.RegularExpressions.Regex("[^0-9.-]+"); //regex that matches disallowed text
+            return !regex.IsMatch(text);
         }
 
         private void Button_Cancel_MouseDown(object sender, MouseButtonEventArgs e)

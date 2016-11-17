@@ -132,6 +132,23 @@ namespace BananaSplit
         }
 
 
+        static int splitDelay = 0;
+        public static int SplitDelay
+        {
+            get
+            {
+                return splitDelay;
+            }
+            set
+            {
+                if (splitDelay != value)
+                {
+                    splitDelay = value;
+                    unsavedChangesFlag = true;
+                }
+            }
+        }
+
         /*
 
             var_SettingsWindow
@@ -309,6 +326,25 @@ namespace BananaSplit
 
         void SplitKey()
         {
+            if(splitDelay == 0)
+            {
+                if (MainStopwatch.IsRunning) Split();
+                else if (MainStopwatch.Elapsed == TimeSpan.Zero) StartSplitting();
+            }
+            else
+            {
+                System.Windows.Threading.DispatcherTimer theTrueDelayTimer = new System.Windows.Threading.DispatcherTimer();
+                theTrueDelayTimer.Interval = TimeSpan.FromMilliseconds(splitDelay);
+                theTrueDelayTimer.Tick += new EventHandler(DelayedSplitKey);
+                theTrueDelayTimer.Start();
+            }
+        
+        }
+
+        void DelayedSplitKey(object sender, EventArgs e)
+        {
+            System.Windows.Threading.DispatcherTimer timer = (System.Windows.Threading.DispatcherTimer)sender;
+            timer.Stop();
             if (MainStopwatch.IsRunning) Split();
             else if (MainStopwatch.Elapsed == TimeSpan.Zero) StartSplitting();
         }
@@ -857,13 +893,34 @@ namespace BananaSplit
                 skipSplitKeyCode = Keys.NumPad1;
                 undoSelectionKeyCode = Keys.NumPad8;
             }
+            if(saveFileElement.Element("Settings").Element("SplitDelay") != null)
+            {
+                if(saveFileElement.Element("Settings").Element("SplitDelay").Attribute("DelayInMs") != null && saveFileElement.Element("Settings").Element("SplitDelay").Attribute("DelayInMs").Value != null)
+                {
+                    splitDelay = XmlConvert.ToInt32(saveFileElement.Element("Settings").Element("SplitDelay").Attribute("DelayInMs").Value);
+                }
+                else
+                {
+                    saveFileElement.Element("Settings").Add(new XElement("SplitDelay", new XAttribute("DelayInMs", 0)));
+                    splitDelay = 0;
+                }
+            }
+            else
+            {
+                saveFileElement.Element("Settings").Add(new XElement("SplitDelay", new XAttribute("DelayInMs", 0)));
+                splitDelay = 0;
+            }
             if (saveFileElement.Element("Settings").Element("useGlobalHotkeys") != null)
             {
                 if (saveFileElement.Element("Settings").Element("useGlobalHotkeys").Attribute("Enabled") != null && saveFileElement.Element("Settings").Element("useGlobalHotkeys").Attribute("Enabled").Value != null)
                 {
                     useGlobalHotkeys = XmlConvert.ToBoolean(saveFileElement.Element("Settings").Element("useGlobalHotkeys").Attribute("Enabled").Value);
                 }
-                else useGlobalHotkeys = false;
+                else
+                {
+                    saveFileElement.Element("Settings").Add(new XElement("useGlobalHotkeys", new XAttribute("Enabled", false)));
+                    useGlobalHotkeys = false;
+                }
             }
             else
             {
@@ -876,7 +933,11 @@ namespace BananaSplit
                 {
                     isInChromaMode = XmlConvert.ToBoolean(saveFileElement.Element("Settings").Element("isInChromaMode").Attribute("Enabled").Value);
                 }
-                else isInChromaMode = false;
+                else
+                {
+                    saveFileElement.Element("Settings").Add(new XElement("isInChromaMode", new XAttribute("Enabled", false)));
+                    isInChromaMode = false;
+                }
             }
             else
             {
@@ -967,6 +1028,7 @@ namespace BananaSplit
             saveFileElement.Element("Settings").Element("Hotkeys").Element("SkipSplit").SetAttributeValue("Primary", (int)skipSplitKeyCode);
             saveFileElement.Element("Settings").Element("Hotkeys").Element("UndoSelection").SetAttributeValue("Primary", (int)undoSelectionKeyCode);
 
+            saveFileElement.Element("Settings").Element("SplitDelay").SetAttributeValue("DelayInMs", splitDelay);
             saveFileElement.Element("Settings").Element("useGlobalHotkeys").SetAttributeValue("Enabled", useGlobalHotkeys);
             saveFileElement.Element("Settings").Element("isInChromaMode").SetAttributeValue("Enabled", isInChromaMode);
         }
