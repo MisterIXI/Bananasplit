@@ -99,7 +99,7 @@ namespace BananaSplit
         }
 
 
-        static bool isInChromaMode = false, useGlobalHotkeys = false, unsavedChangesFlag; 
+        static bool isInChromaMode = false, useGlobalHotkeys = false, isInTintedMode = true, unsavedChangesFlag; 
         public static bool UseGlobalHotkeys
         {
             get
@@ -126,6 +126,21 @@ namespace BananaSplit
                 if (isInChromaMode != value)
                 {
                     isInChromaMode = value;
+                    unsavedChangesFlag = true;
+                }
+            }
+        }
+        public static bool IsInTintedMode
+        {
+            get
+            {
+                return isInTintedMode;
+            }
+            set
+            {
+                if (isInTintedMode != value)
+                {
+                    isInTintedMode = value;
                     unsavedChangesFlag = true;
                 }
             }
@@ -294,6 +309,7 @@ namespace BananaSplit
                 RegisterAllHotkeys();
             }
             ProgramInfoLabel.Content = "Press split to begin run.";
+            if (!isInTintedMode) TimerLabel.Foreground = System.Windows.Media.Brushes.White;
             if (isInChromaMode) System.Windows.Application.Current.MainWindow.Background = new LinearGradientBrush(Color.FromRgb(0, 0, 0), Color.FromRgb(0, 0, 0), new System.Windows.Point(0.5, 0), new System.Windows.Point(0.5, 1));
             else System.Windows.Application.Current.MainWindow.Background = new LinearGradientBrush(Color.FromRgb(0, 0, 0), Color.FromRgb(38, 38, 38), new System.Windows.Point(0.5, 0), new System.Windows.Point(0.5, 1));
             UpdateLabels();
@@ -533,6 +549,34 @@ namespace BananaSplit
             var_SettingsWindow.ShowDialog();
             if(isInChromaMode) System.Windows.Application.Current.MainWindow.Background = new LinearGradientBrush(Color.FromRgb(0, 0, 0), Color.FromRgb(0,0,0), new System.Windows.Point(0.5, 0), new System.Windows.Point(0.5, 1));
             else System.Windows.Application.Current.MainWindow.Background = new LinearGradientBrush(Color.FromRgb(0, 0, 0), Color.FromRgb(38, 38, 38), new System.Windows.Point(0.5, 0), new System.Windows.Point(0.5, 1));
+            if (!isInTintedMode)
+            {
+                TimerLabel.Foreground = System.Windows.Media.Brushes.White;
+
+            }
+            else
+            {
+                if (MainStopwatch.IsRunning)
+                {
+                    LinearGradientBrush tempGradient = new LinearGradientBrush();
+                    tempGradient.StartPoint = new Point(0.5, 0);
+                    tempGradient.EndPoint = new Point(0.5, 1);
+                    tempGradient.GradientStops.Add(new System.Windows.Media.GradientStop(Color.FromRgb(111, 193, 243), 0));
+                    tempGradient.GradientStops.Add(new GradientStop(Color.FromRgb(42, 148, 214), 1));
+
+                    TimerLabel.Foreground = tempGradient;
+                }
+                else
+                {
+                    LinearGradientBrush tempGradient = new LinearGradientBrush();
+                    tempGradient.StartPoint = new Point(0.5, 0);
+                    tempGradient.EndPoint = new Point(0.5, 1);
+                    tempGradient.GradientStops.Add(new System.Windows.Media.GradientStop(Color.FromRgb(211, 211, 211), 0));
+                    tempGradient.GradientStops.Add(new GradientStop(Color.FromRgb(134, 134, 134), 1));
+
+                    TimerLabel.Foreground = tempGradient;
+                }
+            }
         }
 
         private void ContextMenueAboutClick(object sender, RoutedEventArgs e)
@@ -570,6 +614,14 @@ namespace BananaSplit
             unsavedChangesFlag = true;
             UpdateLabels();
 
+            LinearGradientBrush tempGradient = new LinearGradientBrush();
+            tempGradient.StartPoint = new Point(0.5, 0);
+            tempGradient.EndPoint = new Point(0.5, 1);
+            tempGradient.GradientStops.Add(new System.Windows.Media.GradientStop(Color.FromRgb(111, 193, 243),0));
+            tempGradient.GradientStops.Add(new GradientStop(Color.FromRgb(42, 148, 214),1));
+
+            TimerLabel.Foreground = tempGradient;
+
             waitingForFirstSplit = true;
             System.Windows.Threading.DispatcherTimer leTimer = new System.Windows.Threading.DispatcherTimer();
             leTimer.Interval = TimeSpan.FromSeconds(3);
@@ -604,6 +656,17 @@ namespace BananaSplit
                     PBSplits_afterRunInLabel = PBSplits;
                     completedRunCount++;
                     unsavedChangesFlag = true;
+
+                    if (isInTintedMode)
+                    {
+                        LinearGradientBrush tempGradient = new LinearGradientBrush();
+                        tempGradient.StartPoint = new Point(0.5, 0);
+                        tempGradient.EndPoint = new Point(0.5, 1);
+                        tempGradient.GradientStops.Add(new System.Windows.Media.GradientStop(Color.FromRgb(228, 111, 100), 0));
+                        tempGradient.GradientStops.Add(new GradientStop(Color.FromRgb(147, 41, 31), 1));
+
+                        TimerLabel.Foreground = tempGradient;
+                    }
                 }
                 else
                 {
@@ -662,7 +725,20 @@ namespace BananaSplit
                 isPendingTrackSelection = true;
                 currentTrackIndex = -1;
                 ProgramInfoLabel.Content = "Select the next track.";
-                if (!MainStopwatch.IsRunning)if (CheckIfPB()) UpdatePB();
+                if (!MainStopwatch.IsRunning) if (CheckIfPB())
+                    {
+                        UpdatePB();
+                        if (isInTintedMode)
+                        {
+                            LinearGradientBrush tempGradient = new LinearGradientBrush();
+                            tempGradient.StartPoint = new Point(0.5, 0);
+                            tempGradient.EndPoint = new Point(0.5, 1);
+                            tempGradient.GradientStops.Add(new System.Windows.Media.GradientStop(Color.FromRgb(96, 199, 124), 0));
+                            tempGradient.GradientStops.Add(new GradientStop(Color.FromRgb(28, 126, 53), 1));
+
+                            TimerLabel.Foreground = tempGradient;
+                        }
+                    }
                 segmentOffsetForUndo = TimeSpan.Zero;
                 UpdateLabels();
 
@@ -838,7 +914,24 @@ namespace BananaSplit
             PBTotalTimes_afterRunInLabel = new TimeSpan[16];
             Previous_Segment_Label_Number.Content = "";
             UpdateLabels();
-                
+
+            if (isInTintedMode)
+            {
+                LinearGradientBrush tempGradient = new LinearGradientBrush();
+                tempGradient.StartPoint = new Point(0.5, 0);
+                tempGradient.EndPoint = new Point(0.5, 1);
+                tempGradient.GradientStops.Add(new System.Windows.Media.GradientStop(Color.FromRgb(211, 211, 211), 0));
+                tempGradient.GradientStops.Add(new GradientStop(Color.FromRgb(134, 134, 134), 1));
+
+                TimerLabel.Foreground = tempGradient;
+            }
+            else
+            {
+                TimerLabel.Foreground = System.Windows.Media.Brushes.White;
+            }
+
+
+
         }
 
         void ResetVariables()
@@ -966,6 +1059,25 @@ namespace BananaSplit
                 saveFileElement.Element("Settings").Add(new XElement("SplitDelay", new XAttribute("DelayInMs", 0)));
                 splitDelay = 0;
             }
+
+            if (saveFileElement.Element("Settings").Element("isInTintedMode") != null)
+            {
+                if (saveFileElement.Element("Settings").Element("isInTintedMode").Attribute("Enabled") != null && saveFileElement.Element("Settings").Element("isInTintedMode").Attribute("Enabled").Value != null)
+                {
+                    isInTintedMode = XmlConvert.ToBoolean(saveFileElement.Element("Settings").Element("isInTintedMode").Attribute("Enabled").Value);
+                }
+                else
+                {
+                    saveFileElement.Element("Settings").Add(new XElement("isInTintedMode", new XAttribute("Enabled", true)));
+                    isInTintedMode = true;
+                }
+            }
+            else
+            {
+                saveFileElement.Element("Settings").Add(new XElement("isInTintedMode", new XAttribute("Enabled", true)));
+                isInTintedMode = true;
+            }
+
             if (saveFileElement.Element("Settings").Element("useGlobalHotkeys") != null)
             {
                 if (saveFileElement.Element("Settings").Element("useGlobalHotkeys").Attribute("Enabled") != null && saveFileElement.Element("Settings").Element("useGlobalHotkeys").Attribute("Enabled").Value != null)
@@ -983,6 +1095,7 @@ namespace BananaSplit
                 saveFileElement.Element("Settings").Add(new XElement("useGlobalHotkeys", new XAttribute("Enabled", false)));
                 useGlobalHotkeys = false;
             }
+
             if (saveFileElement.Element("Settings").Element("isInChromaMode") != null)
             {
                 if (saveFileElement.Element("Settings").Element("isInChromaMode").Attribute("Enabled") != null && saveFileElement.Element("Settings").Element("isInChromaMode").Attribute("Enabled").Value != null)
@@ -1085,6 +1198,7 @@ namespace BananaSplit
             saveFileElement.Element("Settings").Element("Hotkeys").Element("UndoSelection").SetAttributeValue("Primary", (int)undoSelectionKeyCode);
 
             saveFileElement.Element("Settings").Element("SplitDelay").SetAttributeValue("DelayInMs", splitDelay);
+            saveFileElement.Element("Settings").Element("isInTintedMode").SetAttributeValue("Enabled", useGlobalHotkeys);
             saveFileElement.Element("Settings").Element("useGlobalHotkeys").SetAttributeValue("Enabled", useGlobalHotkeys);
             saveFileElement.Element("Settings").Element("isInChromaMode").SetAttributeValue("Enabled", isInChromaMode);
         }

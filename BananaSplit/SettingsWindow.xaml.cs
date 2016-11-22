@@ -41,6 +41,7 @@ namespace BananaSplit
 
             CheckBox_GlobalHotkeys.IsChecked = MainWindow.UseGlobalHotkeys;
             CheckBox_ChromaKeyMode.IsChecked = MainWindow.IsInChromaMode;
+            CheckBox_UnTintMainTimer.IsChecked = MainWindow.IsInTintedMode;
 
             TempGloabelHotkeys = MainWindow.UseGlobalHotkeys;
             TempChromaMode = MainWindow.IsInChromaMode;
@@ -62,6 +63,7 @@ namespace BananaSplit
             MainWindow.SplitDelay = Convert.ToInt32(TB_SplitDelay.Text.ToString());
             MainWindow.UseGlobalHotkeys = CheckBox_GlobalHotkeys.IsChecked.Value;
             MainWindow.IsInChromaMode = CheckBox_ChromaKeyMode.IsChecked.Value;
+            MainWindow.IsInTintedMode = CheckBox_UnTintMainTimer.IsChecked.Value;
 
             if (CheckBox_GlobalHotkeys.IsChecked.Value && !TempGloabelHotkeys) System.Windows.MessageBox.Show("In order for the Global Hotkeys to work you have to restart the program.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
 
@@ -76,7 +78,7 @@ namespace BananaSplit
 
         private static bool IsTextAllowed(string text)
         {
-            System.Text.RegularExpressions.Regex regex = new System.Text.RegularExpressions.Regex("[^0-9.-]+"); //regex that matches disallowed text
+            System.Text.RegularExpressions.Regex regex = new System.Text.RegularExpressions.Regex("[^0-9]"); //regex that matches disallowed text
             return !regex.IsMatch(text);
         }
 

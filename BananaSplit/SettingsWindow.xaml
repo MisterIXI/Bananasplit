@@ -17,10 +17,10 @@
         <Label Content="Undo Selection/Split:" HorizontalAlignment="Left" Height="30" Margin="10,135,0,0" VerticalAlignment="Top" Width="151"/>
         <TextBox x:Name="TB_UndoSel" HorizontalAlignment="Left" Height="20" Margin="170,140,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="89" Background="{x:Null}" PreviewMouseDown="TB_UndoSel_PreviewMouseDown" IsTabStop="False" PreviewKeyDown="TB_UndoSel_KeyDown"/>
         <Label Content="Splitkey Delay (ms):" HorizontalAlignment="Left" Height="30" Margin="10,165,0,0" VerticalAlignment="Top" Width="115"/>
-        <TextBox x:Name="TB_SplitDelay" HorizontalAlignment="Left" Height="20" Margin="170,170,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="89" Background="{x:Null}" PreviewTextInput="TheNewTruePreviewTextInput"/>
+        <TextBox x:Name="TB_SplitDelay" HorizontalAlignment="Left" Height="20" Margin="170,170,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="89" Background="White" PreviewTextInput="TheNewTruePreviewTextInput"/>
         <Button x:Name="Button_OK" Content="OK" HorizontalAlignment="Left" Height="22" Margin="144,271,0,0" VerticalAlignment="Top" Width="55" PreviewMouseDown="Button_OK_MouseDown"/>
         <Button x:Name="Button_Cancel" Content="Cancel" HorizontalAlignment="Left" Height="22" Margin="204,271,0,0" VerticalAlignment="Top" Width="55" PreviewMouseDown="Button_Cancel_MouseDown"/>
-        <CheckBox x:Name="CheckBox_TintMainTimer" Content="Tint Main Timer" HorizontalAlignment="Left" Height="16" Margin="10,218,0,0" VerticalAlignment="Top" Width="189"/>
+        <CheckBox x:Name="CheckBox_UnTintMainTimer" Content="Keep main timer white" HorizontalAlignment="Left" Height="16" Margin="10,218,0,0" VerticalAlignment="Top" Width="189"/>
         <CheckBox x:Name="CheckBox_ChromaKeyMode" Content="Chroma Key mode" HorizontalAlignment="Left" Height="16" Margin="10,234,0,0" VerticalAlignment="Top" Width="189"/>
         <CheckBox x:Name="CheckBox_GlobalHotkeys" Content="Global Hotkeys" HorizontalAlignment="Left" Height="16" Margin="10,250,0,0" VerticalAlignment="Top" Width="189"/>
     </Grid>

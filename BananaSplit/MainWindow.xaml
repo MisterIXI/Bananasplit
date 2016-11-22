@@ -61,7 +61,14 @@
             <Label x:Name="L_SplitDiff7" Content="+44.6" HorizontalAlignment="Left" Height="45" Margin="146,0,0,0" VerticalAlignment="Top" Width="76" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
             <Label x:Name="L_SplitT7" Content="29:46.9" HorizontalAlignment="Left" Height="45" Margin="232,0,0,0" VerticalAlignment="Top" Width="75" Background="{x:Null}" Foreground="White" FontSize="21" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" RenderTransformOrigin="0.495,0.538"/>
         </Grid>
-        <Label x:Name="TimerLabel" Content="00:00" HorizontalAlignment="Left" Height="83" Margin="159,236,0,0" VerticalAlignment="Top" Width="154" Background="{x:Null}" Foreground="White" FontSize="60" />
+        <Label x:Name="TimerLabel" Content="00:00" HorizontalAlignment="Left" Height="83" Margin="155,236,0,0" VerticalAlignment="Top" Width="158" Background="{x:Null}" FontSize="60" FontWeight="Medium" >
+            <Label.Foreground>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="LightGray" Offset="0"/>
+                    <GradientStop Color="#FF868686" Offset="1"/>
+                </LinearGradientBrush>
+            </Label.Foreground>
+        </Label>
         <Label x:Name="ProgramInfoLabel" Content="Press splitkey to split on Wario Colosseum." HorizontalAlignment="Left" Height="34" Margin="10,316,0,0" VerticalAlignment="Top" Width="299" Background="{x:Null}" Foreground="White" FontSize="14.667"/>
         <Label x:Name="SoB_text" Content="Sum of Best:" HorizontalAlignment="Left" Height="34" Margin="10,339,0,0" VerticalAlignment="Top" Width="129" Background="{x:Null}" Foreground="White" FontSize="21.333"/>
         <Label x:Name="SoB_Value" Content="33:05" HorizontalAlignment="Left" Height="34" Margin="254,339,0,0" VerticalAlignment="Top" Width="63" Background="{x:Null}" Foreground="White" FontSize="21.333" HorizontalContentAlignment="Right"/>
