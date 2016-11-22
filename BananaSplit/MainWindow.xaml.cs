@@ -174,7 +174,7 @@ namespace BananaSplit
 
         int[] currentTrackOrder = new int[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
         TimeSpan[] Splittimes = new TimeSpan[16], PBSplits = new TimeSpan[16], UnsavedGoldSplits = new TimeSpan[16], GoldSplits = new TimeSpan[16], currentTotalTimes = new TimeSpan[16], PBTotalTimes = new TimeSpan[16];
-        TimeSpan lastSplit, totalCurrentRunTime, totalCurrentPBTime, PBEndTime, currentEndTime;
+        TimeSpan lastSplit, totalCurrentRunTime, totalCurrentPBTime, PBEndTime, currentEndTime, segmentOffsetForUndo;
         bool[] isSplitAGoldSplit = new bool[16];
         bool isPendingTrackSelection, isPBMissingSplits, isPBMissingGoldSplits, wasLastSplitSkipped, waitingForFirstSplit;
 
@@ -376,13 +376,20 @@ namespace BananaSplit
 
         void UndoSelectionKey()
         {
-            if(currentTrackIndex > -1)
+            if (MainStopwatch.IsRunning)
             {
-                trackSelectionImages[currentTrackIndex].IsEnabled = true;
-                trackSelectionImages[currentTrackIndex].Opacity = .5;
-                isPendingTrackSelection = true;
-                ProgramInfoLabel.Content = "Select the correct track now.";
-                currentTrackIndex = -1;
+                if (isPendingTrackSelection) UndoSplit();
+                else
+                {
+                    if (currentTrackIndex > -1)
+                    {
+                        trackSelectionImages[currentTrackIndex].IsEnabled = true;
+                        trackSelectionImages[currentTrackIndex].Opacity = .5;
+                        isPendingTrackSelection = true;
+                        ProgramInfoLabel.Content = "Select the correct track now.";
+                        currentTrackIndex = -1;
+                    }
+                }
             }
         }
 
@@ -583,11 +590,11 @@ namespace BananaSplit
                     currentTrackOrder[15] = currentTrackIndex;
 
                     //saving the actual Splitted time in the Splittime Array
-                    Splittimes[currentTrackIndex] = SegmentStopwatch.Elapsed;
+                    Splittimes[currentTrackIndex] = SegmentStopwatch.Elapsed + segmentOffsetForUndo;
                     currentTotalTimes[currentTrackIndex] = TempTimeSpan;
                     currentEndTime = TempTimeSpan;
 
-                    lastSplit = SegmentStopwatch.Elapsed;
+                    lastSplit = SegmentStopwatch.Elapsed + segmentOffsetForUndo;
 
                     MainStopwatch.Stop();
 
@@ -604,10 +611,10 @@ namespace BananaSplit
                     currentTrackOrder[currentSplitProgress] = currentTrackIndex;
 
                     //saving the actual Splitted time in the Splittime Array
-                    Splittimes[currentTrackIndex] = SegmentStopwatch.Elapsed;
+                    Splittimes[currentTrackIndex] = SegmentStopwatch.Elapsed + segmentOffsetForUndo;
                     currentTotalTimes[currentTrackIndex] = TempTimeSpan;
 
-                    lastSplit = SegmentStopwatch.Elapsed;
+                    lastSplit = SegmentStopwatch.Elapsed + segmentOffsetForUndo;
 
 
 
@@ -656,9 +663,58 @@ namespace BananaSplit
                 currentTrackIndex = -1;
                 ProgramInfoLabel.Content = "Select the next track.";
                 if (!MainStopwatch.IsRunning)if (CheckIfPB()) UpdatePB();
-
+                segmentOffsetForUndo = TimeSpan.Zero;
                 UpdateLabels();
 
+            }
+        }
+
+        void UndoSplit()
+        {
+            if (MainStopwatch.IsRunning)
+            {
+                if (isPendingTrackSelection)
+                {
+                    if(segmentOffsetForUndo == TimeSpan.Zero)
+                    {
+                        currentSplitProgress -= 1;
+                        currentTrackIndex = currentTrackOrder[currentSplitProgress];
+                        currentTrackOrder[currentSplitProgress] = -1;
+
+                        segmentOffsetForUndo = Splittimes[currentTrackIndex];
+                        currentTotalTimes[currentTrackIndex] = TimeSpan.Zero;
+
+
+                        if (isSplitAGoldSplit[currentTrackIndex])
+                        {
+                            isSplitAGoldSplit[currentTrackIndex] = false;
+                            UnsavedGoldSplits[currentTrackIndex] = TimeSpan.Zero;
+                        }
+
+                        Previous_Segment_Label_Number.Content = "-";
+
+
+
+                        totalCurrentRunTime -= Splittimes[currentTrackIndex];
+
+                        totalCurrentPBTime -= PBSplits[currentTrackIndex];
+
+                        currentTotalTimes[currentTrackIndex] = TimeSpan.Zero;
+                        if (!isPBMissingSplits)
+                        {
+                            PBTotalTimes[currentTrackIndex] = TimeSpan.Zero;
+                        }
+                        Splittimes[currentTrackIndex] = TimeSpan.Zero;
+                        ScrollOffset = 0;
+                        isPendingTrackSelection = false;
+                        UpdateLabels();
+                        ProgramInfoLabel.Content = "Split undone.";
+                    }
+                    else
+                    {
+                        ProgramInfoLabel.Content = "Sorry you can't undo more than once.";
+                    }
+                }
             }
         }
 
