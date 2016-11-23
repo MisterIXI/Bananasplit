@@ -1,0 +1,81 @@
+﻿<Window x:Class="BananaSplit.SplitEditor"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BananaSplit"
+        mc:Ignorable="d"
+        Title="SplitEditor" Height="342" Width="413" Icon="Paomedia-Small-N-Flat-Cog.ico">
+    <Grid>
+        <Grid HorizontalAlignment="Left" Height="25" VerticalAlignment="Top" Width="181" Margin="100,5,0,0">
+            <Label x:Name="Label_Total" Content="Total Time:" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="100"/>
+            <TextBox x:Name="TB_Total" HorizontalAlignment="Left" Height="20" Margin="100,2.5,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="81" PreviewTextInput="BlockWrongInput"/>
+        </Grid>
+        <Grid HorizontalAlignment="Left" Height="25" VerticalAlignment="Top" Width="181" Margin="10,35,0,0">
+            <Label x:Name="Label_LC" Content="Luigi Circuit:" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="100" FontSize="11"/>
+            <TextBox x:Name="TB_LC" HorizontalAlignment="Left" Height="20" Margin="100,2.5,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="81" PreviewTextInput="BlockWrongInput"/>
+        </Grid>
+        <Grid HorizontalAlignment="Left" Height="25" VerticalAlignment="Top" Width="181" Margin="10,60,0,0">
+            <Label x:Name="Label_PB" Content="Peach Beach:" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="100" FontSize="11"/>
+            <TextBox x:Name="TB_PB" HorizontalAlignment="Left" Height="20" Margin="100,2.5,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="81" PreviewTextInput="BlockWrongInput"/>
+        </Grid>
+        <Grid HorizontalAlignment="Left" Height="25" VerticalAlignment="Top" Width="181" Margin="10,85,0,0">
+            <Label x:Name="Label_BP" Content="Baby Park:" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="100" FontSize="11"/>
+            <TextBox x:Name="TB_BP" HorizontalAlignment="Left" Height="20" Margin="100,2.5,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="81" PreviewTextInput="BlockWrongInput"/>
+        </Grid>
+        <Grid HorizontalAlignment="Left" Height="25" VerticalAlignment="Top" Width="181" Margin="10,110,0,0">
+            <Label x:Name="Label_DDD" Content="Dry Dry Desert:" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="100" FontSize="11"/>
+            <TextBox x:Name="TB_DDD" HorizontalAlignment="Left" Height="20" Margin="100,2.5,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="81" PreviewTextInput="BlockWrongInput"/>
+        </Grid>
+        <Grid HorizontalAlignment="Left" Height="25" VerticalAlignment="Top" Width="181" Margin="10,140,0,0">
+            <Label x:Name="Label_MB" Content="Mushroom Bridge:" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="100" FontSize="11"/>
+            <TextBox x:Name="TB_MB" HorizontalAlignment="Left" Height="20" Margin="100,2.5,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="81" PreviewTextInput="BlockWrongInput"/>
+        </Grid>
+        <Grid HorizontalAlignment="Left" Height="25" VerticalAlignment="Top" Width="181" Margin="10,165,0,0">
+            <Label x:Name="Label_MAC" Content="Mario Circuit:" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="100" FontSize="11"/>
+            <TextBox x:Name="TB_MAC" HorizontalAlignment="Left" Height="20" Margin="100,2.5,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="81" PreviewTextInput="BlockWrongInput"/>
+        </Grid>
+        <Grid HorizontalAlignment="Left" Height="25" VerticalAlignment="Top" Width="181" Margin="10,190,0,0">
+            <Label x:Name="Label_DC" Content="Daisy Cruiser:" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="100" FontSize="11"/>
+            <TextBox x:Name="TB_DC" HorizontalAlignment="Left" Height="20" Margin="100,2.5,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="81" PreviewTextInput="BlockWrongInput"/>
+        </Grid>
+        <Grid HorizontalAlignment="Left" Height="25" VerticalAlignment="Top" Width="181" Margin="10,215,0,0">
+            <Label x:Name="Label_WS" Content="Waluigi Stadium:" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="100" FontSize="11"/>
+            <TextBox x:Name="TB_WS" HorizontalAlignment="Left" Height="20" Margin="100,2.5,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="81" PreviewTextInput="BlockWrongInput"/>
+        </Grid>
+        <Grid HorizontalAlignment="Left" Height="25" VerticalAlignment="Top" Width="181" Margin="200,35,0,0">
+            <Label x:Name="Label_SL" Content="Sherbet Land:" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="100" FontSize="11"/>
+            <TextBox x:Name="TB_SL" HorizontalAlignment="Left" Height="20" Margin="100,2.5,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="81" PreviewTextInput="BlockWrongInput"/>
+        </Grid>
+        <Grid HorizontalAlignment="Left" Height="25" VerticalAlignment="Top" Width="181" Margin="200,60,0,0">
+            <Label x:Name="Label_MUC" Content="Mushroom City:" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="100" FontSize="11"/>
+            <TextBox x:Name="TB_MUC" HorizontalAlignment="Left" Height="20" Margin="100,2.5,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="81" PreviewTextInput="BlockWrongInput"/>
+        </Grid>
+        <Grid HorizontalAlignment="Left" Height="25" VerticalAlignment="Top" Width="181" Margin="200,85,0,0">
+            <Label x:Name="Label_YC" Content="Yoshi Circuit:" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="100" FontSize="11"/>
+            <TextBox x:Name="TB_YC" HorizontalAlignment="Left" Height="20" Margin="100,2.5,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="81" PreviewTextInput="BlockWrongInput"/>
+        </Grid>
+        <Grid HorizontalAlignment="Left" Height="25" VerticalAlignment="Top" Width="181" Margin="200,110,0,0">
+            <Label x:Name="Label_DKM" Content="DK Mountain:" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="100" FontSize="11"/>
+            <TextBox x:Name="TB_DKM" HorizontalAlignment="Left" Height="20" Margin="100,2.5,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="81" PreviewTextInput="BlockWrongInput"/>
+        </Grid>
+        <Grid HorizontalAlignment="Left" Height="25" VerticalAlignment="Top" Width="181" Margin="200,140,0,0">
+            <Label x:Name="Label_WC" Content="Wario Colosseum:" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="100" FontSize="11"/>
+            <TextBox x:Name="TB_WC" HorizontalAlignment="Left" Height="20" Margin="100,2.5,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="81" PreviewTextInput="BlockWrongInput"/>
+        </Grid>
+        <Grid HorizontalAlignment="Left" Height="25" VerticalAlignment="Top" Width="181" Margin="200,165,0,0">
+            <Label x:Name="Label_DDJ" Content="Dino Dino Jungle:" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="100" FontSize="11"/>
+            <TextBox x:Name="TB_DDJ" HorizontalAlignment="Left" Height="20" Margin="100,2.5,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="81" PreviewTextInput="BlockWrongInput"/>
+        </Grid>
+        <Grid HorizontalAlignment="Left" Height="25" VerticalAlignment="Top" Width="181" Margin="200,190,0,0">
+            <Label x:Name="Label_BC" Content="Bowser's Castle:" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="100" FontSize="11"/>
+            <TextBox x:Name="TB_BC" HorizontalAlignment="Left" Height="20" Margin="100,2.5,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="81" PreviewTextInput="BlockWrongInput"/>
+        </Grid>
+        <Grid HorizontalAlignment="Left" Height="25" VerticalAlignment="Top" Width="181" Margin="200,215,0,0">
+            <Label x:Name="Label_RR" Content="Rainbow Road:" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="100" FontSize="11"/>
+            <TextBox x:Name="TB_RR" HorizontalAlignment="Left" Height="20" Margin="100,2.5,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="81" PreviewTextInput="BlockWrongInput"/>
+        </Grid>
+        <Button x:Name="Btn_OK" Content="Apply" HorizontalAlignment="Left" Height="24" Margin="222,265,0,0" VerticalAlignment="Top" Width="77" PreviewMouseDown="Btn_OK_MouseDown"/>
+        <Button x:Name="Btn_Cancel" Content="Cancel" HorizontalAlignment="Left" Height="24" Margin="304,265,0,0" VerticalAlignment="Top" Width="77" PreviewMouseDown="Btn_Cancel_MouseDown"/>
+    </Grid>
+</Window>

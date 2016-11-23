@@ -30,3 +30,7 @@ C:\Users\MisterIXI\Documents\bananasplit\BananaSplit\obj\Debug\SettingsWindow.ba
 C:\Users\MisterIXI\Documents\bananasplit\BananaSplit\obj\Debug\BananaSplit.g.resources
 C:\Users\MisterIXI\Documents\bananasplit\BananaSplit\obj\Debug\BananaSplit.Properties.Resources.resources
 C:\Users\MisterIXI\Documents\bananasplit\BananaSplit\obj\Debug\BananaSplit.csproj.GenerateResource.Cache
+D:\MisterIXI\Documents\Git Repos\BananaSplit\BananaSplit\obj\Debug\SplitEditor.g.cs
+D:\MisterIXI\Documents\Git Repos\BananaSplit\BananaSplit\obj\Debug\SplitEditor.baml
+C:\Users\MisterIXI\Documents\bananasplit\BananaSplit\obj\Debug\SplitEditor.g.cs
+C:\Users\MisterIXI\Documents\bananasplit\BananaSplit\obj\Debug\SplitEditor.baml

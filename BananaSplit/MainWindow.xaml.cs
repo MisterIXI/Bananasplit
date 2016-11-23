@@ -188,10 +188,13 @@ namespace BananaSplit
         int currentTrackIndex, currentSplitProgress = 0;
 
         int[] currentTrackOrder = new int[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
-        TimeSpan[] Splittimes = new TimeSpan[16], PBSplits = new TimeSpan[16], UnsavedGoldSplits = new TimeSpan[16], GoldSplits = new TimeSpan[16], currentTotalTimes = new TimeSpan[16], PBTotalTimes = new TimeSpan[16];
-        TimeSpan lastSplit, totalCurrentRunTime, totalCurrentPBTime, PBEndTime, currentEndTime, segmentOffsetForUndo;
+        TimeSpan[] Splittimes = new TimeSpan[16],  UnsavedGoldSplits = new TimeSpan[16], GoldSplits = new TimeSpan[16], currentTotalTimes = new TimeSpan[16], PBTotalTimes = new TimeSpan[16];
+        public static TimeSpan[] PBSplits = new TimeSpan[16];
+        TimeSpan lastSplit, totalCurrentRunTime, totalCurrentPBTime, currentEndTime, segmentOffsetForUndo;
+        public static TimeSpan PBEndTime;
         bool[] isSplitAGoldSplit = new bool[16];
-        bool isPendingTrackSelection, isPBMissingSplits, isPBMissingGoldSplits, wasLastSplitSkipped, waitingForFirstSplit;
+        bool isPendingTrackSelection, isPBMissingGoldSplits, wasLastSplitSkipped, waitingForFirstSplit, flagForMissingSplitPopup;
+        public static bool isPBMissingSplits;
 
         /*
         Variable explanation:
@@ -220,6 +223,8 @@ namespace BananaSplit
         isPBMissingSplits: Set Flag if PB is Missing one or some of its Split.
         isPBMissingGoldSplits: Set Flag if one or more Gold Values are missing.
         isCurrentRunMissingSplits: Set Flag if one or more Splits in this run are missing.
+
+            flagForMissingSplitPopup: Set flag so the reminder pops up on reset
         */
         #endregion
 
@@ -367,7 +372,6 @@ namespace BananaSplit
 
         void ResetKey()
         {
-
             if (CheckIfGolds())
             {
                 switch (System.Windows.MessageBox.Show("You have beaten some of your best times. Do you want to update them?", "Unsaved Times", MessageBoxButton.YesNoCancel, MessageBoxImage.Question))
@@ -387,7 +391,31 @@ namespace BananaSplit
 
             }
             else Reset();
-
+            if (flagForMissingSplitPopup)
+            {
+                switch (System.Windows.MessageBox.Show("Your PB is missing Splits. As long as some are missing the time difference won't be compared." + Environment.NewLine + Environment.NewLine + "Edit Splits now?", "Missing Splits!", MessageBoxButton.YesNo, MessageBoxImage.Exclamation))
+                {
+                    case MessageBoxResult.Yes:
+                        TimeSpan[] pbHolder = PBSplits;
+                        TimeSpan totalHolder = PBEndTime;
+                        bool tempBool = false;
+                        SplitEditor var_SplitEditorWindow = new SplitEditor();
+                        var_SplitEditorWindow.ShowDialog();
+                        for (int i = 0; i < 16; i++)
+                        {
+                            if (pbHolder[i] != PBSplits[i]) tempBool = true;
+                        }
+                        if (totalHolder != PBEndTime) tempBool = true;
+                        if (tempBool)
+                        {
+                            UpdateRecords();
+                            unsavedChangesFlag = true;
+                        }
+                        break;
+                    case MessageBoxResult.No:
+                        break;
+                }
+            }
         }
 
         void UndoSelectionKey()
@@ -541,6 +569,25 @@ namespace BananaSplit
                         e.Cancel = true;
                         break;
                 }
+        }
+
+        private void ContextSplitEditorClick(object sender, RoutedEventArgs e)
+        {
+            TimeSpan[] pbHolder = PBSplits;
+            TimeSpan totalHolder = PBEndTime;
+            bool tempBool = false;
+            SplitEditor var_SplitEditorWindow = new SplitEditor();
+            var_SplitEditorWindow.ShowDialog();
+            for (int i = 0; i < 16; i++)
+            {
+                if (pbHolder[i] != PBSplits[i])tempBool = true;
+            }
+            if (totalHolder != PBEndTime) tempBool = true;
+            if (tempBool)
+            {
+                UpdateRecords();
+                unsavedChangesFlag = true;
+            }
         }
 
         private void ContextMenueSettingClick(object sender, RoutedEventArgs e)
@@ -834,6 +881,10 @@ namespace BananaSplit
                 wasLastSplitSkipped = true;
 
             }
+            else
+            {
+                ProgramInfoLabel.Content = "Please select the track to skip first.";
+            }
         }
 
         bool CheckIfPB()
@@ -1023,7 +1074,7 @@ namespace BananaSplit
                 {
                     skipSplitKeyCode = (Keys)XmlConvert.ToInt32(saveFileElement.Element("Settings").Element("Hotkeys").Element("SkipSplit").Attribute("Primary").Value);
                 }
-                else skipSplitKeyCode = Keys.NumPad1;
+                else skipSplitKeyCode = Keys.NumPad2;
                 if (saveFileElement.Element("Settings").Element("Hotkeys").Element("UndoSelection").Attribute("Primary") != null && saveFileElement.Element("Settings").Element("Hotkeys").Element("UndoSelection").Attribute("Primary").Value != null)
                 {
                     undoSelectionKeyCode = (Keys)XmlConvert.ToInt32(saveFileElement.Element("Settings").Element("Hotkeys").Element("UndoSelection").Attribute("Primary").Value);
@@ -1039,7 +1090,7 @@ namespace BananaSplit
                     new XElement("UndoSelection", new XAttribute("Primary", (int)Keys.NumPad8))));
                 splitKeyCode = Keys.NumPad1;
                 resetKeyCode = Keys.NumPad3;
-                skipSplitKeyCode = Keys.NumPad1;
+                skipSplitKeyCode = Keys.NumPad2;
                 undoSelectionKeyCode = Keys.NumPad8;
             }
             if(saveFileElement.Element("Settings").Element("SplitDelay") != null)
@@ -1163,6 +1214,7 @@ namespace BananaSplit
                 if (GoldSplits[i] == TimeSpan.Zero) isPBMissingGoldSplits = true;
                 if (PBSplits[i] == TimeSpan.Zero) isPBMissingSplits = true;
             }
+            if (isPBMissingSplits) flagForMissingSplitPopup = true;
         }
 
         void UpdateGolds()
@@ -1178,7 +1230,6 @@ namespace BananaSplit
                 UnsavedGoldSplits[i] = TimeSpan.Zero;
             }
         }
-
 
         void UpdateMiscellaneous()
         {
@@ -1693,7 +1744,6 @@ namespace BananaSplit
             waitingForFirstSplit = false;
         }
 
-
         private void GeneralTrackLogo_MouseDown(int givenIndex)
         {
             if (isPendingTrackSelection)
@@ -1767,8 +1817,6 @@ namespace BananaSplit
             if (isPendingTrackSelection) if(!waitingForFirstSplit) if (trackSelectionImages[givenIndex].IsEnabled) trackSelectionImages[givenIndex].Opacity = .5;
         }
 
-
-
         private void TrackLogo1_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             GeneralTrackLogo_MouseDown(0);
@@ -1783,6 +1831,7 @@ namespace BananaSplit
         {
             GeneralTrackLogo_MouseLeave(0);
         }
+
         private void TrackLogo2_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             GeneralTrackLogo_MouseDown(1);
@@ -1797,6 +1846,7 @@ namespace BananaSplit
         {
             GeneralTrackLogo_MouseLeave(1);
         }
+
         private void TrackLogo3_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             GeneralTrackLogo_MouseDown(2);
@@ -1811,6 +1861,7 @@ namespace BananaSplit
         {
             GeneralTrackLogo_MouseLeave(2);
         }
+
         private void TrackLogo4_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             GeneralTrackLogo_MouseDown(3);
@@ -1825,6 +1876,7 @@ namespace BananaSplit
         {
             GeneralTrackLogo_MouseLeave(3);
         }
+
         private void TrackLogo5_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             GeneralTrackLogo_MouseDown(4);
@@ -1839,6 +1891,7 @@ namespace BananaSplit
         {
             GeneralTrackLogo_MouseLeave(4);
         }
+
         private void TrackLogo6_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             GeneralTrackLogo_MouseDown(5);
@@ -1853,6 +1906,7 @@ namespace BananaSplit
         {
             GeneralTrackLogo_MouseLeave(5);
         }
+
         private void TrackLogo7_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             GeneralTrackLogo_MouseDown(6);
@@ -1867,6 +1921,7 @@ namespace BananaSplit
         {
             GeneralTrackLogo_MouseLeave(6);
         }
+
         private void TrackLogo8_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             GeneralTrackLogo_MouseDown(7);
@@ -1881,6 +1936,7 @@ namespace BananaSplit
         {
             GeneralTrackLogo_MouseLeave(7);
         }
+
         private void TrackLogo9_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             GeneralTrackLogo_MouseDown(8);
@@ -1895,6 +1951,7 @@ namespace BananaSplit
         {
             GeneralTrackLogo_MouseLeave(8);
         }
+
         private void TrackLogo10_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             GeneralTrackLogo_MouseDown(9);
@@ -1909,6 +1966,7 @@ namespace BananaSplit
         {
             GeneralTrackLogo_MouseLeave(9);
         }
+
         private void TrackLogo11_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             GeneralTrackLogo_MouseDown(10);
@@ -1923,6 +1981,7 @@ namespace BananaSplit
         {
             GeneralTrackLogo_MouseLeave(10);
         }
+
         private void TrackLogo12_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             GeneralTrackLogo_MouseDown(11);
@@ -1937,8 +1996,6 @@ namespace BananaSplit
         {
             GeneralTrackLogo_MouseLeave(11);
         }
-
-
 
         private void TrackLogo13_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
@@ -1968,6 +2025,7 @@ namespace BananaSplit
         {
             GeneralTrackLogo_MouseLeave(13);
         }
+
         private void TrackLogo15_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             GeneralTrackLogo_MouseDown(14);
@@ -1982,6 +2040,7 @@ namespace BananaSplit
         {
             GeneralTrackLogo_MouseLeave(14);
         }
+
         private void TrackLogo16_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             GeneralTrackLogo_MouseDown(15);
