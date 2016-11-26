@@ -125,6 +125,7 @@
         <ContextMenu>
             <MenuItem Header="Settings" Click="ContextMenueSettingClick" />
             <MenuItem Header="Edit Splits" Click="ContextSplitEditorClick" />
+            <MenuItem Header="Edit Gold Splits" Click="ContextGoldSplitEditorClick" />
             <MenuItem Header="About" Click="ContextMenueAboutClick" />
             <Separator />
             <MenuItem Header="Close" Click="ContextMenueCloseClick"/>

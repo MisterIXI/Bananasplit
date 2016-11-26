@@ -76,6 +76,9 @@
     </ApplicationDefinition>
     <Compile Include="AtomicDateTime.cs" />
     <Compile Include="CompositeHook.cs" />
+    <Compile Include="GoldSplitEditor.xaml.cs">
+      <DependentUpon>GoldSplitEditor.xaml</DependentUpon>
+    </Compile>
     <Compile Include="NTP.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -85,10 +88,17 @@
     <Compile Include="SplitEditor.xaml.cs">
       <DependentUpon>SplitEditor.xaml</DependentUpon>
     </Compile>
+    <Compile Include="TimeSpanCalc.xaml.cs">
+      <DependentUpon>TimeSpanCalc.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TimeStamp.cs" />
     <Compile Include="SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
+    <Page Include="GoldSplitEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -108,6 +118,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="SplitEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TimeSpanCalc.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -179,6 +193,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Paomedia-Small-N-Flat-Cog.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons8-Windows-8-Very-Basic-Calculator.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

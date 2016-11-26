@@ -34,3 +34,7 @@ D:\MisterIXI\Documents\Git Repos\BananaSplit\BananaSplit\obj\Debug\SplitEditor.g
 D:\MisterIXI\Documents\Git Repos\BananaSplit\BananaSplit\obj\Debug\SplitEditor.baml
 C:\Users\MisterIXI\Documents\bananasplit\BananaSplit\obj\Debug\SplitEditor.g.cs
 C:\Users\MisterIXI\Documents\bananasplit\BananaSplit\obj\Debug\SplitEditor.baml
+D:\MisterIXI\Documents\Git Repos\BananaSplit\BananaSplit\obj\Debug\TimeSpanCalc.g.cs
+D:\MisterIXI\Documents\Git Repos\BananaSplit\BananaSplit\obj\Debug\TimeSpanCalc.baml
+D:\MisterIXI\Documents\Git Repos\BananaSplit\BananaSplit\obj\Debug\GoldSplitEditor.g.cs
+D:\MisterIXI\Documents\Git Repos\BananaSplit\BananaSplit\obj\Debug\GoldSplitEditor.baml

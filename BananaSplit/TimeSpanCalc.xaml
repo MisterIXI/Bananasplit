@@ -1,0 +1,18 @@
+﻿<Window x:Class="BananaSplit.TimeSpanCalc"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BananaSplit"
+        ResizeMode="NoResize"        
+        mc:Ignorable="d"
+        Title="" Height="139.438" Width="218.292" Icon="Icons8-Windows-8-Very-Basic-Calculator.ico">
+    <Grid>
+        <TextBox x:Name="TB_TimeToPutThere" HorizontalAlignment="Left" Height="18" Margin="46,16,0,0" TextWrapping="Wrap" Text="00:00.000" VerticalAlignment="Top" Width="58" PreviewTextInput="BlockWrongInput"/>
+        <TextBox x:Name="TB_TimeToSubtract" HorizontalAlignment="Left" Height="18" Margin="46,38,0,0" TextWrapping="Wrap" Text="00:00.000"  VerticalAlignment="Top" Width="58" PreviewTextInput="BlockWrongInput"/>
+        <TextBox x:Name="TB_OutPut" HorizontalAlignment="Left" Height="20" Margin="28,64,0,0" TextWrapping="Wrap" Text="Output" VerticalAlignment="Top" Width="76" PreviewTextInput="BlockWrongInput"/>
+        <Button x:Name="button" Content="Subtract" HorizontalAlignment="Left" Height="20" Margin="132,63,0,0" VerticalAlignment="Top" Width="54" Click="button_Click"/>
+        <Label x:Name="label" Content="-" HorizontalAlignment="Left" Height="26" Margin="28,34,0,0" VerticalAlignment="Top" Width="18" VerticalContentAlignment="Top"/>
+
+    </Grid>
+</Window>

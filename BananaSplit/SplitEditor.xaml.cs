@@ -21,6 +21,7 @@ namespace BananaSplit
     {
 
         TextBox[] TimeFields = new TextBox[16];
+        TimeSpanCalc windowHolder;
 
         public SplitEditor()
         {
@@ -44,6 +45,31 @@ namespace BananaSplit
             return !regex.IsMatch(text);
         }
 
+        private void Btn_OpenCalc_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            
+            windowHolder = new TimeSpanCalc();
+            windowHolder.Show();
+            windowHolder.Focus();
+        }
+
+        private void Btn_AddUp_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                TimeSpan timeHolder = TimeSpan.Zero;
+                for (int i = 0; i < 16; i++)
+                {
+                    timeHolder += TimeSpan.Parse("00:0" + TimeFields[i].Text);
+                }
+                TB_Total.Text = timeHolder.ToString(@"mm\:ss\.fff");
+            }
+            catch
+            {
+                
+            }
+        }
+
         private void Btn_OK_MouseDown(object sender, MouseButtonEventArgs e)
         {
             try
@@ -63,8 +89,7 @@ namespace BananaSplit
         }
 
         private void Btn_Cancel_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            Console.WriteLine("apiwfhapwfih");
+        {            
             Close();
         }
     }

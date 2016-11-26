@@ -188,8 +188,8 @@ namespace BananaSplit
         int currentTrackIndex, currentSplitProgress = 0;
 
         int[] currentTrackOrder = new int[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
-        TimeSpan[] Splittimes = new TimeSpan[16],  UnsavedGoldSplits = new TimeSpan[16], GoldSplits = new TimeSpan[16], currentTotalTimes = new TimeSpan[16], PBTotalTimes = new TimeSpan[16];
-        public static TimeSpan[] PBSplits = new TimeSpan[16];
+        TimeSpan[] Splittimes = new TimeSpan[16],  UnsavedGoldSplits = new TimeSpan[16], currentTotalTimes = new TimeSpan[16], PBTotalTimes = new TimeSpan[16];
+        public static TimeSpan[] PBSplits = new TimeSpan[16], GoldSplits = new TimeSpan[16];
         TimeSpan lastSplit, totalCurrentRunTime, totalCurrentPBTime, currentEndTime, segmentOffsetForUndo;
         public static TimeSpan PBEndTime;
         bool[] isSplitAGoldSplit = new bool[16];
@@ -588,6 +588,26 @@ namespace BananaSplit
                 UpdateRecords();
                 unsavedChangesFlag = true;
             }
+            UpdateLabels();
+        }
+
+
+        private void ContextGoldSplitEditorClick(object sender, RoutedEventArgs e)
+        {
+            TimeSpan[] pbHolder = GoldSplits;
+            bool tempBool = false;
+            GoldSplitEditor var_SplitEditorWindow = new GoldSplitEditor();
+            var_SplitEditorWindow.ShowDialog();
+            for (int i = 0; i < 16; i++)
+            {
+                if (pbHolder[i] != GoldSplits[i]) tempBool = true;
+            }
+            if (tempBool)
+            {
+                UpdateGolds();
+                unsavedChangesFlag = true;
+            }
+            UpdateLabels();
         }
 
         private void ContextMenueSettingClick(object sender, RoutedEventArgs e)
