@@ -39,6 +39,7 @@ namespace BananaSplit
             TB_UndoSel.Text = MainWindow.UndoSelectionKeyCode.ToString();
             TB_SplitDelay.Text = MainWindow.SplitDelay.ToString();
 
+            CheckBox_BestPosTime.IsChecked = MainWindow.UseBestPosTime;
             CheckBox_GlobalHotkeys.IsChecked = MainWindow.UseGlobalHotkeys;
             CheckBox_ChromaKeyMode.IsChecked = MainWindow.IsInChromaMode;
             CheckBox_UnTintMainTimer.IsChecked = MainWindow.IsInTintedMode;
@@ -61,6 +62,8 @@ namespace BananaSplit
             if (TempUndoSelKey != default(Key)) MainWindow.UndoSelectionKeyCode = (Keys)KeyInterop.VirtualKeyFromKey(TempUndoSelKey);
 
             MainWindow.SplitDelay = Convert.ToInt32(TB_SplitDelay.Text.ToString());
+
+            MainWindow.UseBestPosTime = CheckBox_BestPosTime.IsChecked.Value;
             MainWindow.UseGlobalHotkeys = CheckBox_GlobalHotkeys.IsChecked.Value;
             MainWindow.IsInChromaMode = CheckBox_ChromaKeyMode.IsChecked.Value;
             MainWindow.IsInTintedMode = CheckBox_UnTintMainTimer.IsChecked.Value;

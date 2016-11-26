@@ -99,7 +99,22 @@ namespace BananaSplit
         }
 
 
-        static bool isInChromaMode = false, useGlobalHotkeys = false, isInTintedMode = true, unsavedChangesFlag; 
+        static bool useBestPosTime = false, isInChromaMode = false, useGlobalHotkeys = false, isInTintedMode = true, unsavedChangesFlag;
+        public static bool UseBestPosTime
+        {
+            get
+            {
+                return useBestPosTime;
+            }
+            set
+            {
+                if (useBestPosTime != value)
+                {
+                    useBestPosTime = value;
+                    unsavedChangesFlag = true;
+                }
+            }
+        }
         public static bool UseGlobalHotkeys
         {
             get
@@ -644,6 +659,7 @@ namespace BananaSplit
                     TimerLabel.Foreground = tempGradient;
                 }
             }
+            UpdateLabels();
         }
 
         private void ContextMenueAboutClick(object sender, RoutedEventArgs e)
@@ -1131,6 +1147,24 @@ namespace BananaSplit
                 splitDelay = 0;
             }
 
+            if (saveFileElement.Element("Settings").Element("useBestPosTime") != null)
+            {
+                if (saveFileElement.Element("Settings").Element("useBestPosTime").Attribute("Enabled") != null && saveFileElement.Element("Settings").Element("useBestPosTime").Attribute("Enabled").Value != null)
+                {
+                    useBestPosTime = XmlConvert.ToBoolean(saveFileElement.Element("Settings").Element("useBestPosTime").Attribute("Enabled").Value);
+                }
+                else
+                {
+                    saveFileElement.Element("Settings").Add(new XElement("useBestPosTime", new XAttribute("Enabled", true)));
+                    useBestPosTime = false;
+                }
+            }
+            else
+            {
+                saveFileElement.Element("Settings").Add(new XElement("isInTintedMode", new XAttribute("Enabled", true)));
+                useBestPosTime = false;
+            }
+
             if (saveFileElement.Element("Settings").Element("isInTintedMode") != null)
             {
                 if (saveFileElement.Element("Settings").Element("isInTintedMode").Attribute("Enabled") != null && saveFileElement.Element("Settings").Element("isInTintedMode").Attribute("Enabled").Value != null)
@@ -1269,6 +1303,7 @@ namespace BananaSplit
             saveFileElement.Element("Settings").Element("Hotkeys").Element("UndoSelection").SetAttributeValue("Primary", (int)undoSelectionKeyCode);
 
             saveFileElement.Element("Settings").Element("SplitDelay").SetAttributeValue("DelayInMs", splitDelay);
+            saveFileElement.Element("Settings").Element("useBestPosTime").SetAttributeValue("Enabled", useBestPosTime);
             saveFileElement.Element("Settings").Element("isInTintedMode").SetAttributeValue("Enabled", useGlobalHotkeys);
             saveFileElement.Element("Settings").Element("useGlobalHotkeys").SetAttributeValue("Enabled", useGlobalHotkeys);
             saveFileElement.Element("Settings").Element("isInChromaMode").SetAttributeValue("Enabled", isInChromaMode);
@@ -1699,12 +1734,14 @@ namespace BananaSplit
                 else Possible_Time_Save_Label_Number.Content = "-";
             }
             else Possible_Time_Save_Label_Number.Content = "-";
-            UpdateSumOfBest();
+            if (!useBestPosTime) UpdateSumOfBest();
+            else UpdateBestPosTime();
             Run_Counter_Label_Number.Content = startedRunCount + "/" + completedRunCount;
         }
 
         void UpdateSumOfBest()
         {
+            SoB_text.Content = "Sum of Best:";
             if (!isPBMissingGoldSplits)
             {
                 TimeSpan tempCalcTimeSpan = new TimeSpan();
@@ -1716,7 +1753,22 @@ namespace BananaSplit
                 SoB_Value.Content = tempCalcTimeSpan.ToString(@"mm\:ss");
             }
             else SoB_Value.Content = "-";
+        }
 
+        void UpdateBestPosTime()
+        {
+            SoB_text.Content = "Best possible Time:";
+            if (!isPBMissingGoldSplits)
+            {
+                TimeSpan tempCalcTimeSpan = new TimeSpan();
+                for (int i = 0; i < 16; i++)
+                {
+                    if (Splittimes[i] != TimeSpan.Zero) tempCalcTimeSpan += Splittimes[i];
+                    else tempCalcTimeSpan += GoldSplits[i];
+                }
+                SoB_Value.Content = tempCalcTimeSpan.ToString(@"mm\:ss");
+            }
+            else SoB_Value.Content = "-";
         }
 
         void ScrollUp()

@@ -20,6 +20,7 @@
         <TextBox x:Name="TB_SplitDelay" HorizontalAlignment="Left" Height="20" Margin="170,170,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="89" Background="White" PreviewTextInput="TheNewTruePreviewTextInput"/>
         <Button x:Name="Button_OK" Content="OK" HorizontalAlignment="Left" Height="22" Margin="144,271,0,0" VerticalAlignment="Top" Width="55" PreviewMouseDown="Button_OK_MouseDown"/>
         <Button x:Name="Button_Cancel" Content="Cancel" HorizontalAlignment="Left" Height="22" Margin="204,271,0,0" VerticalAlignment="Top" Width="55" PreviewMouseDown="Button_Cancel_MouseDown"/>
+        <CheckBox x:Name="CheckBox_BestPosTime" Content="Best possible time instead of SoB" HorizontalAlignment="Left" Height="16" Margin="10,202,0,0" VerticalAlignment="Top" Width="249"/>
         <CheckBox x:Name="CheckBox_UnTintMainTimer" Content="Keep main timer white" HorizontalAlignment="Left" Height="16" Margin="10,218,0,0" VerticalAlignment="Top" Width="189"/>
         <CheckBox x:Name="CheckBox_ChromaKeyMode" Content="Chroma Key mode" HorizontalAlignment="Left" Height="16" Margin="10,234,0,0" VerticalAlignment="Top" Width="189"/>
         <CheckBox x:Name="CheckBox_GlobalHotkeys" Content="Global Hotkeys" HorizontalAlignment="Left" Height="16" Margin="10,250,0,0" VerticalAlignment="Top" Width="189"/>

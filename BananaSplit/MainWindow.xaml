@@ -70,7 +70,7 @@
             </Label.Foreground>
         </Label>
         <Label x:Name="ProgramInfoLabel" Content="Press splitkey to split on Wario Colosseum." HorizontalAlignment="Left" Height="34" Margin="10,316,0,0" VerticalAlignment="Top" Width="299" Background="{x:Null}" Foreground="White" FontSize="14.667"/>
-        <Label x:Name="SoB_text" Content="Sum of Best:" HorizontalAlignment="Left" Height="34" Margin="10,339,0,0" VerticalAlignment="Top" Width="129" Background="{x:Null}" Foreground="White" FontSize="21.333"/>
+        <Label x:Name="SoB_text" Content="Sum of Best:" HorizontalAlignment="Left" Height="47" Margin="10,339,0,0" VerticalAlignment="Top" Width="239" Background="{x:Null}" Foreground="White" FontSize="21.333"/>
         <Label x:Name="SoB_Value" Content="33:05" HorizontalAlignment="Left" Height="34" Margin="254,339,0,0" VerticalAlignment="Top" Width="63" Background="{x:Null}" Foreground="White" FontSize="21.333" HorizontalContentAlignment="Right"/>
         <Rectangle Height="4" Margin="10,380,10,0" Width="307" Stroke="#FF313131" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Fill="#FF313131">
             <Rectangle.RenderTransform>
