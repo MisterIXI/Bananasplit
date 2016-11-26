@@ -518,6 +518,8 @@ namespace BananaSplit
                 if (e.Key == System.Windows.Input.KeyInterop.KeyFromVirtualKey((int)resetKeyCode)) ResetKey();
                 if (e.Key == System.Windows.Input.KeyInterop.KeyFromVirtualKey((int)skipSplitKeyCode)) SkipSplitKey();
                 if (e.Key == System.Windows.Input.KeyInterop.KeyFromVirtualKey((int)undoSelectionKeyCode)) UndoSelectionKey();
+
+                //if (e.Key == System.Windows.Input.Key.A) Console.WriteLine(saveFileElement);
                 
             }
 
@@ -1161,7 +1163,7 @@ namespace BananaSplit
             }
             else
             {
-                saveFileElement.Element("Settings").Add(new XElement("isInTintedMode", new XAttribute("Enabled", true)));
+                saveFileElement.Element("Settings").Add(new XElement("useBestPosTime", new XAttribute("Enabled", true)));
                 useBestPosTime = false;
             }
 
@@ -1304,7 +1306,7 @@ namespace BananaSplit
 
             saveFileElement.Element("Settings").Element("SplitDelay").SetAttributeValue("DelayInMs", splitDelay);
             saveFileElement.Element("Settings").Element("useBestPosTime").SetAttributeValue("Enabled", useBestPosTime);
-            saveFileElement.Element("Settings").Element("isInTintedMode").SetAttributeValue("Enabled", useGlobalHotkeys);
+            saveFileElement.Element("Settings").Element("isInTintedMode").SetAttributeValue("Enabled", isInTintedMode);
             saveFileElement.Element("Settings").Element("useGlobalHotkeys").SetAttributeValue("Enabled", useGlobalHotkeys);
             saveFileElement.Element("Settings").Element("isInChromaMode").SetAttributeValue("Enabled", isInChromaMode);
         }

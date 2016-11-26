@@ -26,6 +26,10 @@
       <UndoSelection Primary="104" />
     </Hotkeys>
     <useGlobalHotkeys Enabled="false" />
+    <SplitDelay DelayInMs="0" />
+    <useBestPosTime Enabled="false" />
+    <isInTintedMode Enabled="true" />
+    <isInChromaMode Enabled="false" />
   </Settings>
   <Miscellaneous>
     <RunCounter startedRunCount="0" completedRunCount="0" />
