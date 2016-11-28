@@ -666,7 +666,7 @@ namespace BananaSplit
 
         private void ContextMenueAboutClick(object sender, RoutedEventArgs e)
         {
-            System.Windows.MessageBox.Show("BananaSplit Version 1.1" + Environment.NewLine + "Programmed by Yannik Brändle (aka MisterIXI)" + Environment.NewLine + Environment.NewLine + "For questions, bug reports or anything else regarding this splitter, just send an e-mail at misterixi@t-online.de or contact me on Twitch or Youtube." + Environment.NewLine + Environment.NewLine + "Big shoutouts to GoombaNL for the great help during the development of this program." + Environment.NewLine + Environment.NewLine + "Thank you, Livesplit, for being open-source. You gave Inspiration to the design and the added global hotkey functionality.", "BananaSplit About", MessageBoxButton.OK, MessageBoxImage.None);
+            System.Windows.MessageBox.Show("BananaSplit Version 1.2" + Environment.NewLine + "Programmed by Yannik Brändle (aka MisterIXI)" + Environment.NewLine + Environment.NewLine + "For questions, bug reports or anything else regarding this splitter, just send an e-mail at misterixi@t-online.de or contact me on Twitch or Youtube." + Environment.NewLine + Environment.NewLine + "Big shoutouts to GoombaNL for the great help during the development of this program." + Environment.NewLine + Environment.NewLine + "Thank you, Livesplit, for being open-source. You gave Inspiration to the design and the added global hotkey functionality.", "BananaSplit About", MessageBoxButton.OK, MessageBoxImage.None);
         }
 
         private void ContextMenueCloseClick(object sender, RoutedEventArgs e)
